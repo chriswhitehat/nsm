@@ -1,6 +1,6 @@
-# seconion2 CHANGELOG
+# nsm CHANGELOG
 
-This file is used to list changes made in each version of the seconion2 cookbook.
+This file is used to list changes made in each version of the nsm cookbook.
 
 # 0.1.0
 

@@ -1,4 +1,4 @@
-# InSpec test for recipe seconion2::default
+# InSpec test for recipe nsm::default
 
 # The InSpec reference, with examples and extensive documentation, can be
 # found at https://www.inspec.io/docs/reference/resources/
