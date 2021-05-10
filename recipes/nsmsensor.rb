@@ -16,6 +16,18 @@ node.normal[:nsm][:interfaces][:mgmt][:domain] = 'example.com'
 node.normal[:nsm][:interfaces][:sniffing][:eth2][:enabled] = true
 node.normal[:nsm][:interfaces][:sniffing][:eth2][:interface] = "eth2"
 
+node.normal[:nsm][:zeek][:zkg][:source][:chriswhitehat] = 'https://github.com/chriswhitehat/zkg'
+
+node.normal[:nsm][:zeek][:scripts][:global]['json-streaming-logs'] = true
+node.normal[:nsm][:zeek][:scripts][:global]['zeek-community-id'] = true
+node.normal[:nsm][:zeek][:scripts][:global]['ja3'] = true
+node.normal[:nsm][:zeek][:scripts][:global]['hassh'] = true
+node.normal[:nsm][:zeek][:scripts][:global]['bzar'] = true
+node.normal[:nsm][:zeek][:scripts][:global]['zeek-cryptomining'] = true
+node.normal[:nsm][:zeek][:scripts][:global]['add-node-names'] = true
+node.normal[:nsm][:zeek][:scripts][:global]['detect-ransomware-filenames'] = true
+node.normal[:nsm][:zeek][:scripts][:global]['files_filter'] = true
+node.normal[:nsm][:zeek][:scripts][:global]['pcr'] = true
 
 include_recipe 'nsm::sensor'
 

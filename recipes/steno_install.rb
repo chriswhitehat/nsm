@@ -24,7 +24,7 @@ directory '/home/stenographer' do
   action :create
 end
 
-package ['golang', 'libaio-dev', 'libleveldb-dev', 'libsnappy-dev', 'g++', 'libcap2-bin', 'libseccomp-dev']
+package ['golang', 'libaio-dev', 'libleveldb-dev', 'libsnappy-dev', 'g++', 'libcap2-bin', 'libseccomp-dev', 'tcpreplay']
 
 execute 'go_install' do
   cwd '/home/stenographer'

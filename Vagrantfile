@@ -69,6 +69,7 @@ Vagrant.configure("2") do |config|
 
       # Add a recipe
       chef.add_recipe "nsm::nsmsensor"
+      chef.add_recipe "vagrant"
 
 
     end

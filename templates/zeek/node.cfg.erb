@@ -22,6 +22,6 @@ lb_procs=<%= sniff[:zeek][:lb_procs] %>
 <% if sniff[:zeek][:numa_tune] %>
 pin_cpus=<%= (sniff[:zeek][:numa_cpu]..sniff[:zeek][:numa_cpu]+sniff[:zeek][:lb_procs]-1).to_a.join(",") %>
 <% end %>
-aux_scripts=networks/<%= sniff[:sensorname] %>
+aux_scripts=networks/<%= sniff[:sensorname] %>_networks
 
 <% end %>

@@ -15,11 +15,18 @@ end
 
 
 template '/opt/zeek/etc/zkg/config' do
-  source 'zkg/config.erb'
+  source 'zeek/zkg/config.erb'
   owner 'zeek'
   group 'zeek'
   mode '0644'
+  notifies :run, 'execute[zkg_refresh]', :immediately
 end
+
+execute 'zkg_refresh' do
+  command '/opt/zeek/bin/zkg refresh'
+  action :nothing
+end
+
 
 
 node[:nsm][:zeek][:zkg][:package].each do |zkg_name, zkg|

@@ -11,7 +11,6 @@ user 'zeek' do
    system true
 end 
 
-
 group 'zeek' do
   action :create
   members ['zeek']
@@ -44,6 +43,10 @@ end
 apt_update 'zeek_update' do
   action :nothing
 end
+
+
+package 'gdb'
+
 
 package 'zeek' do
   action :install

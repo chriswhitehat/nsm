@@ -8,10 +8,6 @@
 #!
 #! This file will not be overwritten when upgrading or reinstalling!
 
-<% if not node[:seconion][:sensor][:clustered] %>
-redef Broker::default_listen_address = "127.0.0.1";
-<% end %>
-
 
 ########################
 # Zeek Signatures
@@ -43,7 +39,7 @@ redef Broker::default_listen_address = "127.0.0.1";
 
 ################
 # Sensor Group 
-# <%= node[:seconion][:sensor][:sensor_group] %>
+# <%= node[:nsm][:sensor][:sensor_group] %>
 ################
 
 <% @sensor_group_sigs.each do |sig, enabled| %>
@@ -97,7 +93,7 @@ redef Broker::default_listen_address = "127.0.0.1";
 
 ################
 # Sensor Group 
-# <%= node[:seconion][:sensor][:sensor_group] %>
+# <%= node[:nsm][:sensor][:sensor_group] %>
 ################
 
 <% @sensor_group.each do |script, enabled| %>
