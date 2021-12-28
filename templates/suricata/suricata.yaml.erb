@@ -66,7 +66,7 @@ vars:
 # The default logging directory.  Any log or output file will be
 # placed here if it's not specified with a full path name. This can be
 # overridden with the -l command line parameter.
-default-log-dir: /var/log/suricata/
+default-log-dir: /nsm/suricata/
 
 # Global stats configuration
 stats:
@@ -86,7 +86,7 @@ stats:
 outputs:
   # a line based alerts log similar to Snort's fast.log
   - fast:
-      enabled: yes
+      enabled: no
       filename: fast.log
       append: yes
       #filetype: regular # 'regular', 'unix_stream' or 'unix_dgram'
@@ -98,7 +98,7 @@ outputs:
       filename: eve.json
       # Enable for multi-threaded eve.json output; output files are amended with
       # with an identifier, e.g., eve.9.json
-      #threaded: false
+      threaded: true
       #prefix: "@cee: " # prefix to prepend to each log entry
       # the following are valid when type: syslog above
       #identity: "suricata"
@@ -137,7 +137,7 @@ outputs:
       # to make the id less predictable.
 
       # enable/disable the community id feature.
-      community-id: false
+      community-id: true
       # Seed value for the ID output. Valid values are 0-65535.
       community-id-seed: 0
 
@@ -147,7 +147,7 @@ outputs:
       # helpful when reviewing alerts for traffic that is being reverse
       # or forward proxied.
       xff:
-        enabled: no
+        enabled: yes
         # Two operation modes are available: "extra-data" and "overwrite".
         mode: extra-data
         # Two proxy deployments are supported: "reverse" and "forward". In
@@ -161,7 +161,7 @@ outputs:
 
       types:
         - alert:
-            # payload: yes             # enable dumping payload in Base64
+            payload: yes             # enable dumping payload in Base64
             # payload-buffer-size: 4kb # max size of payload buffer to output in eve-log
             # payload-printable: yes   # enable dumping payload in printable (lossy) format
             # packet: yes              # enable dumping of packet (without stream segments)
@@ -172,7 +172,7 @@ outputs:
             # Enable the logging of tagged packets for rules using the
             # "tag" keyword.
             tagged-packets: yes
-        - anomaly:
+        #- anomaly:
             # Anomaly log records describe unexpected conditions such
             # as truncated packets, packets with invalid IP/UDP/TCP
             # length values, and other events that render the packet
@@ -197,24 +197,24 @@ outputs:
             # By default, anomaly logging is enabled. When anomaly
             # logging is enabled, applayer anomaly reporting is
             # also enabled.
-            enabled: yes
+            #enabled: yes
             #
             # Choose one or more types of anomaly logging and whether to enable
             # logging of the packet header for packet anomalies.
-            types:
+            #types:
               # decode: no
               # stream: no
               # applayer: yes
             #packethdr: no
-        - http:
-            extended: yes     # enable this for extended logging information
+        #- http:
+            #extended: yes     # enable this for extended logging information
             # custom allows additional HTTP fields to be included in eve-log.
             # the example below adds three additional fields when uncommented
             #custom: [Accept-Encoding, Accept-Language, Authorization]
             # set this value to one and only one from {both, request, response}
             # to dump all HTTP headers for every HTTP request and/or response
             # dump-all-headers: none
-        - dns:
+        #- dns:
             # This configuration uses the new DNS logging format,
             # the old configuration is still available:
             # https://suricata.readthedocs.io/en/latest/output/eve/eve-json-output.html#dns-v1-format
@@ -242,15 +242,15 @@ outputs:
             # DNS record types to log, based on the query type.
             # Default: all.
             #types: [a, aaaa, cname, mx, ns, ptr, txt]
-        - tls:
-            extended: yes     # enable this for extended logging information
+        #- tls:
+            #extended: yes     # enable this for extended logging information
             # output TLS transaction where the session is resumed using a
             # session id
             #session-resumption: no
             # custom controls which TLS fields that are included in eve-log
             #custom: [subject, issuer, session_resumed, serial, fingerprint, sni, version, not_before, not_after, certificate, chain, ja3, ja3s]
-        - files:
-            force-magic: no   # force logging magic on all logged files
+        #- files:
+            #force-magic: no   # force logging magic on all logged files
             # force logging of checksums, available hash functions are md5,
             # sha1 and sha256
             #force-hash: [md5]
@@ -258,8 +258,8 @@ outputs:
         #    alerts: yes      # log alerts that caused drops
         #    flows: all       # start or all: 'start' logs only a single drop
         #                     # per flow direction. All logs each dropped pkt.
-        - smtp:
-            #extended: yes # enable this for extended logging information
+        #- smtp:
+            #extended: no # enable this for extended logging information
             # this includes: bcc, message-id, subject, x_mailer, user-agent
             # custom fields logging from the list:
             #  reply-to, bcc, message-id, subject, x-mailer, user-agent, received,
@@ -272,26 +272,26 @@ outputs:
             #md5: [body, subject]
 
         #- dnp3
-        - ftp
-        - rdp
-        - nfs
-        - smb
-        - tftp
+        #- ftp
+        #- rdp
+        #- nfs
+        #- smb
+        #- tftp
         - ikev2
-        - dcerpc
-        - krb5
-        - snmp
-        - rfb
-        - sip
-        - dhcp:
-            enabled: yes
+        #- dcerpc
+        #- krb5
+        #- snmp
+        #- rfb
+        #- sip
+        #- dhcp:
+            #enabled: yes
             # When extended mode is on, all DHCP messages are logged
             # with full detail. When extended mode is off (the
             # default), just enough information to map a MAC address
             # to an IP address is logged.
-            extended: no
-        - ssh
-        - mqtt:
+            #extended: no
+        #- ssh
+        #- mqtt:
             # passwords: yes           # enable output of passwords
         # HTTP2 logging. HTTP2 support is currently experimental and
         # disabled by default. To enable, uncomment the following line
@@ -302,7 +302,7 @@ outputs:
             threads: no       # per thread stats
             deltas: no        # include delta values
         # bi-directional flows
-        - flow
+        #- flow
         # uni-directional flows
         #- netflow
 

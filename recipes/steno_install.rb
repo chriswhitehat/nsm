@@ -17,49 +17,97 @@ group 'stenographer' do
   system true
 end
 
-directory '/home/stenographer' do
-  owner 'stenographer'
-  group 'stenographer'
-  mode '0750'
+directory '/etc/stenographer' do
+  owner 'root'
+  group 'root'
+  mode '0755'
   action :create
 end
 
-package ['golang', 'libaio-dev', 'libleveldb-dev', 'libsnappy-dev', 'g++', 'libcap2-bin', 'libseccomp-dev', 'tcpreplay']
+dirs = ['/home/stenographer', 
+        '/nsm/steno/', 
+        '/nsm/steno/rpc',
+        '/etc/stenographer/certs',
+        '/etc/stenographer/certs/rpc',
+        '/etc/stenographer/certs/rpc/ca']
 
-execute 'go_install' do
+dirs.each do |dir|
+  directory dir do
+    owner 'stenographer'
+    group 'stenographer'
+    mode '0750'
+    recursive true
+    action :create
+  end
+end
+
+package ['build-essential', 'golang', 'libaio-dev', 'libleveldb-dev', 'libsnappy-dev', 'g++', 
+  'libcap2-bin', 'libseccomp-dev', 'tcpreplay', 'jq', 'libjq1', 'libonig5', 'openssl']
+
+execute 'go_get_stenographer' do
   cwd '/home/stenographer'
   user 'stenographer'
   group 'stenographer'
   environment ({'GOPATH' => '/home/stenographer/go',
                 'GOCACHE' => '/home/stenographer/go/.cache'})
   command 'go get github.com/google/stenographer'
-  not_if do ::File.exist?("/home/stenographer/go/bin/stenographer") end
+  not_if do ::File.exist?("/home/stenographer/go/src/github.com/google/stenographer") end
   action :run
-  notifies :run, 'execute[make_stenotype]'
+  notifies :run, 'execute[go_build_stenographer]', :immediate
+  notifies :run, 'execute[make_stenotype]', :immediate
+end
+
+execute 'go_build_stenographer' do
+  cwd '/home/stenographer/go/src/github.com/google/stenographer'
+  environment ({'GOPATH' => '/home/stenographer/go',
+                'GOCACHE' => '/home/stenographer/go/.cache'})
+  command 'go build'
+  action :nothing
 end
 
 execute 'make_stenotype' do
-  cwd '/home/stenographer/go/src/github.com/google/stenographer/stenotype/'
-  user 'stenographer'
-  group 'stenographer'
-  command 'make && cp stenotype /home/stenographer/go/bin/'
-  not_if do ::File.exist?("/home/stenographer/go/bin/stenotype") end
+  cwd '/home/stenographer/go/src/github.com/google/stenographer/stenotype'
+  environment ({'GOPATH' => '/home/stenographer/go',
+                'GOCACHE' => '/home/stenographer/go/.cache'})
+  command 'make'
   action :nothing
-  notifies :run, 'execute[setcap_steno]', :immediate
+end
+
+bins = [['stenographer', 'stenographer', 0700, 'stenographer', 'root'], 
+        ['stenotype/stenotype', 'stenotype', 0500, 'stenographer', 'root'], 
+        ['stenoread', 'stenoread', 0755, 'root', 'root'], 
+        ['stenocurl', 'stenocurl', 0755, 'root', 'root'],
+        ['stenokeys.sh', 'stenokeys.sh', 0750, 'stenographer', 'root']
+      ]
+
+bins.each do |steno_bin_src,  steno_bin_dest, steno_bin_perms, steno_bin_user, steno_bin_group|
+  remote_file "copy_steno_file_#{steno_bin_dest}" do 
+    path "/usr/bin/#{steno_bin_dest}" 
+    source "file:///home/stenographer/go/src/github.com/google/stenographer/#{steno_bin_src}"
+    mode steno_bin_perms
+    owner steno_bin_user
+    group steno_bin_group
+  end
+end
+
+template '/lib/systemd/system/stenographer.service' do
+  source 'steno/stenographer.service.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  notifies :run, 'execute[systemctl_reload]'
+  notifies :run, 'execute[setcap_steno]'
 end
 
 execute 'setcap_steno' do
-  command 'setcap cap_net_raw=eip /home/stenographer/go/bin/stenographer && setcap cap_net_raw=eip /home/stenographer/go/bin/stenotype'
+  command 'setcap cap_net_raw,cap_net_admin,cap_ipc_lock+eip /usr/bin/stenotype'
   user 'root'
   action :nothing
 end
 
-directory '/nsm/stenographer' do
-  owner 'stenographer'
-  group 'stenographer'
-  mode '0750'
-  recursive true
-  action :create
+execute 'systemctl_reload' do
+  command 'sudo systemctl daemon-reload'
+  action :nothing
 end
 
 

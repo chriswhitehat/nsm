@@ -18,7 +18,7 @@ default[:nsm][:zeek][:config][:broker_db_dir] = '/nsm/zeek/spool/brokerstore'
 default[:nsm][:zeek][:zkg][:source][:zeek] = 'https://github.com/zeek/packages'
 
 ###############
-# Zeek Packages
+# Zkg Packages
 ###############
 default[:nsm][:zeek][:zkg][:package]['zeek-af_packet-plugin'][:install] = true
 default[:nsm][:zeek][:zkg][:package]['zeek-af_packet-plugin'][:apt_deps] = ['cmake', 'build-essential',  'linux-headers-generic', "linux-headers-#{node[:kernel][:release]}"]
@@ -75,3 +75,15 @@ default[:nsm][:zeek][:zkg][:package]['zeek_pcr'][:install] = true
 default[:nsm][:zeek][:zkg][:package]['zeek_pcr'][:apt_deps] = []
 default[:nsm][:zeek][:zkg][:package]['zeek_pcr'][:path] = 'zeek_pcr'
 default[:nsm][:zeek][:zkg][:package]['zeek_pcr'][:install_path] = 'zeek_pcr'
+
+
+#####################
+# Zkg Local Packages
+#####################
+
+default[:nsm][:zeek][:zkg][:local_package]['base_streams'][:install] = true
+default[:nsm][:zeek][:zkg][:local_package]['base_streams'][:name] = 'base_streams'
+default[:nsm][:zeek][:zkg][:local_package]['base_streams'][:apt_deps] = []
+default[:nsm][:zeek][:zkg][:local_package]['base_streams'][:load_template] = 'zeek/local_packages/__load__zeek.erb'
+default[:nsm][:zeek][:zkg][:local_package]['base_streams'][:script_templates] = ['base_streams.zeek.erb']
+

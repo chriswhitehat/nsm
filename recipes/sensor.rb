@@ -22,7 +22,7 @@ end
 directory '/nsm' do
   owner 'nsm'
   group 'nsm'
-  mode '0750'
+  mode '0755'
   action :create
 end
 
@@ -31,6 +31,7 @@ if node[:nsm][:zeek][:enabled]
   include_recipe 'nsm::zeek_install'
   include_recipe 'nsm::zeek_package'
   include_recipe 'nsm::zeek_config'
+  include_recipe 'nsm::zeek_scripts'  
 end
 
 
@@ -43,6 +44,7 @@ end
 
 if node[:nsm][:steno][:enabled]
   include_recipe 'nsm::steno_install'
+  include_recipe 'nsm::steno_rpc'
   # include_recipe 'nsm::steno_package'
-  # include_recipe 'nsm::steno_config'
+  include_recipe 'nsm::steno_config'
 end

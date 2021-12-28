@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: seconion
-# Attribute:: bro_scripts
+# Cookbook Name:: nsm
+# Attribute:: zeek_scripts
 #
 
 ##########################
@@ -15,7 +15,7 @@ default[:nsm][:zeek][:base_streams][:global]['Syslog::LOG'] = true
 
 
 ##########################
-# Load Bro Sigs
+# Load Zeek Sigs
 ##########################
 
 # This adds signatures to detect cleartext forward and reverse windows shells.
@@ -23,7 +23,7 @@ default[:nsm][:zeek][:sigs][:global]['frameworks/signatures/detect-windows-shell
 
 
 ##########################
-# Load Bro Scripts
+# Load Zeek Scripts
 ##########################
 
 # This script logs which scripts were loaded during each run.
@@ -135,7 +135,7 @@ default[:nsm][:zeek][:scripts][:global]['ja3'] = false
 # Add ssh handshake ja3 hash fingerprint to ssh log
 default[:nsm][:zeek][:scripts][:global]['hassh'] = false
 
-# Add the bzar data to various bro logs
+# Add the bzar data to various zeek logs
 default[:nsm][:zeek][:scripts][:global]['bzar'] = false
 
 # Add notice for cryptomining traffic
@@ -148,14 +148,14 @@ default[:nsm][:zeek][:scripts][:global]['add-node-names'] = false
 default[:nsm][:zeek][:scripts][:global]['detect-ransomware-filenames'] = false
 
 # Add the ability to filter out noisey files log events by mime-type (SSL file)
-default[:nsm][:zeek][:scripts][:global]['files_filter'] = false
+default[:nsm][:zeek][:scripts][:global]['zeek_files_filter'] = false
 
 # Add producer consumer ratio PCR to the conn log
-default[:nsm][:zeek][:scripts][:global]['pcr'] = false
+default[:nsm][:zeek][:scripts][:global]['zeek_pcr'] = false
 
 # TODO: 
 # You can load your own intel into:
-# /opt/bro/share/bro/intel/
+# /opt/zeek/share/zeek/intel/
 default[:nsm][:zeek][:scripts][:global]['intel'] = false
 
 
@@ -173,7 +173,7 @@ default[:nsm][:zeek][:scripts][:global]['cert_authorities']  = false
 # Extract high value file types
 default[:nsm][:zeek][:scripts][:global]['extractions'] = false
 
-# Change default bro config for Scan script
+# Change default zeek config for Scan script
 default[:nsm][:zeek][:scripts][:global]['scan_conf'] = false
 
 

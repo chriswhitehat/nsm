@@ -16,8 +16,8 @@ if node[:nsm][:zeek][:sigs]
   else
     regional_sigs = {}
   end
-  if node[:nsm][:zeek][:sigs][node[:nsm][:zeek][:sensor_group]]
-    sensor_group_sigs = node[:nsm][:zeek][:sigs][node[:nsm][:zeek][:sensor_group]]
+  if node[:nsm][:zeek][:sigs][node[:nsm][:sensor_group]]
+    sensor_group_sigs = node[:nsm][:zeek][:sigs][node[:nsm][:sensor_group]]
   else
     sensor_group_sigs = {}
   end
@@ -44,8 +44,8 @@ if node[:nsm][:zeek][:scripts]
   else
     regional = {}
   end
-  if node[:nsm][:zeek][:scripts][node[:nsm][:zeek][:sensor_group]]
-    sensor_group = node[:nsm][:zeek][:scripts][node[:nsm][:zeek][:sensor_group]]
+  if node[:nsm][:zeek][:scripts][node[:nsm][:sensor_group]]
+    sensor_group = node[:nsm][:zeek][:scripts][node[:nsm][:sensor_group]]
   else
     sensor_group = {}
   end
@@ -61,10 +61,10 @@ else
   host = {}
 end
 
-template '/opt/bro/share/bro/site/local.bro' do
-  source 'bro/site/local.bro.erb'
-  owner 'sguil'
-  group 'sguil'
+template '/opt/zeek/share/zeek/site/local.zeek' do
+  source 'zeek/local.zeek.erb'
+  owner 'zeek'
+  group 'zeek'
   mode '0644'
   manage_symlink_source true
   variables({
@@ -75,7 +75,12 @@ template '/opt/bro/share/bro/site/local.bro' do
     :global => global,
     :regional => regional,
     :sensor_group => sensor_group,
-    :host => host,
+    :host => host
   })
-  notifies :run, 'execute[deploy_bro]', :delayed
+  notifies :run, 'execute[deploy_zeek]', :delayed
+end
+
+execute 'deploy_zeek' do
+  command "/opt/zeek/bin/zeekctl deploy"
+  action :nothing
 end

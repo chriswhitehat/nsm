@@ -39,11 +39,11 @@ default[:nsm][:interfaces][:sniffing][:iface][:zeek][:extract_files] = false
 # Stenographer
 ##############
 
-default[:nsm][:interfaces][:sniffing][:iface][:stenographer][:enabled] = true
-
-
-
-
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:enabled] = true
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:lb_count] = 1
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:port] = 1234
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:host] = "127.0.0.1"
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:flags] = "[]"
 
 
 ################

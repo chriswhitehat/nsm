@@ -1,0 +1,29 @@
+{
+  "Threads": [
+    <% (1..@sniff[:steno][:lb_count]).each do | thread | %>
+    { "MaxDirectoryFiles": <%= node[:nsm][:steno][:max_directory_files] %>
+    , "DiskFreePercentage": <%= node[:nsm][:steno][:disk_free_percentage] %>
+    , "PacketsDirectory": "/nsm/steno/thread<%= thread %>/packets"
+    , "IndexDirectory": "/nsm/steno/thread<%= thread %>/index"
+    }<% if thread != @sniff[:steno][:lb_count] %>,<% end %>
+    <% end %>
+        
+  ]
+  , "StenotypePath": "/usr/bin/stenotype"
+  , "Interface": "<%= @sniff[:interface] %>"
+  , "Port": <%= node[:nsm][:steno][:port] %>
+  , "Host": "<%= node[:nsm][:steno][:host] %>"
+  , "Flags": <%= node[:nsm][:steno][:flags] %>
+  , "CertPath": "/etc/stenographer/certs"
+  <% if node[:nsm][:steno][:grpc] %>
+  , "Rpc": { "CaCert": "/etc/stenographer/certs/rpc/StenoCA.crt"
+           , "ServerKey": "/etc/stenographer/certs/rpc/Steno.key"
+           , "ServerCert": "/etc/stenographer/certs/rpc/Steno.crt"
+           , "ServerPort": 8443
+           , "ServerPcapPath": "/nsm/steno/rpc/"
+           , "ServerPcapMaxSize": 1000000000
+           , "ClientPcapChunkSize": 1000
+           , "ClientPcapMaxSize": 5000000
+  }
+  <% end %>
+}
