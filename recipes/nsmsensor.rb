@@ -4,8 +4,9 @@
 #
 # Copyright:: 2021, The Authors, All Rights Reserved.
 
-node.normal[:nsm][:zeek][:enabled] = false
-node.normal[:nsm][:suricata][:enabled] = false
+node.normal[:nsm][:zeek][:enabled] = true
+node.normal[:nsm][:suricata][:enabled] = true
+node.normal[:nsm][:steno][:enabled] = true
 
 node.normal[:nsm][:interfaces][:mgmt][:configure] = false
 node.normal[:nsm][:interfaces][:mgmt][:interface] = 'eth0'

@@ -6,7 +6,7 @@
 
 user 'suricata' do
    action :create
-   comment 'Seek User'
+   comment 'Suricata User'
    home '/home/suricata'
    system true
 end 

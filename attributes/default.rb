@@ -10,6 +10,9 @@ default[:nsm][:zeek][:version] = '4.0.1'
 default[:nsm][:suricata][:enabled] = false
 default[:nsm][:suricata][:version] = '5.0.3'
 
-default[:nsm][:steno][:enabled] = true
+default[:nsm][:go][:version] = '1.17.5'
+
+default[:nsm][:steno][:enabled] = false
+default[:nsm][:steno][:version] = 'v1.0.1'
 
 default[:nsm][:sensor_group] = 'default_group'

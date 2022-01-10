@@ -33,7 +33,7 @@ execute 'go_build_certstrap' do
   cwd '/home/stenographer/certstrap'
   environment ({'GOPATH' => '/home/stenographer/go',
                 'GOCACHE' => '/home/stenographer/go/.cache'})
-  command 'go build'
+  command '/usr/local/go/bin/go build'
   action :nothing
 end
 

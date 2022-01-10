@@ -47,7 +47,7 @@ Vagrant.configure("2") do |config|
     nsmsensor.vm.box = "bento/ubuntu-20.04"
     nsmsensor.vm.hostname = "nsmsensor"
     nsmsensor.vm.network :private_network, ip: "192.168.50.11", virtualbox__intnet: "vagrant_network"
-    nsmsensor.vm.network :private_network, ip: '1.1.1.1', auto_network: true
+    nsmsensor.vm.network :private_network, ip: '192.168.56.20', auto_network: true
     config.vm.provider :virtualbox do |vb|
       vb.linked_clone = true
       vb.cpus = 4
@@ -69,7 +69,7 @@ Vagrant.configure("2") do |config|
 
       # Add a recipe
       chef.add_recipe "nsm::nsmsensor"
-      chef.add_recipe "vagrant"
+      #chef.add_recipe "vagrant"
 
 
     end

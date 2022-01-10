@@ -41,37 +41,54 @@ dirs.each do |dir|
   end
 end
 
-package ['build-essential', 'golang', 'libaio-dev', 'libleveldb-dev', 'libsnappy-dev', 'g++', 
+
+package ['build-essential', 'libaio-dev', 'libleveldb-dev', 'libsnappy-dev', 'g++', 
   'libcap2-bin', 'libseccomp-dev', 'tcpreplay', 'jq', 'libjq1', 'libonig5', 'openssl']
 
-execute 'go_get_stenographer' do
+
+remote_file "/root/installtmp/go#{node[:nsm][:go][:version]}.linux-amd64.tar.gz" do
+  owner 'root'
+  group 'root'
+  mode '0644'
+  source "https://go.dev/dl/go#{node[:nsm][:go][:version]}.linux-amd64.tar.gz"
+  notifies :run, 'execute[extract_golang]', :immediate
+end
+
+execute 'extract_golang' do
+  command "rm -rf /usr/local/go && tar -C /usr/local -xzf /root/installtmp/go#{node[:nsm][:go][:version]}.linux-amd64.tar.gz"
+  action :nothing
+end
+
+
+execute 'go_install_stenographer' do
   cwd '/home/stenographer'
   user 'stenographer'
   group 'stenographer'
   environment ({'GOPATH' => '/home/stenographer/go',
                 'GOCACHE' => '/home/stenographer/go/.cache'})
-  command 'go get github.com/google/stenographer'
-  not_if do ::File.exist?("/home/stenographer/go/src/github.com/google/stenographer") end
+  command "/usr/local/go/bin/go install github.com/google/stenographer@#{node[:nsm][:steno][:version]}"
+  not_if do ::File.exist?("/home/stenographer/go/pkg/mod/github.com/google/stenographer@#{node[:nsm][:steno][:version]}") end
   action :run
-  notifies :run, 'execute[go_build_stenographer]', :immediate
   notifies :run, 'execute[make_stenotype]', :immediate
 end
 
-execute 'go_build_stenographer' do
-  cwd '/home/stenographer/go/src/github.com/google/stenographer'
-  environment ({'GOPATH' => '/home/stenographer/go',
-                'GOCACHE' => '/home/stenographer/go/.cache'})
-  command 'go build'
-  action :nothing
-end
 
 execute 'make_stenotype' do
-  cwd '/home/stenographer/go/src/github.com/google/stenographer/stenotype'
+  cwd "/home/stenographer/go/pkg/mod/github.com/google/stenographer@#{node[:nsm][:steno][:version]}/stenotype"
   environment ({'GOPATH' => '/home/stenographer/go',
                 'GOCACHE' => '/home/stenographer/go/.cache'})
   command 'make'
   action :nothing
 end
+
+
+remote_file "copy_stenographer_file" do 
+    path "/home/stenographer/go/pkg/mod/github.com/google/stenographer@#{node[:nsm][:steno][:version]}/stenographer" 
+    source "file:///home/stenographer/go/bin/stenographer"
+    mode 0700
+    owner 'stenographer'
+    group 'root'
+  end
 
 bins = [['stenographer', 'stenographer', 0700, 'stenographer', 'root'], 
         ['stenotype/stenotype', 'stenotype', 0500, 'stenographer', 'root'], 
@@ -83,7 +100,7 @@ bins = [['stenographer', 'stenographer', 0700, 'stenographer', 'root'],
 bins.each do |steno_bin_src,  steno_bin_dest, steno_bin_perms, steno_bin_user, steno_bin_group|
   remote_file "copy_steno_file_#{steno_bin_dest}" do 
     path "/usr/bin/#{steno_bin_dest}" 
-    source "file:///home/stenographer/go/src/github.com/google/stenographer/#{steno_bin_src}"
+    source "file:///home/stenographer/go/pkg/mod/github.com/google/stenographer@#{node[:nsm][:steno][:version]}/#{steno_bin_src}"
     mode steno_bin_perms
     owner steno_bin_user
     group steno_bin_group

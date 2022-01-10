@@ -4,6 +4,7 @@
 #
 # Copyright:: 2021, The Authors, All Rights Reserved.
 
+include_recipe 'nsm::default'
 include_recipe 'nsm::interfaces'
 
 user 'nsm' do
@@ -27,6 +28,19 @@ directory '/nsm' do
 end
 
 
+file '/usr/share/ca-certificates/mozilla/DST_Root_CA_X3.crt' do
+  action :delete
+  notifies :run, 'execute[update_ca]', :immediately
+end
+
+
+execute 'update_ca' do
+  command 'update-ca-certificates'
+  action :nothing
+end
+
+
+
 if node[:nsm][:zeek][:enabled]
   include_recipe 'nsm::zeek_install'
   include_recipe 'nsm::zeek_package'
@@ -39,6 +53,7 @@ if node[:nsm][:suricata][:enabled]
   include_recipe 'nsm::suricata_install'
   # include_recipe 'nsm::suricata_package'
   include_recipe 'nsm::suricata_config'
+  include_recipe 'nsm::suricata_rules'
 end
 
 
