@@ -17,10 +17,11 @@
 <% end %>
 
 ##########################
-# Regional
+# Sensor Region
+# <%= @sniff[:sensor_region] %>
 ##########################
 
-<% @regional_sigs.each do |msg, sig| %>
+<% @sensor_region_sigs.each do |msg, sig| %>
 	<% if sig %>
 <%= "\# #{msg}" %>
 <%= "#{sig}" %>
@@ -31,7 +32,7 @@
 
 ##########################
 # Sensor Group 
-# <%= node[:seconion][:sensor][:sensor_group] %>
+# <%= @sniff[:sensor_group] %>
 ##########################
 
 <% @sensor_group_sigs.each do |msg, sig| %>
@@ -43,7 +44,8 @@
 <% end %>
 
 ##########################
-# Host
+# Host Chef FQDN
+# <%= node[:fqdn] %>
 ##########################
 
 <% @host_sigs.each do |msg, sig| %>
@@ -57,6 +59,7 @@
 
 ##########################
 # Sensor 
+# <%= @sniff[:sensorname] %>
 ##########################
 
 <% @sensor_sigs.each do |msg, sig| %>

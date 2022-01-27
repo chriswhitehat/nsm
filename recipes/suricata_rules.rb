@@ -54,11 +54,8 @@ if node[:nsm][:interfaces][:sniffing]
       end
       
 
-      etc_base = "/etc/suricata/#{sniff[:sensorname]}"
+      etc_base = "/etc/suricata/#{sniff[:sensorname]}"      
 
-
-      # suricata_update_confs = ['disable', 'drop', 'enable', 'modify']
-      # suricata_update_confs.each do |conf|
       ['disable', 'drop', 'enable', 'modify'].each do |conf|
 
         if node[:nsm][:suricata][:rules] && node[:nsm][:suricata][:rules][conf]
@@ -162,6 +159,7 @@ if node[:nsm][:interfaces][:sniffing]
           :host_sigs => host,
           :sensor_sigs => sensor
         })
+        notifies :run, "execute[suricata_update_#{sniff[:sensorname]}]", :delayed
       end
     
 
@@ -185,7 +183,7 @@ if node[:nsm][:interfaces][:sniffing]
               :sniff => sniff
             )
         notifies :run, "execute[suricata_update_sources]", :immediately
-        notifies :run, "execute[suricata_update_#{sniff[:sensorname]}]", :immediately
+        notifies :run, "execute[suricata_update_#{sniff[:sensorname]}]", :delayed
       end
 
       execute 'suricata_update_sources' do
