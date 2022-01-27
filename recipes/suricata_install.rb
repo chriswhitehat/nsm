@@ -37,7 +37,7 @@ end
 
 apt_repository 'suricata-stable' do
   uri 'ppa:oisf/suricata-stable'
-  notifies :update, 'apt_update[update_suricata]'
+  notifies :update, 'apt_update[update_suricata]', :immediately
 end
 
 
@@ -112,6 +112,6 @@ end
 #   command "make && make install-full"
 #   # creates "/opt/suricata/suricata-#{node[:nsm][:suricata][:version]}.installed"
 #   action :nothing
-#   # notifies :run, 'execute[chown_chmod_suricata]', :immediate
-#   # notifies :run, 'execute[setcap_suricata]', :immediate
+#   # notifies :run, 'execute[chown_chmod_suricata]', :immediately
+#   # notifies :run, 'execute[setcap_suricata]', :immediately
 # end

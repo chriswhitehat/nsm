@@ -22,7 +22,21 @@ if node[:nsm][:interfaces][:sniffing]
         end
       end
 
-      template "/etc/suricata/suricata_#{interface}.yaml" do
+      dirs = ["/etc/suricata/",
+              "/etc/suricata/#{sniff[:sensorname]}",
+              "/etc/suricata/#{sniff[:sensorname]}/rules" ]
+
+      dirs.each do |dir|
+        directory dir do
+          owner 'suricata'
+          group 'suricata'
+          mode '0750'
+          action :create
+        end
+      end
+
+
+      template "/etc/suricata/#{sniff[:sensorname]}/suricata.yaml" do
         source 'suricata/suricata.yaml.erb'
         owner 'suricata'
         group 'suricata'

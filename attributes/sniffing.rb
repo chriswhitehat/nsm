@@ -10,7 +10,12 @@
 default[:nsm][:interfaces][:sniffing][:iface][:enabled] = false
 default[:nsm][:interfaces][:sniffing][:iface][:interface] = 'eth1'
 default[:nsm][:interfaces][:sniffing][:iface][:mtu] = 9060
+# Ensure sensorname is directory safe.
 default[:nsm][:interfaces][:sniffing][:iface][:sensorname] = 'sensorname'
+# Region or broader locations
+default[:nsm][:interfaces][:sniffing][:iface][:sensor_region] = 'default_region'
+# Specific group of sensors within a region
+default[:nsm][:interfaces][:sniffing][:iface][:sensor_group] = 'default_group'
 default[:nsm][:interfaces][:sniffing][:iface][:nic_offloading] = 'rx tx sg tso ufo gso gro lro'
 
 # Sensor net group, should be same as sensorname unless breaking down individual services per server.
@@ -25,6 +30,8 @@ default[:nsm][:interfaces][:sniffing][:iface][:homenet]['172.16.0.0/12'] = 'rfc1
 ##############
 default[:nsm][:interfaces][:sniffing][:iface][:suricata][:enabled] = true
 default[:nsm][:interfaces][:sniffing][:iface][:suricata][:lb_procs] = 1
+default[:nsm][:interfaces][:sniffing][:iface][:suricata][:rule_source][:et_pro][:enabled] = false
+default[:nsm][:interfaces][:sniffing][:iface][:suricata][:rule_source][:et_pro][:code] = ''
 
 
 ##############

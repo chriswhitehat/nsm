@@ -7,6 +7,21 @@
 include_recipe 'nsm::default'
 include_recipe 'nsm::interfaces'
 
+
+template '/etc/timezone' do
+  source 'misc/timezone.erb'
+  mode '0644'
+  owner 'root'
+  group 'root'
+  notifies :run, 'execute[set-timezone]', :immediately
+end
+
+execute 'set-timezone' do
+  command "dpkg-reconfigure --frontend noninteractive tzdata; timedatectl set-timezone #{node[:nsm][:timezone]}"
+  action :nothing
+end
+
+
 user 'nsm' do
    action :create
    comment 'NSM User'
@@ -28,17 +43,14 @@ directory '/nsm' do
 end
 
 
-file '/usr/share/ca-certificates/mozilla/DST_Root_CA_X3.crt' do
-  action :delete
-  notifies :run, 'execute[update_ca]', :immediately
+# Fix for lets encrypt embeded CA expiration
+template '/opt/chef/embedded/ssl/certs/cacert.pem' do
+  source 'chef_client/cacert.pem.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  only_if "egrep 'DST Root CA X3' /opt/chef/embedded/ssl/certs/cacert.pem"
 end
-
-
-execute 'update_ca' do
-  command 'update-ca-certificates'
-  action :nothing
-end
-
 
 
 if node[:nsm][:zeek][:enabled]

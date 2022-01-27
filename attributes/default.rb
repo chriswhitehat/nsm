@@ -4,6 +4,8 @@
 #
 # Copyright:: 2021, The Authors, All Rights Reserved.
 
+default[:nsm][:timezone] = 'Etc/UTC'
+
 default[:nsm][:zeek][:enabled] = false
 default[:nsm][:zeek][:version] = '4.0.1'
 

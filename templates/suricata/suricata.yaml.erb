@@ -1866,10 +1866,10 @@ napatech:
 ## Configure Suricata to load Suricata-Update managed rules.
 ##
 
-default-rule-path: /var/lib/suricata/rules
+default-rule-path: /var/lib/suricata/<%= @sniff[:sensorname] %>/rules
 
 rule-files:
-  - suricata_<%= @sniff[:interface] %>.rules
+  - suricata.rules
 
 ##
 ## Auxiliary configuration files.
@@ -1877,7 +1877,7 @@ rule-files:
 
 classification-file: /etc/suricata/classification.config
 reference-config-file: /etc/suricata/reference.config
-threshold-file: /etc/suricata/threshold_<%= @sniff[:interface] %>.config
+threshold-file: /etc/suricata/<%= @sniff[:sensorname] %>/threshold.config
 
 ##
 ## Include other configs

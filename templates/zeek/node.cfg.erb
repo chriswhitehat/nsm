@@ -6,16 +6,16 @@
 
 [manager]
 type=manager
-host=<%= node[:hostname] %>
+host=localhost
 
 [proxy]
 type=proxy
-host=<%= node[:hostname] %>
+host=localhost
 
 <% for sniff in @sniffing_interfaces %>
 [<%= sniff[:sensorname] %>]
 type=worker
-host=<%= node[:hostname] %>
+host=localhost
 interface=af_packet::<%= sniff[:interface] %>
 lb_method=custom
 lb_procs=<%= sniff[:zeek][:lb_procs] %>

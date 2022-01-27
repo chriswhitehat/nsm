@@ -46,21 +46,25 @@ Vagrant.configure("2") do |config|
   config.vm.define "nsmsensor" do |nsmsensor|
     nsmsensor.vm.box = "bento/ubuntu-20.04"
     nsmsensor.vm.hostname = "nsmsensor"
-    nsmsensor.vm.network :private_network, ip: "192.168.50.11", virtualbox__intnet: "vagrant_network"
-    nsmsensor.vm.network :private_network, ip: '192.168.56.20', auto_network: true
+
+    nsmsensor.vm.network :private_network, ip: "10.124.194.11", virtualbox__intnet: "vagrant_network"
+    nsmsensor.vm.network :private_network, ip: '10.124.194.20', auto_network: true
+#    nsmsensor.vm.network :private_network, ip: "192.168.50.11", virtualbox__intnet: "vagrant_network"
+#    nsmsensor.vm.network :private_network, ip: '192.168.56.20', auto_network: true
     config.vm.provider :virtualbox do |vb|
       vb.linked_clone = true
       vb.cpus = 4
       vb.customize ["modifyvm", :id, "--cpuexecutioncap", "75"]
       vb.customize ["modifyvm", :id, "--memory", "6096"]
-      vb.customize ['modifyvm', :id, '--natnet1', '192.168.222.0/24']
+      vb.customize ['modifyvm', :id, '--natnet1', '10.124.194.0/24']
+      #vb.customize ['modifyvm', :id, '--natnet1', '192.168.222.0/24']
       vb.customize ['modifyvm', :id, "--natdnshostresolver1", "off"]
     end
 
     nsmsensor.vm.provision "chef_zero" do |chef|
       # Specify the local paths where Chef data is stored
       # chef.install = false
-      chef.version = '16.13.16'
+      #chef.version = '16.13.16'
       chef.arguments = "--chef-license accept"
       chef.cookbooks_path = ".."
       chef.data_bags_path = ".."

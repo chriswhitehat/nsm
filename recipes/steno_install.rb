@@ -51,7 +51,7 @@ remote_file "/root/installtmp/go#{node[:nsm][:go][:version]}.linux-amd64.tar.gz"
   group 'root'
   mode '0644'
   source "https://go.dev/dl/go#{node[:nsm][:go][:version]}.linux-amd64.tar.gz"
-  notifies :run, 'execute[extract_golang]', :immediate
+  notifies :run, 'execute[extract_golang]', :immediately
 end
 
 execute 'extract_golang' do
@@ -69,7 +69,7 @@ execute 'go_install_stenographer' do
   command "/usr/local/go/bin/go install github.com/google/stenographer@#{node[:nsm][:steno][:version]}"
   not_if do ::File.exist?("/home/stenographer/go/pkg/mod/github.com/google/stenographer@#{node[:nsm][:steno][:version]}") end
   action :run
-  notifies :run, 'execute[make_stenotype]', :immediate
+  notifies :run, 'execute[make_stenotype]', :immediately
 end
 
 
@@ -112,8 +112,10 @@ template '/lib/systemd/system/stenographer.service' do
   owner 'root'
   group 'root'
   mode '0644'
-  notifies :run, 'execute[systemctl_reload]'
-  notifies :run, 'execute[setcap_steno]'
+  notifies :run, 'execute[setcap_steno]', :immediately
+  notifies :run, 'execute[systemctl_reload]', :immediately
+  notifies :enable, 'service[stenographer.service]', :immediately
+  notifies :start, 'service[stenographer.service]', :delayed
 end
 
 execute 'setcap_steno' do
@@ -126,5 +128,10 @@ execute 'systemctl_reload' do
   command 'sudo systemctl daemon-reload'
   action :nothing
 end
+
+service 'stenographer.service' do
+  action :nothing
+end
+
 
 

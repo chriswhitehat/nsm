@@ -25,7 +25,7 @@ git '/home/stenographer/certstrap' do
   revision 'master'
   action :sync
   not_if do ::File.exist?("/home/stenographer/certstrap") end
-  notifies :run, 'execute[go_build_certstrap]', :immediate
+  notifies :run, 'execute[go_build_certstrap]', :immediately
 end
 
 execute 'go_build_certstrap' do

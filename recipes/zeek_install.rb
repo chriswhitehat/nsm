@@ -37,7 +37,7 @@ apt_repository 'security:zeek' do
   uri "http://download.opensuse.org/repositories/security:/zeek/xUbuntu_#{node[:lsb][:release]}/"
   distribution "/"
   key "https://download.opensuse.org/repositories/security:zeek/xUbuntu_#{node[:lsb][:release]}/Release.key"
-  notifies :update, 'apt_update[zeek_update]',  :immediate
+  notifies :update, 'apt_update[zeek_update]',  :immediately
 end
 
 apt_update 'zeek_update' do
@@ -112,7 +112,7 @@ end
 #   mode '0644'
 #   source "https://download.zeek.org/zeek-#{node[:nsm][:zeek][:version]}.tar.gz"
 #   not_if do ::File.exist?("/opt/zeek/zeek-#{node[:nsm][:zeek][:version]}.installed") end
-#   notifies :run, "execute[extract_zeek]", :immediate
+#   notifies :run, "execute[extract_zeek]", :immediately
 # end
 
 # execute "extract_zeek" do
@@ -120,7 +120,7 @@ end
 #   cwd '/tmp/'
 #   command "tar -xzvf /tmp/zeek-#{node[:nsm][:zeek][:version]}.tar.gz"
 #   action :nothing
-#   notifies :run, 'execute[configure_zeek]', :immediate
+#   notifies :run, 'execute[configure_zeek]', :immediately
 # end
 
 
@@ -129,7 +129,7 @@ end
 #   cwd "/tmp/zeek-#{node[:nsm][:zeek][:version]}"
 #   command './configure --prefix=/opt/zeek --enable-jemalloc'
 #   action :nothing
-#   notifies :run, 'execute[make_zeek]', :immediate
+#   notifies :run, 'execute[make_zeek]', :immediately
 # end
 
 # execute 'make_zeek' do
@@ -137,8 +137,8 @@ end
 #   command "make && make install && touch /opt/zeek/zeek-#{node[:nsm][:zeek][:version]}.installed"
 #   creates "/opt/zeek/zeek-#{node[:nsm][:zeek][:version]}.installed"
 #   action :nothing
-#   notifies :run, 'execute[chown_chmod_zeek]', :immediate
-#   notifies :run, 'execute[setcap_zeek]', :immediate
+#   notifies :run, 'execute[chown_chmod_zeek]', :immediately
+#   notifies :run, 'execute[setcap_zeek]', :immediately
 # end
 
 # # Add zeek to path
