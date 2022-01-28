@@ -88,3 +88,38 @@ default[:nsm][:zeek][:zkg][:local_package]['base_streams'][:load_template] = tru
 default[:nsm][:zeek][:zkg][:local_package]['base_streams'][:script_templates] = ['base_streams.zeek']
 default[:nsm][:zeek][:zkg][:local_package]['base_streams'][:disable]['Syslog::LOG'] = true
 
+
+default[:nsm][:zeek][:zkg][:local_package]['cert_authorities'][:install] = true
+default[:nsm][:zeek][:zkg][:local_package]['cert_authorities'][:name] = 'cert_authorities'
+default[:nsm][:zeek][:zkg][:local_package]['cert_authorities'][:apt_deps] = []
+default[:nsm][:zeek][:zkg][:local_package]['cert_authorities'][:load_template] = true
+default[:nsm][:zeek][:zkg][:local_package]['cert_authorities'][:script_templates] = ['cert_authorities.zeek',
+																					 'gen_certs.py']
+
+
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:install] = true
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:name] = 'extractions'
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:apt_deps] = []
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:load_template] = true
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:script_templates] = ['extractions.zeek']
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:mimetypes]["application/x-dosexec"] = "exe"
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:mimetypes]["application/x-java-applet"] = "class"
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:mimetypes]["application/x-java-archive"] = "jar"
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:mimetypes]["application/zip"] = "zip"
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:mimetypes]["application/pdf"] = "pdf"
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:mimetypes]["application/x-rar"] = "rar"
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:mimetypes]["application/vnd.openxmlformats-officedocument.wordprocessingml.document"] = "docx"
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:mimetypes]["text/rtf"] = "rtf" 
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:mimetypes]["application/vnd.openxmlformats-officedocument.presentationml.presentation"] = "pptx"
+default[:nsm][:zeek][:zkg][:local_package]['extractions'][:mimetypes]["application/vnd.openxmlformats-officedocument"]  = "pptx"
+
+
+default[:nsm][:zeek][:zkg][:local_package]['scan_conf'][:install] = true
+default[:nsm][:zeek][:zkg][:local_package]['scan_conf'][:name] = 'scan_conf'
+default[:nsm][:zeek][:zkg][:local_package]['scan_conf'][:apt_deps] = []
+default[:nsm][:zeek][:zkg][:local_package]['scan_conf'][:load_template] = true
+default[:nsm][:zeek][:zkg][:local_package]['scan_conf'][:script_templates] = ['scan_conf.zeek']
+default[:nsm][:zeek][:zkg][:local_package]['scan_conf'][:confs][:addr_scan_interval] = '5min'
+default[:nsm][:zeek][:zkg][:local_package]['scan_conf'][:confs][:addr_scan_threshold] = '25.0'
+default[:nsm][:zeek][:zkg][:local_package]['scan_conf'][:confs][:port_scan_interval] = '5min'
+default[:nsm][:zeek][:zkg][:local_package]['scan_conf'][:confs][:port_scan_threshold] = '15.0'
