@@ -50,12 +50,13 @@ package 'gdb'
 
 package 'zeek' do
   action :install
-  notifies :run, 'execute[chown_chmod_zeek]'
+  notifies :run, 'execute[chown_chmod_zeek]', :immediately
 end
 
 execute 'chown_chmod_zeek' do
   command 'chown -R zeek:zeek /opt/zeek'
   action :nothing
+  notifies :run, 'execute[setcap_zeek]', :immediately
 end
 
 execute 'setcap_zeek' do

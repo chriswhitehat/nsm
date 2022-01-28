@@ -44,6 +44,7 @@ if node[:nsm][:interfaces][:sniffing]
     owner 'zeek'
     group 'zeek'
     mode '0644'
+    notifies :run, 'execute[deploy_zeek]', :delayed
   end
 
   template '/opt/zeek/etc/node.cfg' do
@@ -54,6 +55,7 @@ if node[:nsm][:interfaces][:sniffing]
     variables(
             :sniffing_interfaces => sniffing_interfaces
           )
+    notifies :run, 'execute[deploy_zeek]', :delayed
   end
 
   #############
@@ -68,6 +70,7 @@ if node[:nsm][:interfaces][:sniffing]
     variables(
       :sniffing_interfaces => sniffing_interfaces
       )
+    notifies :run, 'execute[deploy_zeek]', :delayed
   end
   
   for sniff in sniffing_interfaces
@@ -78,7 +81,13 @@ if node[:nsm][:interfaces][:sniffing]
       mode '0640'
       variables(
         :sniff => sniff)
+      notifies :run, 'execute[deploy_zeek]', :delayed
     end
+  end
+
+  execute 'deploy_zeek' do
+    command "/opt/zeek/bin/zeekctl deploy"
+    action :nothing
   end
   
 end
