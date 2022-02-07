@@ -23,14 +23,13 @@ if node[:nsm][:interfaces][:sniffing]
         end
       end
 
-      var_lib_base = "/var/lib/suricata/#{sniff[:sensorname]}"
+      var_lib_base = "/var/lib/suricata"
 
-      dirs = ["/var/lib/suricata",
-        "#{var_lib_base}",
-        "#{var_lib_base}/rules",
-        "#{var_lib_base}/update",
-        "#{var_lib_base}/update/sources",
-        "#{var_lib_base}/update/cache"]
+      dirs = [var_lib_base,
+              "#{var_lib_base}/rules",
+              "#{var_lib_base}/update",
+              "#{var_lib_base}/update/sources",
+              "#{var_lib_base}/update/cache"]
 
       dirs.each do |dir|
         directory dir do
@@ -41,7 +40,7 @@ if node[:nsm][:interfaces][:sniffing]
         end
       end
 
-      if sniff[:suricata][:rule_source][:et_pro][:enabled]
+      if node[:nsm][:suricata][:rules][:source][:et_pro][:enabled]
         template "#{var_lib_base}/update/sources/et-pro.yaml" do
           source 'suricata/rules/et-pro.yaml.erb'
           owner 'suricata'
@@ -54,7 +53,7 @@ if node[:nsm][:interfaces][:sniffing]
       end
       
 
-      etc_base = "/etc/suricata/#{sniff[:sensorname]}"      
+      etc_base = "/etc/suricata/"      
 
       ['disable', 'drop', 'enable', 'modify'].each do |conf|
 
@@ -107,7 +106,7 @@ if node[:nsm][:interfaces][:sniffing]
             :sensor_sigs => sensor,
             :rule_conf => conf
           })
-          notifies :run, "execute[suricata_update_#{sniff[:sensorname]}]", :delayed
+          notifies :run, "execute[suricata_update]", :delayed
         end
       end
 
@@ -159,7 +158,7 @@ if node[:nsm][:interfaces][:sniffing]
           :host_sigs => host,
           :sensor_sigs => sensor
         })
-        notifies :run, "execute[suricata_update_#{sniff[:sensorname]}]", :delayed
+        notifies :run, "execute[suricata_update]", :delayed
       end
     
 
@@ -171,7 +170,7 @@ if node[:nsm][:interfaces][:sniffing]
         variables(
             :sniff => sniff
           )
-        notifies :run, "execute[suricata_update_#{sniff[:sensorname]}]", :delayed
+        notifies :run, "execute[suricata_update]", :delayed
       end
     
       template "#{etc_base}/update.yaml" do
@@ -183,7 +182,7 @@ if node[:nsm][:interfaces][:sniffing]
               :sniff => sniff
             )
         notifies :run, "execute[suricata_update_sources]", :immediately
-        notifies :run, "execute[suricata_update_#{sniff[:sensorname]}]", :delayed
+        notifies :run, "execute[suricata_update]", :delayed
       end
 
       execute 'suricata_update_sources' do
@@ -192,7 +191,7 @@ if node[:nsm][:interfaces][:sniffing]
         action :nothing
       end
       
-      execute "suricata_update_#{sniff[:sensorname]}" do
+      execute "suricata_update" do
         command "suricata-update -D #{var_lib_base} -c #{etc_base}/update.yaml --suricata-conf #{etc_base}/suricata.yaml"
         user "suricata"
         action :nothing
@@ -205,7 +204,7 @@ if node[:nsm][:interfaces][:sniffing]
         # action :nothing
       # end
 
-      cron_d "suricata_update_#{sniff[:sensorname]}" do
+      cron_d "cron_suricata_update" do
         action :create
         minute '0'
         hour '10'

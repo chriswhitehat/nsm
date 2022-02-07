@@ -12,16 +12,19 @@ host=localhost
 type=proxy
 host=localhost
 
+<% af_packet_fanout_id = 23 %>
 <% for sniff in @sniffing_interfaces %>
+
 [<%= sniff[:sensorname] %>]
 type=worker
 host=localhost
 interface=af_packet::<%= sniff[:interface] %>
 lb_method=custom
-lb_procs=<%= sniff[:zeek][:lb_procs] %>
+lb_procs=<%= sniff[:zeek][:lb_count] %>
+af_packet_fanout_id=<%= af_packet_fanout_id %>
 <% if sniff[:zeek][:numa_tune] %>
 pin_cpus=<%= (sniff[:zeek][:numa_cpu]..sniff[:zeek][:numa_cpu]+sniff[:zeek][:lb_procs]-1).to_a.join(",") %>
 <% end %>
 aux_scripts=networks/<%= sniff[:sensorname] %>_networks
-
+<% af_packet_fanout_id += 1 %>
 <% end %>

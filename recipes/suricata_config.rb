@@ -7,10 +7,16 @@
 
 if node[:nsm][:interfaces][:sniffing] 
 
+  suricata_cluster_id = 90
+  
+  homenet_descs = ''
+  homenet = []
+
+  af_packet = ''
+
   node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
 
     if sensor[:enabled]
-
       
       sniff = node[:nsm][:interfaces][:sniffing][:iface].dup
       # Set default sniff options to interface
@@ -23,8 +29,7 @@ if node[:nsm][:interfaces][:sniffing]
       end
 
       dirs = ["/etc/suricata/",
-              "/etc/suricata/#{sniff[:sensorname]}",
-              "/etc/suricata/#{sniff[:sensorname]}/rules" ]
+              "/etc/suricata/rules" ]
 
       dirs.each do |dir|
         directory dir do
@@ -35,16 +40,46 @@ if node[:nsm][:interfaces][:sniffing]
         end
       end
 
+      # Collect AF Packet settings
+      sniff[:suricata]['cluster-id'] = suricata_cluster_id
 
-      template "/etc/suricata/#{sniff[:sensorname]}/suricata.yaml" do
-        source 'suricata/suricata.yaml.erb'
-        owner 'suricata'
-        group 'suricata'
-        mode '0640'
-        variables(
-            :sniff => sniff
-          )
+
+      
+      af_packet << "\n"
+      af_packet << "  - interface: #{sniff[:interface]}\n"
+      af_packet << "    cluster-id: #{suricata_cluster_id}\n"
+
+      if sniff[:suricata][:af_packet]
+        sniff[:suricata][:af_packet].each do |key, val|
+          af_packet << "    #{key}: #{val}\n"
+        end
       end
+      
+      # Collect homenets
+      if sniff[:homenet]
+        sniff[:homenet].each do |net, desc|
+
+          homenet << net
+
+          homenet_descs << "# #{net} - #{desc}\n"
+          homenet << net
+        end
+      end
+
+      suricata_cluster_id += 1
+
     end
+  end
+
+  template "/etc/suricata/suricata.yaml" do
+    source 'suricata/suricata.yaml.erb'
+    owner 'suricata'
+    group 'suricata'
+    mode '0640'
+    variables(
+        :homenet => homenet,
+        :homenet_descs => homenet_descs,
+        :af_packet => af_packet
+      )
   end
 end

@@ -18,7 +18,7 @@ end
 
 if node[:nsm][:interfaces][:sniffing] 
 
-  sniffing_interfaces = Array.new
+  sniffing_interfaces = []
 
   node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
 

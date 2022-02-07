@@ -29,16 +29,30 @@ default[:nsm][:interfaces][:sniffing][:iface][:homenet]['172.16.0.0/12'] = 'rfc1
 # Suricata
 ##############
 default[:nsm][:interfaces][:sniffing][:iface][:suricata][:enabled] = true
-default[:nsm][:interfaces][:sniffing][:iface][:suricata][:lb_procs] = 1
-default[:nsm][:interfaces][:sniffing][:iface][:suricata][:rule_source][:et_pro][:enabled] = false
-default[:nsm][:interfaces][:sniffing][:iface][:suricata][:rule_source][:et_pro][:code] = ''
+default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['threads'] = 5
+default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['cluster-type'] = 'cluster_flow'
+default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['defrag'] = 'yes'
+default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['use-mmap'] = 'yes'
+default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['mmap-locked'] = 'yes'
+default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['tpacket-v3'] = 'yes'
+default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['ring-size'] = 100000
+#default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['block-size'] = 32768
+#default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['block-timeout'] = 10
+#default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['use-emergency-flush'] = 'no'
+#default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['buffer-size'] = 32768
+#default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['disable-promisc'] = 'no'
+#default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['checksum-checks'] = 'kernel'
+#default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['bpf-filter'] = 'port 80 or udp'
+#default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['copy-mode'] = 'ips'
+#default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['copy-iface'] = 'eth1'
+
 
 
 ##############
 # Zeek
 ##############
 default[:nsm][:interfaces][:sniffing][:iface][:zeek][:enabled] = true
-default[:nsm][:interfaces][:sniffing][:iface][:zeek][:lb_procs] = 1
+default[:nsm][:interfaces][:sniffing][:iface][:zeek][:lb_count] = 5
 default[:nsm][:interfaces][:sniffing][:iface][:zeek][:extract_files] = false
 
 
@@ -47,7 +61,7 @@ default[:nsm][:interfaces][:sniffing][:iface][:zeek][:extract_files] = false
 ##############
 
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:enabled] = true
-default[:nsm][:interfaces][:sniffing][:iface][:steno][:lb_count] = 1
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:lb_count] = 4
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:port] = 1234
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:host] = "127.0.0.1"
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:flags] = "[]"
