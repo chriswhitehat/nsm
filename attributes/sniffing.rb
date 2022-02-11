@@ -61,7 +61,7 @@ default[:nsm][:interfaces][:sniffing][:iface][:zeek][:extract_files] = false
 ##############
 
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:enabled] = true
-default[:nsm][:interfaces][:sniffing][:iface][:steno][:lb_count] = 4
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:lb_count] = 1
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:max_directory_files] = 750000
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:disk_free_percentage] = 5
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:host] = '127.0.0.1'

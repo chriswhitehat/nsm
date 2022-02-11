@@ -169,11 +169,11 @@ execute "suricata_update" do
   command "suricata-update -D #{var_lib_base} -c #{etc_base}/update.yaml --suricata-conf #{etc_base}/suricata.yaml"
   user "suricata"
   action :nothing
-  notifies :run, 'execute[surciata_reload]', :delayed
+  notifies :run, 'execute[suricata_reload]', :delayed
 end
 
 
-execute 'surciata_reload' do
+execute 'suricata_reload' do
    command '/usr/sbin/suricata-reload'
    action :nothing
  end
