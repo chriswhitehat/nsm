@@ -107,15 +107,13 @@ bins.each do |steno_bin_src,  steno_bin_dest, steno_bin_perms, steno_bin_user, s
   end
 end
 
-template '/lib/systemd/system/stenographer.service' do
+template '/lib/systemd/system/stenographer@.service' do
   source 'steno/stenographer.service.erb'
   owner 'root'
   group 'root'
   mode '0644'
   notifies :run, 'execute[setcap_steno]', :immediately
   notifies :run, 'execute[systemctl_reload]', :immediately
-  notifies :enable, 'service[stenographer.service]', :immediately
-  notifies :start, 'service[stenographer.service]', :delayed
 end
 
 execute 'setcap_steno' do
@@ -128,10 +126,5 @@ execute 'systemctl_reload' do
   command 'sudo systemctl daemon-reload'
   action :nothing
 end
-
-service 'stenographer.service' do
-  action :nothing
-end
-
 
 

@@ -28,6 +28,7 @@ if node[:nsm][:interfaces][:sniffing]
         end
       end
 
+
       dirs = ["/etc/suricata/",
               "/etc/suricata/rules" ]
 

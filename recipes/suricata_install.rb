@@ -54,7 +54,12 @@ execute 'setcap_suricata' do
   action :nothing
 end
 
-
+template '/usr/sbin/suricata-reload' do
+  source 'suricata/suricata-reload.erb'
+  owner 'suricata'
+  group 'suricata'
+  mode '0750'
+end
 
 # directory '/opt/suricata' do
 #   owner 'suricata'

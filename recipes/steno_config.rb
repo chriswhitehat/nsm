@@ -14,11 +14,13 @@ end
 
 if node[:nsm][:interfaces][:sniffing] 
 
+  local_port = 15140
+  grpc_port = 8443
+
   node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
 
     if sensor[:enabled]
 
-      
       sniff = node[:nsm][:interfaces][:sniffing][:iface].dup
       # Set default sniff options to interface
       sniff.each do |key, val|
@@ -26,6 +28,22 @@ if node[:nsm][:interfaces][:sniffing]
           sniff[key] = sensor[key].dup
         else
           sniff[key] = val
+        end
+      end
+
+      if sniff[:steno][:grpc]
+
+        rpc_dirs = ["/nsm/steno/#{sniff[:sensorname]}", 
+                    "/nsm/steno/#{sniff[:sensorname]}/rpc"]
+
+        rpc_dirs.each do |dir|
+
+          directory dir do
+            owner 'stenographer'
+            group 'stenographer'
+            mode '0750'
+            action :create
+          end
         end
       end
 
@@ -45,15 +63,44 @@ if node[:nsm][:interfaces][:sniffing]
         end
       end
 
-      template '/etc/stenographer/config' do
+      #############
+      # Unused config needed for stenokeys
+      #############
+      
+      template "/etc/stenographer/config" do
         source 'steno/steno.conf.erb'
         owner 'root'
         group 'root'
         mode '0644'
         variables(
-            :sniff => sniff
+            :sniff => sniff,
+            :local_port => local_port,
+            :grpc_port => grpc_port
           )
+        not_if do ::File.exist?("/etc/stenographer/config") end
       end
+
+      template "/etc/stenographer/config_#{sniff[:sensorname]}" do
+        source 'steno/steno.conf.erb'
+        owner 'root'
+        group 'root'
+        mode '0644'
+        variables(
+            :sniff => sniff,
+            :local_port => local_port,
+            :grpc_port => grpc_port
+          )
+        notifies :enable, "service[stenographer_service_#{sniff[:sensorname]}]", :immediately
+        notifies :start, "service[stenographer_service_#{sniff[:sensorname]}]", :delayed
+      end
+
+      service "stenographer_service_#{sniff[:sensorname]}" do
+        service_name "stenographer@#{sniff[:sensorname]}.service"
+        action :nothing
+      end
+
+      local_port += 1
+      grpc_port += 1
 
     end
   end
@@ -62,4 +109,11 @@ end
 execute 'generate_stenokeys' do
   command '/usr/bin/stenokeys.sh stenographer stenographer'
   not_if do ::File.exist?("/etc/stenographer/certs/ca_cert.pem") end
+end
+
+directory '/etc/stenographer/certs' do
+  owner 'stenographer'
+  group 'stenographer'
+  mode '0750'
+  action :create
 end

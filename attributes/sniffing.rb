@@ -62,9 +62,14 @@ default[:nsm][:interfaces][:sniffing][:iface][:zeek][:extract_files] = false
 
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:enabled] = true
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:lb_count] = 4
-default[:nsm][:interfaces][:sniffing][:iface][:steno][:port] = 1234
-default[:nsm][:interfaces][:sniffing][:iface][:steno][:host] = "127.0.0.1"
-default[:nsm][:interfaces][:sniffing][:iface][:steno][:flags] = "[]"
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:max_directory_files] = 750000
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:disk_free_percentage] = 5
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:host] = '127.0.0.1'
+# Set reserved memory (default: 8GB)
+# Set file reallocate for xfs (default: 4GB)
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:flags] = '["--blocks=8192", "--preallocate_file_mb=4096"]'
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:grpc] = true
+
 
 
 ################
