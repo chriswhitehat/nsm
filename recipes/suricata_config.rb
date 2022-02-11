@@ -82,5 +82,11 @@ if node[:nsm][:interfaces][:sniffing]
         :homenet_descs => homenet_descs,
         :af_packet => af_packet
       )
+    notifies :restart, 'service[suricata.service]'
   end
+
+  service 'suricata.service' do
+    action :nothing
+  end
+  
 end
