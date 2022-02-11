@@ -1145,12 +1145,12 @@ host-os-policy:
 # Defrag settings:
 
 defrag:
-  memcap: 32mb
+  memcap: 16gb
   hash-size: 65536
   trackers: 65535 # number of defragmented flows to follow
   max-frags: 65535 # number of fragments to keep (higher than trackers)
   prealloc: yes
-  timeout: 60
+  timeout: 10
 
 # Enable defrag per host settings
 #  host-config:
@@ -1187,7 +1187,7 @@ defrag:
 # in bytes.
 
 flow:
-  memcap: 128mb
+  memcap: 12gb #128mb
   hash-size: 65536
   prealloc: 10000
   emergency-recovery: 30
@@ -1222,37 +1222,37 @@ vlan:
 flow-timeouts:
 
   default:
-    new: 30
-    established: 300
+    new: 10 #30
+    established: 20 #300
     closed: 0
     bypassed: 100
-    emergency-new: 10
-    emergency-established: 100
+    emergency-new: 5 #10
+    emergency-established: 50 #100
     emergency-closed: 0
     emergency-bypassed: 50
   tcp:
-    new: 60
-    established: 600
-    closed: 60
+    new: 30 #60
+    established: 300 #600
+    closed: 30 #60
     bypassed: 100
-    emergency-new: 5
-    emergency-established: 100
+    emergency-new: 2 #5
+    emergency-established: 50 #100
     emergency-closed: 10
     emergency-bypassed: 50
   udp:
-    new: 30
-    established: 300
-    bypassed: 100
-    emergency-new: 10
-    emergency-established: 100
-    emergency-bypassed: 50
+    new: 15 #30
+    established: 150 #300
+    bypassed: 50 #100
+    emergency-new: 5 #10
+    emergency-established: 50 #100
+    emergency-bypassed: 25 #50
   icmp:
-    new: 30
-    established: 300
-    bypassed: 100
-    emergency-new: 10
-    emergency-established: 100
-    emergency-bypassed: 50
+    new: 15 #30
+    established: 150 #300
+    bypassed: 50 #100
+    emergency-new: 5 #10
+    emergency-established: 50 #100
+    emergency-bypassed: 25 #50
 
 # Stream engine settings. Here the TCP stream tracking and reassembly
 # engine is configured.
@@ -1314,12 +1314,15 @@ flow-timeouts:
 #                               # is used in a rule.
 #
 stream:
-  memcap: 64mb
-  checksum-validation: yes      # reject incorrect csums
-  inline: auto                  # auto will use inline mode in IPS mode, yes or no set it statically
+  memcap: 16gb
+  max-sessions: 20000000
+  prealloc-sessions: 10000000
+  checksum-validation: no      # reject incorrect csums
+  #checksum-validation: yes      # reject incorrect csums
+  inline: no                  # auto will use inline mode in IPS mode, yes or no set it statically
   reassembly:
-    memcap: 256mb
-    depth: 1mb                  # reassemble 1mb into a stream
+    memcap: 12gb
+    depth: 12mb                  # reassemble 1mb into a stream
     toserver-chunk-size: 2560
     toclient-chunk-size: 2560
     randomize-chunk-size: yes
@@ -1335,7 +1338,7 @@ stream:
 host:
   hash-size: 4096
   prealloc: 1000
-  memcap: 32mb
+  memcap: 16gb
 
 # IP Pair table:
 #
@@ -1396,7 +1399,7 @@ decoder:
 # If the argument specified is 0, the engine uses an internally defined
 # default limit.  When a value is not specified, there are no limits on the recursion.
 detect:
-  profile: medium
+  profile: high
   custom-values:
     toclient-groups: 3
     toserver-groups: 25

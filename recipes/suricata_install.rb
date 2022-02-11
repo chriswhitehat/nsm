@@ -61,6 +61,12 @@ template '/usr/sbin/suricata-reload' do
   mode '0750'
 end
 
+# Bad for performance on high volume sensors
+service 'irqbalance' do
+  action :stop
+end
+
+
 # directory '/opt/suricata' do
 #   owner 'suricata'
 #   group 'suricata'
