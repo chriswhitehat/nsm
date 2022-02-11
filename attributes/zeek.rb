@@ -25,7 +25,7 @@ default[:nsm][:zeek][:zkg][:package]['zeek-af_packet-plugin'][:apt_deps] = ['cma
 default[:nsm][:zeek][:zkg][:package]['zeek-af_packet-plugin'][:path] = 'zeek/j-gras/zeek-af_packet-plugin'
 default[:nsm][:zeek][:zkg][:package]['zeek-af_packet-plugin'][:install_path] = 'zeek-af_packet-plugin'
 
-default[:nsm][:zeek][:zkg][:package]['json-streaming-logs'][:install] = true
+default[:nsm][:zeek][:zkg][:package]['json-streaming-logs'][:install] = false
 default[:nsm][:zeek][:zkg][:package]['json-streaming-logs'][:apt_deps] = []
 default[:nsm][:zeek][:zkg][:package]['json-streaming-logs'][:path] = 'json-streaming-logs'
 default[:nsm][:zeek][:zkg][:package]['json-streaming-logs'][:install_path] = 'json-streaming-logs'
