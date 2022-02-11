@@ -66,7 +66,7 @@ default[:nsm][:zeek][:zkg][:package]['detect-ransomware-filenames'][:apt_deps] =
 default[:nsm][:zeek][:zkg][:package]['detect-ransomware-filenames'][:path] = 'corelight/detect-ransomware-filenames'
 default[:nsm][:zeek][:zkg][:package]['detect-ransomware-filenames'][:install_path] = 'detect-ransomware-filenames'
 
-default[:nsm][:zeek][:zkg][:package]['zeek_files_filter'][:install] = true
+default[:nsm][:zeek][:zkg][:package]['zeek_files_filter'][:install] = false
 default[:nsm][:zeek][:zkg][:package]['zeek_files_filter'][:apt_deps] = []
 default[:nsm][:zeek][:zkg][:package]['zeek_files_filter'][:path] = 'zeek_files_filter'
 default[:nsm][:zeek][:zkg][:package]['zeek_files_filter'][:install_path] = 'zeek_files_filter'
