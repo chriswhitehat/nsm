@@ -12,6 +12,19 @@ template '/etc/security/limits.d/stenographer.conf' do
   mode '0644'
 end
 
+template '/etc/rsyslog.d/rsyslog_steno.conf' do
+  source 'steno/rsyslog_steno.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  notifies :restart, 'service[rsyslog.service]'
+end
+
+service 'rsyslog.service' do
+  action :nothing
+end
+
+
 if node[:nsm][:interfaces][:sniffing] 
 
   local_port = 15140
@@ -105,6 +118,9 @@ if node[:nsm][:interfaces][:sniffing]
     end
   end
 end
+
+
+
 
 execute 'generate_stenokeys' do
   command '/usr/bin/stenokeys.sh stenographer stenographer'
