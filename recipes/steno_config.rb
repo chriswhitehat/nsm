@@ -91,7 +91,7 @@ if node[:nsm][:interfaces][:sniffing]
             :grpc_port => grpc_port
           )
         notifies :enable, "service[stenographer_service_#{sniff[:sensorname]}]", :immediately
-        notifies :start, "service[stenographer_service_#{sniff[:sensorname]}]", :delayed
+        notifies :restart, "service[stenographer_service_#{sniff[:sensorname]}]", :delayed
       end
 
       service "stenographer_service_#{sniff[:sensorname]}" do
