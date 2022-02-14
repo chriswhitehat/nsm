@@ -65,6 +65,19 @@ execute 'setcap_zeek' do
   action :nothing
 end
 
+zeek_bins = ['zeek',
+            'zeek-archiver',
+            'zeek-config',
+            'zeekctl',
+            'zeek-cut',
+            'zeek-wrapper']
+
+zeek_bins.each do |zbin|
+  link "/usr/bin/#{zbin}" do
+    to "/opt/zeek/bin/#{zbin}"
+  end
+end
+
 # Zeek Cron Monitoring
 cron_d 'zeekctl_cron' do
   user 'zeek'

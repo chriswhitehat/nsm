@@ -24,6 +24,15 @@ service 'rsyslog.service' do
   action :nothing
 end
 
+nsm_logrotate_paths = ['/var/log/stenographer.log']
+
+logrotate_app "rotate-stenographer" do
+  path      nsm_logrotate_paths
+  frequency 'daily'
+  rotate    14
+  create    '640 stenographer stenographer'
+end
+
 
 if node[:nsm][:interfaces][:sniffing] 
 
