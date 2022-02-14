@@ -85,7 +85,7 @@ cron_d 'zeekctl_cron' do
   command '/opt/zeek/bin/zeekctl cron'
 end
 
-cron 'zeek_log_rotate' do
+cron_d 'zeek_log_rotate' do
   minute '0'
   hour '8'
   command "/bin/rm -rf #{node[:nsm][:zeek][:config][:log_dir]}/`/bin/date --date=\"#{node[:nsm][:zeek][:config][:log_rotate_retention_days]} day ago\" +\\%Y-\\%m-\\%d`"
