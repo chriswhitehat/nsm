@@ -72,6 +72,17 @@ if node[:nsm][:interfaces][:sniffing]
     end
   end
 
+  nsm_logrotate_paths = ['/nsm/suricata/suricata.log',
+                        '/nsm/suricata/stats.log',
+                        '/var/log/suricata/suricata-start.log']
+
+  logrotate_app "rotate-suricata" do
+    path      nsm_logrotate_paths
+    frequency 'daily'
+    rotate    14
+    create    '640 suricata suricata'
+  end
+
   template "/etc/suricata/suricata.yaml" do
     source 'suricata/suricata.yaml.erb'
     owner 'suricata'
