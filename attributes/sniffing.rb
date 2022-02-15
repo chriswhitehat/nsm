@@ -33,7 +33,7 @@ default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['threads'] 
 default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['cluster-type'] = 'cluster_flow'
 default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['defrag'] = 'yes'
 default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['use-mmap'] = 'yes'
-default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['mmap-locked'] = 'yes'
+default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['mmap-locked'] = 'no'
 default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['tpacket-v3'] = 'yes'
 default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['ring-size'] = 100000
 #default[:nsm][:interfaces][:sniffing][:iface][:suricata][:af_packet]['block-size'] = 32768

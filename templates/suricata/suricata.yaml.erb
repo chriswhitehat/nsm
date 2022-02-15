@@ -1227,7 +1227,7 @@ flow-timeouts:
     closed: 0
     bypassed: 100
     emergency-new: 5 #10
-    #emergency-established: 50 #100
+    emergency-established: 10 #100
     emergency-closed: 0
     emergency-bypassed: 50
   tcp:
@@ -1236,7 +1236,7 @@ flow-timeouts:
     closed: 30 #60
     bypassed: 100
     emergency-new: 2 #5
-    #emergency-established: 50 #100
+    emergency-established: 10 #100
     emergency-closed: 10
     emergency-bypassed: 50
   udp:
@@ -1244,14 +1244,14 @@ flow-timeouts:
     established: 150 #300
     bypassed: 50 #100
     emergency-new: 5 #10
-    #emergency-established: 50 #100
+    emergency-established: 10 #100
     emergency-bypassed: 25 #50
   icmp:
     new: 15 #30
     established: 150 #300
     bypassed: 50 #100
     emergency-new: 5 #10
-    #emergency-established: 50 #100
+    emergency-established: 10 #100
     emergency-bypassed: 25 #50
 
 
