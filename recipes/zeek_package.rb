@@ -122,5 +122,6 @@ end
 
 execute 'deploy_zeek' do
   command "/opt/zeek/bin/zeekctl deploy"
+  user 'zeek'
   action :nothing
 end

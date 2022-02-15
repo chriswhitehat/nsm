@@ -1145,10 +1145,10 @@ host-os-policy:
 # Defrag settings:
 
 defrag:
-  memcap: 128mb
+  memcap: 512mb
   hash-size: 65536
   trackers: 65535 # number of defragmented flows to follow
-  max-frags: 65535 # number of fragments to keep (higher than trackers)
+  max-frags: 262140 # number of fragments to keep (higher than trackers)
   prealloc: yes
   timeout: 10
 
@@ -1187,9 +1187,9 @@ defrag:
 # in bytes.
 
 flow:
-  memcap: 256mb #128mb
+  memcap: 1gb #128mb
   hash-size: 65536
-  prealloc: 10000
+  prealloc: 50000
   emergency-recovery: 30
   #managers: 1 # default to one flow manager
   #recyclers: 1 # default to one flow recycler thread
@@ -1316,12 +1316,12 @@ flow-timeouts:
 #
 stream:
   memcap: 16gb
-  prealloc-sessions: 8192
+  prealloc-sessions: 200000
   checksum-validation: no      # reject incorrect csums
   #checksum-validation: yes      # reject incorrect csums
   inline: no                  # auto will use inline mode in IPS mode, yes or no set it statically
   reassembly:
-    memcap: 12gb
+    memcap: 20gb
     depth: 12mb                  # reassemble 1mb into a stream
     toserver-chunk-size: 2560
     toclient-chunk-size: 2560
