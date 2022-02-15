@@ -39,7 +39,7 @@ ignore:
 # OUTPUT_DIR - The directory the rules are written to.
 # OUTPUT_FILENAME - The name of the rule file. Will be empty if the rules
 #                   were not merged.
-test-command: /usr/bin/suricata -T -l /tmp && rm suricata.log eve.log stats.log
+test-command: /usr/bin/suricata -T -l /tmp && rm suricata.log eve.json stats.log; true
 
 # Provide a command to reload the Suricata rules.
 # May be overrided by the --reload-command command line option.
