@@ -89,6 +89,7 @@ cron_d 'zeek_log_rotate' do
   minute '0'
   hour '8'
   command "/bin/rm -rf #{node[:nsm][:zeek][:config][:log_dir]}/`/bin/date --date=\"#{node[:nsm][:zeek][:config][:log_rotate_retention_days]} day ago\" +\\%Y-\\%m-\\%d`"
+  action :delete
 end
 
 zeek_dirs = ['/nsm/zeek', node[:nsm][:zeek][:config][:log_dir], node[:nsm][:zeek][:config][:spool_dir],

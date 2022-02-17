@@ -13,8 +13,6 @@ default[:nsm][:zeek][:config][:broker_db_dir] = '/nsm/zeek/spool/brokerstore'
 #default[:nsm][:zeek][:config][:log_expire_interval] = '7 days'
 default[:nsm][:zeek][:config][:log_expire_days] = '0'
 
-default[:nsm][:zeek][:config][:log_rotate_retention_days] = 7
-
 
 ###############
 # Zkg Sources
