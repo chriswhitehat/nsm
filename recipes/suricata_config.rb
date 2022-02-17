@@ -74,6 +74,7 @@ if node[:nsm][:interfaces][:sniffing]
 
   nsm_logrotate_paths = ['/nsm/suricata/suricata.log',
                         '/nsm/suricata/stats.log',
+                        '/nsm/suricata/eve.json',
                         '/var/log/suricata/suricata-start.log']
 
   logrotate_app "rotate-suricata" do

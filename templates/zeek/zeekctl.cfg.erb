@@ -39,7 +39,7 @@ LogRotationInterval = 3600
 # will be deleted by "zeekctl cron".  The interval is an integer followed by
 # one of these time units:  day, hr, min.  A value of 0 means that logs
 # never expire.
-LogExpireInterval = 0
+LogExpireInterval = <%= node[:nsm][:zeek][:config][:log_expire_days] %>
 
 # Enable ZeekControl to write statistics to the stats.log file.  A value of 1
 # means write to stats.log, and a value of 0 means do not write to stats.log.
