@@ -17,16 +17,21 @@ group 'stenographer' do
   system true
 end
 
+group 'nsm' do
+  action :create
+  members ['stenographer']
+  append true
+end
+
+
 directory '/etc/stenographer' do
-  owner 'root'
-  group 'root'
+  owner 'stenographer'
+  group 'stenographer'
   mode '0755'
   action :create
 end
 
 dirs = ['/home/stenographer', 
-        '/nsm/steno/', 
-        '/nsm/steno/rpc',
         '/etc/stenographer/certs',
         '/etc/stenographer/certs/rpc',
         '/etc/stenographer/certs/rpc/ca']
@@ -41,6 +46,17 @@ dirs.each do |dir|
   end
 end
 
+dirs = ['/nsm/steno/', 
+        '/nsm/steno/rpc']
+
+dirs.each do |dir|
+  directory dir do
+    owner 'stenographer'
+    group 'nsm'
+    mode '0750'
+    recursive true
+    action :create
+  end
 
 package ['build-essential', 'libaio-dev', 'libleveldb-dev', 'libsnappy-dev', 'g++', 
   'libcap2-bin', 'libseccomp-dev', 'tcpreplay', 'jq', 'libjq1', 'libonig5', 'openssl']

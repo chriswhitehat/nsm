@@ -62,7 +62,7 @@ if node[:nsm][:interfaces][:sniffing]
 
           directory dir do
             owner 'stenographer'
-            group 'stenographer'
+            group 'nsm'
             mode '0750'
             action :create
           end
@@ -78,7 +78,7 @@ if node[:nsm][:interfaces][:sniffing]
         dirs.each do |dir|
           directory dir do
             owner 'stenographer'
-            group 'stenographer'
+            group 'nsm'
             mode '0750'
             action :create
           end

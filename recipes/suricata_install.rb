@@ -17,6 +17,11 @@ group 'suricata' do
   system true
 end
 
+group 'nsm' do
+  action :create
+  members ['suricata']
+  append true
+end
 
 directory '/home/suricata' do
   owner 'suricata'
@@ -28,7 +33,7 @@ end
 
 directory '/nsm/suricata' do
   owner 'suricata'
-  group 'suricata'
+  group 'nsm'
   mode '0750'
   recursive true
   action :create
@@ -56,8 +61,8 @@ end
 
 template '/usr/sbin/suricata-reload' do
   source 'suricata/suricata-reload.erb'
-  owner 'suricata'
-  group 'suricata'
+  owner 'root'
+  group 'root'
   mode '0750'
 end
 

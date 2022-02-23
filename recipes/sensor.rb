@@ -31,8 +31,9 @@ end
 
 group 'nsm' do
   action :create
-  members ['nsm']
+  members ['nsm', 'system']
   system true
+  append true
 end
 
 directory '/nsm' do

@@ -17,6 +17,13 @@ group 'zeek' do
   system true
 end
 
+group 'nsm' do
+  action :create
+  members ['zeek']
+  append true
+end
+
+
 directory '/home/zeek' do
   owner 'zeek'
   group 'zeek'
@@ -99,7 +106,7 @@ zeek_dirs.each do |zeek_dir|
 
   directory zeek_dir do
     owner 'zeek'
-    group 'zeek'
+    group 'nsm'
     mode '0750'
     action :create
     recursive true
