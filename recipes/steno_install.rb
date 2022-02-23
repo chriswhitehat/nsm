@@ -57,6 +57,7 @@ dirs.each do |dir|
     recursive true
     action :create
   end
+end
 
 package ['build-essential', 'libaio-dev', 'libleveldb-dev', 'libsnappy-dev', 'g++', 
   'libcap2-bin', 'libseccomp-dev', 'tcpreplay', 'jq', 'libjq1', 'libonig5', 'openssl']
