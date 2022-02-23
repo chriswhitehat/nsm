@@ -81,8 +81,13 @@ if node[:nsm][:interfaces][:sniffing]
     path      nsm_logrotate_paths
     frequency 'daily'
     rotate    14
-    create    '640 suricata suricata'
+    create    '640 suricata nsm'
+    postrotate <<-EOF
+    /bin/kill -HUP `cat /var/run/suricata.pid 2>/dev/null` 2>/dev/null || true 
+  EOF
   end
+
+
 
   template "/etc/suricata/suricata.yaml" do
     source 'suricata/suricata.yaml.erb'
