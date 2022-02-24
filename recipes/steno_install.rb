@@ -109,6 +109,7 @@ remote_file "copy_stenographer_file" do
 
 bins = [['stenographer', 'stenographer', 0700, 'stenographer', 'root'], 
         ['stenotype/stenotype', 'stenotype', 0500, 'stenographer', 'root'], 
+        ['stenotype/compile_bpf.sh', 'compile_bpf.sh', 0750, 'stenographer', 'root'], 
         ['stenoread', 'stenoread', 0755, 'root', 'root'], 
         ['stenocurl', 'stenocurl', 0755, 'root', 'root'],
         ['stenokeys.sh', 'stenokeys.sh', 0750, 'stenographer', 'root']

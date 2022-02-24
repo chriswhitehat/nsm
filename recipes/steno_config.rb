@@ -102,6 +102,42 @@ if node[:nsm][:interfaces][:sniffing]
         not_if do ::File.exist?("/etc/stenographer/config") end
       end
 
+
+      if sniff[:steno][:bpf]
+        file '/etc/stenographer/bpf.txt' do
+          action :create
+          owner 'stenographer'
+          group 'stenographer'
+          mode '0640'
+          content sniff[:steno][:bpf].strip
+          notifies :run, "execute[steno_bpf_compile]", :immediately
+        end
+
+        execute 'steno_bpf_compile' do
+          command "/usr/bin/compile_bpf.sh #{sniff[:interface]} \"#{sniff[:steno][:bpf]}\" > /etc/stenographer/bpf_compiled.txt"
+          action :nothing
+        end
+
+      else
+        file '/etc/stenographer/bpf.txt' do
+          action :delete
+        end
+
+        file '/etc/stenographer/bpf_compiled.txt' do
+          action :create
+          content ''
+        end
+
+      end
+      
+      
+
+      if sniff[:steno][:flags]
+        flags = "\"#{sniff[:steno][:flags].join('", "')}\""
+      else
+        flags = ''
+      end
+
       template "/etc/stenographer/config_#{sniff[:sensorname]}" do
         source 'steno/steno.conf.erb'
         owner 'root'
@@ -110,7 +146,9 @@ if node[:nsm][:interfaces][:sniffing]
         variables(
             :sniff => sniff,
             :local_port => local_port,
-            :grpc_port => grpc_port
+            :grpc_port => grpc_port,
+            :flags => flags,
+            :bpf => lazy { ::File.read("/etc/stenographer/bpf_compiled.txt") }
           )
         notifies :enable, "service[stenographer_service_#{sniff[:sensorname]}]", :immediately
         notifies :restart, "service[stenographer_service_#{sniff[:sensorname]}]", :delayed

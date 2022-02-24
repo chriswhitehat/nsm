@@ -25,10 +25,14 @@
   <% else %>
   , "Host": "127.0.0.1"
   <% end %>
-  <% if @sniff[:steno][:flags] %>
-  , "Flags": <%= @sniff[:steno][:flags] %>
+  <% if @bpf %>
+    <% if @flags %>
+  , "Flags": [<%= @flags %>, "--filter=<%= @bpf %>"]
+    <% else %>
+  , "Flags": ["--filter=<%= @bpf %>"]
+    <% end %>
   <% else %>
-  , "Flags": []
+  , "Flags": [<%= @flags %>]
   <% end %>
   , "CertPath": "/etc/stenographer/certs"
   <% if @sniff[:steno][:grpc] %>

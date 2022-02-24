@@ -84,7 +84,7 @@ if node[:nsm][:interfaces][:sniffing]
     create    '640 suricata nsm'
     postrotate <<-EOF
     /bin/kill -HUP `cat /var/run/suricata.pid 2>/dev/null` 2>/dev/null || true 
-  EOF
+    EOF
   end
 
 

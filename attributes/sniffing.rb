@@ -67,8 +67,9 @@ default[:nsm][:interfaces][:sniffing][:iface][:steno][:disk_free_percentage] = 5
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:host] = '127.0.0.1'
 # Set reserved memory (default: 8GB)
 # Set file reallocate for xfs (default: 4GB)
-default[:nsm][:interfaces][:sniffing][:iface][:steno][:flags] = '["-v", "--blocks=8192", "--preallocate_file_mb=4096"]'
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:flags] = ["-v", "--blocks=8192", "--preallocate_file_mb=4096"]
 default[:nsm][:interfaces][:sniffing][:iface][:steno][:grpc] = true
+default[:nsm][:interfaces][:sniffing][:iface][:steno][:bpf] = ''
 
 
 

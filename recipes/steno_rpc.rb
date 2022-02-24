@@ -4,8 +4,15 @@
 #
 # Copyright:: 2021, The Authors, All Rights Reserved. 
 
-dirs = ['/nsm/steno/rpc',
-        '/etc/stenographer/certs',
+directory '/nsm/steno/rpc' do
+  owner 'stenographer'
+  group 'nsm'
+  mode '0750'
+  action :create
+end
+
+
+dirs = ['/etc/stenographer/certs',
         '/etc/stenographer/certs/rpc',
         '/etc/stenographer/certs/rpc/ca']
 
