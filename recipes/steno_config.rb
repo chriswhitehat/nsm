@@ -133,7 +133,7 @@ if node[:nsm][:interfaces][:sniffing]
       
 
       if sniff[:steno][:flags]
-        flags = "\"#{sniff[:steno][:flags].join('", "')}\""
+        flags = '"' + sniff[:steno][:flags].join('", "') + '"'
       else
         flags = ''
       end
