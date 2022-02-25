@@ -103,6 +103,7 @@ if node[:nsm][:interfaces][:sniffing]
       end
 
 
+      # This is ugly, sorry
       if sniff[:steno][:bpf]
         file '/etc/stenographer/bpf.txt' do
           action :create
@@ -131,7 +132,6 @@ if node[:nsm][:interfaces][:sniffing]
       end
       
       
-
       if sniff[:steno][:flags]
         flags = '"' + sniff[:steno][:flags].join('", "') + '"'
       else
@@ -149,6 +149,7 @@ if node[:nsm][:interfaces][:sniffing]
             :grpc_port => grpc_port,
             :flags => flags,
             :bpf => lazy { ::File.read("/etc/stenographer/bpf_compiled.txt").strip }
+            # :bpf => lazy { shell_out!("/usr/bin/compile_bpf.sh #{sniff[:interface]} '#{sniff[:steno][:bpf]}'").stdout.strip }
           )
         notifies :enable, "service[stenographer_service_#{sniff[:sensorname]}]", :immediately
         notifies :restart, "service[stenographer_service_#{sniff[:sensorname]}]", :delayed
