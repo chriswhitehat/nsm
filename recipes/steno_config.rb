@@ -103,31 +103,33 @@ if node[:nsm][:interfaces][:sniffing]
       end
 
 
-      file '/etc/stenographer/bpf.txt' do
-        action :create
-        owner 'stenographer'
-        group 'stenographer'
-        mode '0640'
-        content sniff[:steno][:bpf].strip
-        notifies :run, "execute[steno_bpf_compile]", :immediately
-        not_if sniff[:steno][:bpf].empty?()
-      end
+      if sniff[:steno][:bpf]
+        file '/etc/stenographer/bpf.txt' do
+          action :create
+          owner 'stenographer'
+          group 'stenographer'
+          mode '0640'
+          content sniff[:steno][:bpf].strip
+          notifies :run, "execute[steno_bpf_compile]", :immediately
+        end
 
-      execute 'steno_bpf_compile' do
-        command "/usr/bin/compile_bpf.sh #{sniff[:interface]} \"#{sniff[:steno][:bpf]}\" > /etc/stenographer/bpf_compiled.txt"
-        action :nothing
-      end
+        execute 'steno_bpf_compile' do
+          command "/usr/bin/compile_bpf.sh #{sniff[:interface]} \"#{sniff[:steno][:bpf]}\" > /etc/stenographer/bpf_compiled.txt"
+          action :nothing
+        end
 
-      file '/etc/stenographer/bpf.txt' do
-        action :delete
-        only_if sniff[:steno][:bpf].empty?()
-      end
+      else
+        file '/etc/stenographer/bpf.txt' do
+          action :delete
+        end
 
-      file '/etc/stenographer/bpf_compiled.txt' do
-        action :create
-        content ''
-        only_if sniff[:steno][:bpf].empty?()
-      end      
+        file '/etc/stenographer/bpf_compiled.txt' do
+          action :create
+          content ''
+        end
+
+      end
+      
       
 
       if sniff[:steno][:flags]
