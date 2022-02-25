@@ -148,7 +148,7 @@ if node[:nsm][:interfaces][:sniffing]
             :local_port => local_port,
             :grpc_port => grpc_port,
             :flags => flags,
-            :bpf => lazy { ::File.read("/etc/stenographer/bpf_compiled.txt") }
+            :bpf => lazy { ::File.read("/etc/stenographer/bpf_compiled.txt").strip }
           )
         notifies :enable, "service[stenographer_service_#{sniff[:sensorname]}]", :immediately
         notifies :restart, "service[stenographer_service_#{sniff[:sensorname]}]", :delayed
