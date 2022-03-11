@@ -692,6 +692,8 @@ def collect_pcaps(fabricate_metadata):
     else:
         runBash(f'mv {merge_pcaps[0]} {target_pcap_path}')
 
+    runBash(f'editcap -d {target_pcap_path} {target_pcap_path}')
+
     if os.path.exists(target_pcap_path):
         fabricate_metadata.status = "Finished"
         fabricate_metadata.download_link = f'https://{fabricate_metadata.sensor}:8000/pcaps/{fabricate_metadata.pcaps_dir}/{fabricate_metadata.file_name}'
