@@ -76,3 +76,8 @@ if node[:nsm][:steno][:enabled]
   # include_recipe 'nsm::steno_package'
   include_recipe 'nsm::steno_config'
 end
+
+
+if node[:nsm][:pcapfab][:enabled]
+  include_recipe 'nsm::pcapfab_install'
+end
