@@ -109,7 +109,7 @@ end
 
 
 template '/etc/systemd/system/pcapfab.service' do
-  source 'pcapfab.service.erb'
+  source 'pcapfab/pcapfab.service.erb'
   owner 'root'
   group 'root'
   mode '0644'
@@ -117,7 +117,7 @@ end
 
 
 template '/opt/pcapfab/pcapfab.py' do
-  source 'pcapfab.py.erb'
+  source 'pcapfab/pcapfab.py.erb'
   owner 'pcapfab'
   group 'pcapfab'
   mode '0644'
