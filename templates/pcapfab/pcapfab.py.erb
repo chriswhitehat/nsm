@@ -745,7 +745,8 @@ def stenoread(pcap_metadata: PCAPFab_PCAP_Metadata, pcap_request: PCAPFab_PCAP_R
 
     for count, time_range in enumerate(time_ranges):
 
-        pcap_path = f'{dir_base}/{pcap_request.pcap_dir}/{pcap_metadata.file_name.rsplit('.pcap')[0]}.{count}.pcap'
+        file_name = pcap_metadata.file_name.rsplit('.pcap')[0]
+        pcap_path = f'{dir_base}/{pcap_request.pcap_dir}/{file_name}.{count}.pcap'
 
         pcap_paths.append(pcap_path)
         
