@@ -582,7 +582,7 @@ def pcap_stats(pcap_path):
         if lines[0] == b'Data size':
             packet_size = lines[1]
 
-            if packet_size == b'0 bytes'
+            if packet_size == b'0 bytes':
                 packets_found = True
 
     return packets_found, packet_count, packet_size
