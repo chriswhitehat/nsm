@@ -114,7 +114,7 @@ template '/etc/systemd/system/pcapfab.service' do
   group 'root'
   mode '0644'
   notifies :run, 'execute[systemctl_reload]', :immediately
-  notifies :restart, 'service[pcapfab.service]'
+  notifies :restart, 'systemd_unit[pcapfab.service]'
 end
 
 
