@@ -14,6 +14,7 @@ end
 group 'stenographer' do
   action :create
   members ['stenographer']
+  append true
   system true
 end
 

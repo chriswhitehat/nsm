@@ -14,6 +14,7 @@ end
 group 'zeek' do
   action :create
   members ['zeek']
+  append true
   system true
 end
 

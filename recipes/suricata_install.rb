@@ -14,6 +14,7 @@ end
 group 'suricata' do
   action :create
   members ['suricata']
+  append true
   system true
 end
 
