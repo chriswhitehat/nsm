@@ -578,11 +578,12 @@ def pcap_stats(pcap_path):
         lines = [x.strip() for x in line.split(b':')]
         if lines[0] == b'Number of packets':
             packet_count = lines[1]
-            if packet_count != '0':
-                packets_found = True
 
         if lines[0] == b'Data size':
             packet_size = lines[1]
+
+            if packet_size == b'0 bytes'
+                packets_found = True
 
     return packets_found, packet_count, packet_size
 
