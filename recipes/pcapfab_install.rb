@@ -48,13 +48,13 @@ directory '/nsm' do
   action :create
 end
 
-direcotries = ['/nsm/pcapfab',
+directories = ['/nsm/pcapfab',
                '/nsm/pcapfab/pending',
                '/nsm/pcapfab/finished',
                '/nsm/pcapfab/pcaps',
                '/nsm/pcapfab/files']
 
-direcotries.each do |dir|
+directories.each do |dir|
   directory dir do
     owner 'pcapfab'
     group 'nsm'
@@ -113,6 +113,14 @@ template '/etc/systemd/system/pcapfab.service' do
   owner 'root'
   group 'root'
   mode '0644'
+  notifies :run, 'execute[systemctl_reload]', :immediately
+  notifies :restart, 'service[pcapfab.service]'
+end
+
+
+execute 'systemctl_reload' do
+  command 'systemctl daemon-reload'
+  action :nothing
 end
 
 
