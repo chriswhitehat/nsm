@@ -78,7 +78,7 @@ class PCAPFab_PCAP_Metadata(BaseModel):
     file_name: str
     download_link: Optional[str]
     sensor: str
-    size: Optional[int]
+    size: Optional[str]
     status: str
     status_msg: Optional[str]
     status_updated: str
@@ -570,18 +570,21 @@ def pcap_stats(pcap_path):
     
     capinfos = runBash(f'/usr/bin/capinfos {pcap_path}')
 
-    packet_count = 0
+    packets_found = False
+    packet_count = ''
     packet_size = ''
 
     for line in capinfos.splitlines():
         lines = [x.strip() for x in line.split(b':')]
         if lines[0] == b'Number of packets':
-            packet_count = int(lines[1])
+            packet_count = lines[1]
+            if packet_count != '0':
+                packets_found = True
 
         if lines[0] == b'Data size':
             packet_size = lines[1]
 
-    return packet_count, packet_size
+    return packets_found, packet_count, packet_size
 
 
 def request_pcap(sensor, fabricate_metadata):
@@ -788,8 +791,8 @@ def stenoread(pcap_metadata: PCAPFab_PCAP_Metadata, pcap_request: PCAPFab_PCAP_R
     pcaps = []
     for path in pcap_paths:
         if os.path.exists(path):
-            num_packets, packet_size = pcap_stats(path)
-            if num_packets:
+            packets_found, num_packets, packet_size = pcap_stats(path)
+            if packets_found:
                 pcaps.append(path)
     
     if not pcaps:
@@ -807,9 +810,12 @@ def stenoread(pcap_metadata: PCAPFab_PCAP_Metadata, pcap_request: PCAPFab_PCAP_R
     else:
         runBash(f"mv {pcaps[0]} {dir_base}/{pcap_request.pcap_dir}/{pcap_metadata.file_name}")
 
+    packets_found, num_packets, packet_size = pcap_stats(f'{dir_base}/{pcap_request.pcap_dir}/{pcap_metadata.file_name}')
+
     pcap_metadata.status = "Finished"
     pcap_metadata.pcap_end = datetime.now().isoformat()
     pcap_metadata.pcap_duration = (parse(pcap_metadata.pcap_end) - parse(pcap_metadata.pcap_start)).seconds
+    pcap_metadata.size = packet_size
     pcap_metadata.download_link = f'https://{pcap_metadata.sensor}:8000/pcaps/{pcap_request.pcap_dir}/{pcap_metadata.file_name}'
     write_metadata(pcap_metadata, 'p')
 
