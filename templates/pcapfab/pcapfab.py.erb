@@ -712,7 +712,7 @@ def collect_pcaps(fabricate_metadata):
         runBash(f'mergecap -w {target_pcap_path} {" ".join(merge_pcaps)} && rm {" ".join(merge_pcaps)}')
 
     else:
-        runBash(f'mv {merge_pcaps[0]} {target_pcap_path}')
+        shutil.move(merge_pcaps[0], target_pcap_path)
 
     runBash(f'editcap -d {target_pcap_path} {target_pcap_path}')
 
@@ -809,7 +809,7 @@ def stenoread(pcap_metadata: PCAPFab_PCAP_Metadata, pcap_request: PCAPFab_PCAP_R
     
         runBash(f"mergecap -a -w {dir_base}/{pcap_request.pcap_dir}/{pcap_metadata.file_name} {' '.join(pcaps)} && rm {' '.join(pcaps)}")
     else:
-        runBash(f"mv {pcaps[0]} {dir_base}/{pcap_request.pcap_dir}/{pcap_metadata.file_name}")
+        shutil.move(pcaps[0], f'{dir_base}/{pcap_request.pcap_dir}/{pcap_metadata.file_name}' )
 
     packets_found, num_packets, packet_size = pcap_stats(f'{dir_base}/{pcap_request.pcap_dir}/{pcap_metadata.file_name}')
 
