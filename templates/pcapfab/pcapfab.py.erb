@@ -578,21 +578,21 @@ def build_query(fabricate_request: PCAPFab_Fabricate_Request):
 
 def pcap_stats(pcap_path):
     
-    capinfos = runBash(f'/usr/bin/capinfos {pcap_path}')
+    capinfos = runBash(f'/usr/bin/capinfos {pcap_path}').decode()
 
     packets_found = False
     packet_count = ''
     packet_size = ''
 
     for line in capinfos.splitlines():
-        lines = [x.strip() for x in line.split(b':')]
-        if lines[0] == b'Number of packets':
+        lines = [x.strip() for x in line.split(':')]
+        if lines[0] == 'Number of packets':
             packet_count = lines[1]
 
-        if lines[0] == b'Data size':
+        if lines[0] == 'Data size':
             packet_size = lines[1]
 
-            if packet_size == b'0 bytes':
+            if packet_size == '0 bytes':
                 packets_found = True
 
     return packets_found, packet_count, packet_size
