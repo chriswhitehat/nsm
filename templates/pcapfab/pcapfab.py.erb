@@ -593,7 +593,6 @@ def pcap_stats(pcap_path):
             packet_size = lines[1]
 
             if packet_size != '0 bytes':
-                logger.info("made it here should be true")
                 packets_found = True
 
     logger.info(f'capinfos path={pcap_path} found={packets_found} packet_count="{packet_count}" packet_size="{packet_size}"')
@@ -725,7 +724,7 @@ def collect_pcaps(fabricate_metadata):
         runBash(f'mergecap -w {target_pcap_path} {" ".join(merge_pcaps)} && rm {" ".join(merge_pcaps)}')
 
     else:
-        shutil.move(merge_pcaps[0], target_pcap_path)
+        shutil.copy(merge_pcaps[0], target_pcap_path)
 
     runBash(f'editcap -d {target_pcap_path} {target_pcap_path}')
 
