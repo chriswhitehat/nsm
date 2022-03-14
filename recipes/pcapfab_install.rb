@@ -40,11 +40,10 @@ group 'nsm' do
   members ['pcapfab']
 end
 
-
 directory '/nsm' do
   owner 'nsm'
   group 'nsm'
-  mode '0750'
+  mode '0755'
   action :create
 end
 
@@ -132,9 +131,11 @@ template '/opt/pcapfab/pcapfab.py' do
   notifies :restart, 'systemd_unit[pcapfab.service]'
 end
 
+
 systemd_unit 'pcapfab.service' do
   action :enable
 end
+
 
 systemd_unit 'pcapfab.service' do
   action :start

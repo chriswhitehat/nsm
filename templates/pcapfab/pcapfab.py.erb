@@ -743,14 +743,16 @@ def collect_pcaps(fabricate_metadata):
     fabricate_metadata.status = "Merging"
     write_metadata(fabricate_metadata, 'pfab')
 
+    status_msg_suffix = ''
+    for pcap in fabricate_metadata.pcaps:
+        if pcap.status == "Failed":
+            status_msg_suffix = ' with Failed Sensor(s)'
+
     target_pcap_path = f'{dir_base}/{fabricate_metadata.pcaps_dir}/{fabricate_metadata.file_name}'
 
     if not merge_pcaps:
         fabricate_metadata.status = "Finished"
-        if sensor_failures:
-            fabricate_metadata.status_msg = "No PCAPs found with Failed Sensor(s)"
-        else:
-            fabricate_metadata.status_msg = "No PCAPs found"
+        fabricate_metadata.status_msg = f"No PCAPs found{status_msg_suffix}"
         write_metadata(fabricate_metadata, 'pfab')
         
     elif len(merge_pcaps) > 1:
@@ -775,10 +777,7 @@ def collect_pcaps(fabricate_metadata):
         packets_found, num_packets, packet_size = pcap_stats(target_pcap_path)
 
         fabricate_metadata.status = "Finished"
-        if sensor_failures:
-            fabricate_metadata.status_msg = "Found PCAPs with Failed Sensor(s)"
-        else:
-            fabricate_metadata.status_msg = "Found PCAPs"
+        fabricate_metadata.status_msg = f"Found PCAPs{status_msg_suffix}"
         fabricate_metadata.download_link = f'https://{fabricate_metadata.sensor}:8000/pcaps/{fabricate_metadata.pcaps_dir}/{fabricate_metadata.file_name}'
         fabricate_metadata.total_size = packet_size
         write_metadata(fabricate_metadata, 'pfab')
