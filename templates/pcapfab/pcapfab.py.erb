@@ -696,6 +696,8 @@ def collect_pcaps(fabricate_metadata):
                             current_pcap_metadata.status = "Failed"
                             current_pcap_metadata.status_msg = "Download failed: " + r.text
                             pcaps.append(current_pcap_metadata)
+                else:
+                    pcaps.append(current_pcap_metadata)
             elif current_pcap_metadata.status == "Failed":
                 pcaps.append(current_pcap_metadata)
             else:
