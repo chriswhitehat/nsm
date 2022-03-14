@@ -560,7 +560,7 @@ def build_query(fabricate_request: PCAPFab_Fabricate_Request):
         query.extend(['host ' + x.strip() for x in fabricate_request.host.split(',')])
 
     if fabricate_request.net:
-        query.append(['net ' + x.strip() for x in fabricate_request.net.split(',')])
+        query.extend(['net ' + x.strip() for x in fabricate_request.net.split(',')])
 
     if fabricate_request.port:
         query.extend(['port ' + x.strip() for x in fabricate_request.port.split(',')])
