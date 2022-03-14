@@ -3,6 +3,7 @@ from typing import Optional, List
 from fastapi import FastAPI, Security, HTTPException, Depends, BackgroundTasks
 from fastapi.security.api_key import APIKeyHeader, APIKeyQuery, APIKey
 from fastapi.staticfiles import StaticFiles
+from fastapi.logger import logger
 
 import uuid
 
@@ -31,7 +32,13 @@ from subprocess import Popen, PIPE
 
 import logging
 
-log = logging.getLogger()
+logger = logging.getLogger('gunicorn.error')
+logger.handlers = gunicorn_logger.handlers
+
+if __name__ != "main":
+    logger.setLevel(gunicorn_logger.level)
+else:
+    logger.setLevel(logging.DEBUG)
 
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -46,8 +53,6 @@ DEFAULT_WAIT_TIME = 0
 
 EMPTY_RESPONSE_ERROR_MSG = "There is nothing to render. This can occur when there is a refused connection." \
                            " Please check your URL."
-
-
 
 
 def runBash(cmd):
