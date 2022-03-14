@@ -184,7 +184,7 @@ class PCAPFab_Fabricate_Request(BaseModel):
 
                 ip, cidr = net.split('/')
 
-                if cidr > 32:
+                if int(cidr) > 32:
                     raise ValueError('must be a valid cidr')
 
                 socket.inet_aton(ip)
