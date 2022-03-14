@@ -687,7 +687,6 @@ def collect_pcaps(fabricate_metadata):
 
     poll_duration = 0
 
-    sensor_failures = False
 
     merge_pcaps = []
     while pending and poll_duration < 1800:
@@ -719,14 +718,13 @@ def collect_pcaps(fabricate_metadata):
                             pcaps.append(current_pcap_metadata)
                             merge_pcaps.append(target_pcap_path)
                         else:
-                            sensor_failures = True
                             current_pcap_metadata.status = "Failed"
                             current_pcap_metadata.status_msg = f"Download failed: {status_msg}"
                             pcaps.append(current_pcap_metadata)
                 else:
                     pcaps.append(current_pcap_metadata)
             elif current_pcap_metadata.status == "Failed":
-                sensor_failures = False
+        
                 pcaps.append(current_pcap_metadata)
             else:
                 new_pcap_metadata = request_pcap_status(current_pcap_metadata)
