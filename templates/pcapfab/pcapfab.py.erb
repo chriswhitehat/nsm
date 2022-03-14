@@ -723,12 +723,22 @@ def collect_pcaps(fabricate_metadata):
         write_metadata(fabricate_metadata, 'pfab')
         
     elif len(merge_pcaps) > 1:
-        runBash(f'mergecap -w {target_pcap_path} {" ".join(merge_pcaps)} && rm {" ".join(merge_pcaps)}')
-
+        command = f'mergecap -w {target_pcap_path} {" ".join(merge_pcaps)} && rm {" ".join(merge_pcaps)}'
+        logger.info(f"mergecap command: {command}")
+        runBash(command)
     else:
+        logger.info(f"Moving {merge_pcaps[0]} to {target_pcap_path}")
         shutil.copy(merge_pcaps[0], target_pcap_path)
 
-    runBash(f'editcap -d {target_pcap_path} {target_pcap_path}')
+    pcap_stats(target_pcap_path)
+
+    runBash(f'editcap -d {target_pcap_path} {target_pcap_path}.tmp')
+
+    pcap_stats(f'{target_pcap_path}.tmp')
+
+    shutil.move(f'{target_pcap_path}.tmp', target_pcap_path)
+
+    pcap_stats(target_pcap_path)
 
     if os.path.exists(target_pcap_path):
         fabricate_metadata.status = "Finished"
