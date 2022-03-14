@@ -790,7 +790,7 @@ def stenoread(pcap_metadata: PCAPFab_PCAP_Metadata, pcap_request: PCAPFab_PCAP_R
             tcpdump_args = f'-w {pcap_path}'
 
         command = f"stenoread '{pcap_request.query} and {time_range}' {tcpdump_args}"
-        log.info(command)
+        logger.info(command)
         runBashParallel(bashChildren, command)
 
         pcap_metadata.status = "Reading"
@@ -805,7 +805,7 @@ def stenoread(pcap_metadata: PCAPFab_PCAP_Metadata, pcap_request: PCAPFab_PCAP_R
     for path in pcap_paths:
         if os.path.exists(path):
             packets_found, num_packets, packet_size = pcap_stats(path)
-            log.info(f'capinfos path={path} found={packets_found} packet_count={num_packets} packet_size={packet_size}')
+            logger.info(f'capinfos path={path} found={packets_found} packet_count={num_packets} packet_size={packet_size}')
             if packets_found:
                 pcaps.append(path)
     
