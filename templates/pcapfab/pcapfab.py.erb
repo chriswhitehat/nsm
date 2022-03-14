@@ -687,6 +687,8 @@ def collect_pcaps(fabricate_metadata):
 
     poll_duration = 0
 
+    sensor_failures = False
+
     merge_pcaps = []
     while pending and poll_duration < 1800:
         pcaps = []
@@ -717,12 +719,14 @@ def collect_pcaps(fabricate_metadata):
                             pcaps.append(current_pcap_metadata)
                             merge_pcaps.append(target_pcap_path)
                         else:
+                            sensor_failures = True
                             current_pcap_metadata.status = "Failed"
                             current_pcap_metadata.status_msg = f"Download failed: {status_msg}"
                             pcaps.append(current_pcap_metadata)
                 else:
                     pcaps.append(current_pcap_metadata)
             elif current_pcap_metadata.status == "Failed":
+                sensor_failures = False
                 pcaps.append(current_pcap_metadata)
             else:
                 new_pcap_metadata = request_pcap_status(current_pcap_metadata)
@@ -743,7 +747,10 @@ def collect_pcaps(fabricate_metadata):
 
     if not merge_pcaps:
         fabricate_metadata.status = "Finished"
-        fabricate_metadata.status_msg = "No pcaps found"
+        if sensor_failures:
+            fabricate_metadata.status_msg = "No PCAPs found with Failed Sensor(s)"
+        else:
+            fabricate_metadata.status_msg = "No PCAPs found"
         write_metadata(fabricate_metadata, 'pfab')
         
     elif len(merge_pcaps) > 1:
@@ -768,6 +775,10 @@ def collect_pcaps(fabricate_metadata):
         packets_found, num_packets, packet_size = pcap_stats(target_pcap_path)
 
         fabricate_metadata.status = "Finished"
+        if sensor_failures:
+            fabricate_metadata.status_msg = "Found PCAPs with Failed Sensor(s)"
+        else:
+            fabricate_metadata.status_msg = "Found PCAPs"
         fabricate_metadata.download_link = f'https://{fabricate_metadata.sensor}:8000/pcaps/{fabricate_metadata.pcaps_dir}/{fabricate_metadata.file_name}'
         fabricate_metadata.total_size = packet_size
         write_metadata(fabricate_metadata, 'pfab')
