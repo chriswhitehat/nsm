@@ -258,7 +258,7 @@ class PCAPFab_Fabricate_Request(BaseModel):
     @validator('tcpdump_args')
     def tcpdump_args_validator(cls, v):
 
-        if '-w' not in v:
+        if '-w' in v:
             raise ValueError("file write flag '-w' not allowed")    
         return v
 
