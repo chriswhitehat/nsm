@@ -34,6 +34,12 @@ group 'stenographer' do
   members ['pcapfab']
 end
 
+group 'zeek' do
+  action :create
+  append true
+  members ['pcapfab']
+end
+
 group 'nsm' do
   action :create
   append true
