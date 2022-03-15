@@ -1,5 +1,5 @@
 #
-# Cookbook:: remote_rasterize
+# Cookbook:: pcapfab_install
 # Recipe:: default
 #
 # Copyright:: 2021, The Authors, All Rights Reserved.
@@ -133,7 +133,7 @@ end
 
 
 template '/opt/pcapfab/pcapfab_extract.zeek' do
-  source 'pcapfab_extract.zeek.erb'
+  source 'pcapfab/pcapfab_extract.zeek.erb'
   owner 'pcapfab'
   group 'pcapfab'
   mode '0640'
