@@ -111,7 +111,7 @@ template '/etc/systemd/system/pcapfab.service' do
   source 'pcapfab/pcapfab.service.erb'
   owner 'root'
   group 'root'
-  mode '0644'
+  mode '0640'
   notifies :run, 'execute[systemctl_reload]', :immediately
   notifies :restart, 'systemd_unit[pcapfab.service]'
 end
@@ -127,8 +127,16 @@ template '/opt/pcapfab/pcapfab.py' do
   source 'pcapfab/pcapfab.py.erb'
   owner 'pcapfab'
   group 'pcapfab'
-  mode '0644'
+  mode '0640'
   notifies :restart, 'systemd_unit[pcapfab.service]'
+end
+
+
+template '/opt/pcapfab/pcapfab_extract.zeek' do
+  source 'pcapfab_extract.zeek.erb'
+  owner 'pcapfab'
+  group 'pcapfab'
+  mode '0640'
 end
 
 
