@@ -701,7 +701,7 @@ def file_extaction(pcap_path, fabricate_metadata):
         if not os.path.exists(extract_dir):
             os.mkdir(extract_dir)
 
-        runBash(f'cd {pcap_dir}; /opt/zeek/bin/zeek -r {metadata.file_name} /opt/pcapfab/pcapfab_extract.zeek')
+        runBash(f'cd {pcap_dir}; /opt/zeek/bin/zeek -r {fabricate_metadata.file_name} /opt/pcapfab/pcapfab_extract.zeek')
 
         
 
