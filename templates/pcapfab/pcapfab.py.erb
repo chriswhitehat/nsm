@@ -508,6 +508,7 @@ def generate_fabricate_metadata(fabricate_request):
                             before=fabricate_request.before,
                             query=query,
                             tcpdump_args=tcpdump_args,
+                            extract_files=fabricate_request.extract_files,
                             status='Distributing',
                             status_updated=status_updated)
 
