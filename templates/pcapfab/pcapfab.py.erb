@@ -711,7 +711,7 @@ def file_extaction(pcap_path, fabricate_metadata):
 
         for fname in os.listdir(extract_dir):
             new_fname = f'{files_prefix}{fname}'
-            shutil.move(f'{extract_dir}/{fname} {extract_dir}/{new_fname}')
+            shutil.move(f'{extract_dir}/{fname}', f'{extract_dir}/{new_fname}')
             files.append(new_fname)
             file_links.append(f'https://{fabricate_metadata.sensor}:8000/pcaps/{fabricate_metadata.pcaps_dir}/extract_files/{new_fname}')
 
