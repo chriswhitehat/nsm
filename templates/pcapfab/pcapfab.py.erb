@@ -62,8 +62,11 @@ EMPTY_RESPONSE_ERROR_MSG = "There is nothing to render. This can occur when ther
 
 
 
-def runBash(cmd):
-    p = Popen(cmd, shell=True, stdout=PIPE)
+def runBash(cmd, cwd=''):
+    if cwd:
+        p = Popen(cmd, shell=True, stdout=PIPE, cwd=cwd)
+    else:
+        p = Popen(cmd, shell=True, stdout=PIPE)
     out = p.stdout.read().strip()
     return out
 
@@ -701,10 +704,10 @@ def file_extaction(pcap_path, fabricate_metadata):
         if not os.path.exists(extract_dir):
             os.mkdir(extract_dir)
 
-        command = f'cd {pcap_dir}; /opt/zeek/bin/zeek -r {fabricate_metadata.file_name} /opt/pcapfab/pcapfab_extract.zeek'
+        command = f'/opt/zeek/bin/zeek -r {fabricate_metadata.file_name} /opt/pcapfab/pcapfab_extract.zeek'
         logger.info(command)
 
-        runBash(command)
+        runBash(command, cwd=pcap_dir)
 
         for fname in os.listdir(extract_dir):
             new_fname = f'{files_prefix}{fname}'
