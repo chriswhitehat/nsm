@@ -153,6 +153,10 @@ default[:nsm][:zeek][:scripts][:global]['zeek_files_filter'] = false
 # Add producer consumer ratio PCR to the conn log
 default[:nsm][:zeek][:scripts][:global]['zeek_pcr'] = false
 
+# File Extractions
+default[:nsm][:zeek][:scripts][:global]['file-extraction'] = false
+
+
 # TODO: 
 # You can load your own intel into:
 # /opt/zeek/share/zeek/intel/

@@ -63,6 +63,12 @@ default[:nsm][:zeek][:zkg][:package]['add-node-names'][:apt_deps] = []
 default[:nsm][:zeek][:zkg][:package]['add-node-names'][:path] = 'zeek/j-gras/add-node-names'
 default[:nsm][:zeek][:zkg][:package]['add-node-names'][:install_path] = 'add-node-names'
 
+default[:nsm][:zeek][:zkg][:package]['file-extraction'][:install] = true
+default[:nsm][:zeek][:zkg][:package]['file-extraction'][:apt_deps] = []
+default[:nsm][:zeek][:zkg][:package]['file-extraction'][:path] = 'zeek/hosom/file-extraction'
+default[:nsm][:zeek][:zkg][:package]['file-extraction'][:install_path] = 'file-extraction'
+
+
 # TODO: Add download script/cron for fsrm 
 default[:nsm][:zeek][:zkg][:package]['detect-ransomware-filenames'][:install] = true
 default[:nsm][:zeek][:zkg][:package]['detect-ransomware-filenames'][:apt_deps] = []
