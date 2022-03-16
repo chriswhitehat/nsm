@@ -25,8 +25,8 @@
   <% else %>
   , "Host": "127.0.0.1"
   <% end %>
-  <% if @bpf && not @bpf.empty? %>
-    <% if @flags && not @flags.empty? %>
+  <% if @bpf and not @bpf.empty? %>
+    <% if @flags and not @flags.empty? %>
   , "Flags": [<%= @flags %>, "--filter=<%= @bpf %>"]
     <% else %>
   , "Flags": ["--filter=<%= @bpf %>"]
