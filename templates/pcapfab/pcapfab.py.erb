@@ -298,6 +298,9 @@ class PCAPFab_Fabricate_Request(BaseModel):
 class PCAPFab_Fabricate_Status(BaseModel):
     id: int
 
+class PCAPFab_Test(BaseModel):
+    test: str
+
 
 class PCAPFab_List_Request(BaseModel):
     ids: Optional[str]
@@ -334,8 +337,8 @@ async def get_api_key(api_key_header: str = Security(api_key_header) ):
 
 @app.get("/pcapfab/test")
 async def pcapfab_fabricate(api_key: APIKey = Depends(get_api_key)):
-    response = {'test': 'successful'}
-    return json.dumps(response)
+    response = PCAPFab_Test(test='successful')
+    return response
 
 
 @app.post("/pcapfab/fabricate/submit")
