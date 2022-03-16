@@ -366,6 +366,8 @@ async def pcapfab_fabricate(fabricate_request: PCAPFab_Fabricate_Request, backgr
         backgroundtasks.add_task(collect_pcaps, fabricate_metadata)
     else:
         fabricate_metadata.status = "Failed"
+        fabricate_metadata.fabricate_end = datetime.now().isoformat()
+        fabricate_metadata.fabricate_duration = (parse(fabricate_metadata.fabricate_end) - parse(fabricate_metadata.fabricate_start)).seconds
         write_metadata(fabricate_metadata, 'pfab')
 
     return fabricate_metadata
@@ -801,6 +803,8 @@ def collect_pcaps(fabricate_metadata):
     if not merge_pcaps:
         fabricate_metadata.status = "Finished"
         fabricate_metadata.status_msg = f"No PCAPs found{status_msg_suffix}"
+        fabricate_metadata.fabricate_end = datetime.now().isoformat()
+        fabricate_metadata.fabricate_duration = (parse(fabricate_metadata.fabricate_end) - parse(fabricate_metadata.fabricate_start)).seconds
         write_metadata(fabricate_metadata, 'pfab')
         
     elif len(merge_pcaps) > 1:
@@ -831,6 +835,8 @@ def collect_pcaps(fabricate_metadata):
         fabricate_metadata.pcap_link = f'https://{fabricate_metadata.sensor}:8000/pcaps/{fabricate_metadata.pcaps_dir}/{fabricate_metadata.file_name}'
         fabricate_metadata.file_links = file_links
         fabricate_metadata.total_size = packet_size
+        fabricate_metadata.fabricate_end = datetime.now().isoformat()
+        fabricate_metadata.fabricate_duration = (parse(fabricate_metadata.fabricate_end) - parse(fabricate_metadata.fabricate_start)).seconds
         write_metadata(fabricate_metadata, 'pfab')
 
 
@@ -914,7 +920,7 @@ def stenoread(pcap_metadata: PCAPFab_PCAP_Metadata, pcap_request: PCAPFab_PCAP_R
     
     if not pcaps:
         pcap_metadata.status = "Finished"
-        pcap_metadata.status_msg = "No pcaps found"
+        pcap_metadata.status_msg = "No PCAPs found"
         pcap_metadata.pcap_end = datetime.now().isoformat()
         pcap_metadata.pcap_duration = (parse(pcap_metadata.pcap_end) - parse(pcap_metadata.pcap_start)).seconds
         write_metadata(pcap_metadata, 'p')
@@ -933,6 +939,7 @@ def stenoread(pcap_metadata: PCAPFab_PCAP_Metadata, pcap_request: PCAPFab_PCAP_R
         packets_found, num_packets, packet_size = pcap_stats(target_pcap_path)
 
         pcap_metadata.status = "Finished"
+        pcap_metadata.status_msg = "Found PCAPs"
         pcap_metadata.pcap_end = datetime.now().isoformat()
         pcap_metadata.pcap_duration = (parse(pcap_metadata.pcap_end) - parse(pcap_metadata.pcap_start)).seconds
         pcap_metadata.size = packet_size
