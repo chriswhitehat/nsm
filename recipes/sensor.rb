@@ -80,4 +80,5 @@ end
 
 if node[:nsm][:pcapfab][:enabled]
   include_recipe 'nsm::pcapfab_install'
+  include_recipe 'nsm::pcapfab_config'
 end
