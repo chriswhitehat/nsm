@@ -143,6 +143,7 @@ class PCAPFab_Fabricate_Metadata(BaseModel):
     pcap_link: Optional[str]
     file_links: Optional[List[str]]
     extract_files: bool
+    done: str
     status: str
     status_msg: Optional[str]
     status_updated: str
@@ -567,6 +568,16 @@ def write_metadata(metadata, extension):
         output_path = finished_path
     else:
         output_path = pending_path
+
+    if extension == 'pfab':
+        done = 0
+        total = 0
+        for pcap in metadata.pcaps:
+            total += 1
+            if pcap['status'] in ["Finished", "Failed"]:
+                done += 1
+
+        metadata.done = f'{done}/{total}'
 
     metadata.status_updated = datetime.now().isoformat()
 
