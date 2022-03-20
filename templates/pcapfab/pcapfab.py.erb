@@ -526,6 +526,7 @@ def generate_fabricate_metadata(fabricate_request):
                             query=query,
                             tcpdump_args=tcpdump_args,
                             extract_files=fabricate_request.extract_files,
+                            done=f'0/{len(fabricate_request.sensor_group)}',
                             status='Distributing',
                             status_updated=status_updated)
 
@@ -570,12 +571,13 @@ def write_metadata(metadata, extension):
         output_path = pending_path
 
     if extension == 'pfab':
-        done = 0
-        total = 0
-        for pcap in metadata.pcaps:
-            total += 1
-            if pcap['status'] in ["Finished", "Failed"]:
-                done += 1
+        if metadata.get('pcaps'):
+            done = 0
+            total = 0
+            for pcap in metadata.pcaps:
+                total += 1
+                if pcap['status'] in ["Finished", "Failed"]:
+                    done += 1
 
         metadata.done = f'{done}/{total}'
 
