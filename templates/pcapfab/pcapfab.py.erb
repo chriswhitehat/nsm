@@ -575,7 +575,7 @@ def write_metadata(metadata, extension):
         total = 0
         for pcap in metadata.pcaps:
             total += 1
-            if pcap['status'] in ["Finished", "Failed"]:
+            if pcap.status and pcap.status in ["Finished", "Failed"]:
                 done += 1
 
         metadata.done = f'{done}/{total}'
