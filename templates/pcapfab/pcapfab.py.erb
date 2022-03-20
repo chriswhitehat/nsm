@@ -570,7 +570,7 @@ def write_metadata(metadata, extension):
     else:
         output_path = pending_path
 
-    if extension == 'pfab':
+    if extension == 'pfab' and metadata.pcaps:
         done = 0
         total = 0
         for pcap in metadata.pcaps:
