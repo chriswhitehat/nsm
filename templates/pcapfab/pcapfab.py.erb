@@ -571,13 +571,12 @@ def write_metadata(metadata, extension):
         output_path = pending_path
 
     if extension == 'pfab':
-        if metadata.get('pcaps'):
-            done = 0
-            total = 0
-            for pcap in metadata.pcaps:
-                total += 1
-                if pcap['status'] in ["Finished", "Failed"]:
-                    done += 1
+        done = 0
+        total = 0
+        for pcap in metadata.pcaps:
+            total += 1
+            if pcap['status'] in ["Finished", "Failed"]:
+                done += 1
 
         metadata.done = f'{done}/{total}'
 
