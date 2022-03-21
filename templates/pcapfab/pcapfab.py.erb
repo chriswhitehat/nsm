@@ -304,9 +304,11 @@ class PCAPFab_Test(BaseModel):
     test: str
 
 class PCAPFab_Stats_Request(BaseModel):
+    sensor_group: str
     sensor: str
 
 class PCAPFab_Stats_Response(BaseModel):
+    sensor_group: str
     sensor: str
     pcap_earliest: str
     pcap_latest: str
