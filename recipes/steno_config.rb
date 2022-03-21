@@ -182,8 +182,16 @@ directory '/etc/stenographer/certs' do
   action :create
 end
 
+file '/var/log/stenographer.log' do
+  action :create
+  owner 'stenographer'
+  group 'stenographer'
+  mode '0640'
+end
+
+
 cron_d 'steno_chmod_cron' do
   user 'stenoghrapher'
   minute '*'
-  command 'chmod g+r -R /nsm/steno/; chmod g+r /var/log/stenographer.log'
+  command 'chmod g+r -R /nsm/steno/'
 end
