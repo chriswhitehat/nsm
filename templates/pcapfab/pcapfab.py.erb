@@ -357,7 +357,7 @@ async def pcapfab_fabricate(api_key: APIKey = Depends(get_api_key)):
     return response
 
 
-@app.get("/pcapfab/stats")
+@app.post("/pcapfab/stats")
 async def pcapfab_fabricate(stats_request: PCAPFab_Stats_Request, api_key: APIKey = Depends(get_api_key)):
 
     steno_dirs = [x for x in os.listdir('/nsm/steno/') if x not in ['rpc', 'thread1']]
