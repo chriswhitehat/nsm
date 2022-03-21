@@ -310,6 +310,7 @@ class PCAPFab_Stats_Response(BaseModel):
     sensor: str
     pcap_earliest: str
     pcap_latest: str
+    pcap_retention: int
     pcap_count: int
     pcap_total_size: int
     pcap_avg_size: int
@@ -372,8 +373,8 @@ async def pcapfab_fabricate(stats_request: PCAPFab_Stats_Request, api_key: APIKe
     else:
         steno_packets_dir = f'/nsm/steno/{steno_dirs[0]}/thread1/packets/'
         steno_packets = [x for x in sorted(os.listdir(steno_packets_dir)) if not x.startswith('.')]
-        pcap_earliest = datetime.fromtimestamp(int(steno_packets[0][:-6])).isoformat()
-        pcap_latest = datetime.fromtimestamp(int(steno_packets[-1][:-6])).isoformat()
+        pcap_earliest = datetime.fromtimestamp(int(steno_packets[0][:-6]))
+        pcap_latest = datetime.fromtimestamp(int(steno_packets[-1][:-6]))
         pcap_count = len(steno_packets)
         pcap_sizes = [os.path.getsize(steno_packets_dir+f) for f in steno_packets if os.path.isfile(steno_packets_dir+f)]
         pcap_size_gbs = int(sum(pcap_sizes) / 1024 / 1024 / 1024)
@@ -387,8 +388,9 @@ async def pcapfab_fabricate(stats_request: PCAPFab_Stats_Request, api_key: APIKe
     nsm_disk_util = shutil.disk_usage('/nsm')
 
     response = PCAPFab_Stats_Response(sensor=stats_request.sensor,
-                                      pcap_earliest=pcap_earliest,
-                                      pcap_latest=pcap_latest,
+                                      pcap_earliest=pcap_earliest.isoformat(),
+                                      pcap_latest=pcap_latest.isoformat(),
+                                      pcap_retention=(pcap_latest - pcap_earliest).days,
                                       pcap_count=pcap_count,
                                       pcap_total_size=pcap_total_size,
                                       pcap_avg_size=pcap_avg_size,
