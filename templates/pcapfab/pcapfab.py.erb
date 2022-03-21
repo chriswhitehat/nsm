@@ -377,7 +377,7 @@ async def pcapfab_fabricate(stats_request: PCAPFab_Stats_Request, api_key: APIKe
         pcap_count = len(steno_packets)
         pcap_sizes = [os.path.getsize(steno_packets_dir+f) for f in steno_packets if os.path.isfile(steno_packets_dir+f)]
         pcap_size_gbs = int(sum(pcap_sizes) / 1024 / 1024 / 1024)
-        pcap_total_size = f'{pcap_gbs} GB'
+        pcap_total_size = f'{pcap_size_gbs} GB'
         pcap_avg_size = pcap_size_gbs / pcap_count
 
     steno_log = runBash('tac /var/log/stenographer.log | egrep stenotype | head -1')
