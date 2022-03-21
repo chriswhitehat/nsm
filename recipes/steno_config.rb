@@ -185,5 +185,5 @@ end
 cron_d 'steno_chmod_cron' do
   user 'stenoghrapher'
   minute '*'
-  command 'chmod g+r -R /nsm/steno/'
+  command 'chmod g+r -R /nsm/steno/; chmod g+r /var/log/stenographer.log'
 end
