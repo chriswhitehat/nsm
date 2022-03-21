@@ -362,7 +362,7 @@ async def pcapfab_fabricate(stats_request: PCAPFab_Stats_Request, api_key: APIKe
 
     steno_dirs = [x for x in os.listdir('/nsm/steno/') if x not in ['rpc', 'thread1']]
 
-    if len(steno_dirs != 1):
+    if len(steno_dirs) != 1:
         logger.error("Something went wrong in stats, unexpected steno dir listing.")
         pcap_earliest = 'unknown'
         pcap_latest = 'unknown'
