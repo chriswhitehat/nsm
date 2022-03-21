@@ -389,7 +389,8 @@ async def pcapfab_fabricate(stats_request: PCAPFab_Stats_Request, api_key: APIKe
 
     nsm_disk_util = shutil.disk_usage('/nsm')
 
-    response = PCAPFab_Stats_Response(sensor=stats_request.sensor,
+    response = PCAPFab_Stats_Response(sensor_group=stats_request.sensor_group,
+                                      sensor=stats_request.sensor,
                                       pcap_earliest=pcap_earliest.isoformat(),
                                       pcap_latest=pcap_latest.isoformat(),
                                       pcap_retention=(pcap_latest - pcap_earliest).days,
