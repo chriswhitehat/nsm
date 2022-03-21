@@ -382,7 +382,7 @@ async def pcapfab_fabricate(stats_request: PCAPFab_Stats_Request, api_key: APIKe
         pcap_avg_size = pcap_size_gbs / pcap_count
 
     steno_log = runBash('tac /var/log/stenographer.log | egrep stenotype | head -1')
-    steno_stats = re.search("MBps=(?P<MBps>\S+).+drops=(?P<drops>\S+)\sdrop%=(?P<drop_pct>\d+)", steno_log).groupdict()
+    steno_stats = re.search("MBps=(?P<MBps>\S+).+drops=(?P<drops>\S+)\sdrop%=(?P<drop_pct>\d+)", steno_log.decode()).groupdict()
     steno_stats['mbps'] = int(float(steno_stats['MBps']) * 8)
 
     nsm_disk_util = shutil.disk_usage('/nsm')
