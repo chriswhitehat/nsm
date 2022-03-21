@@ -372,8 +372,8 @@ async def pcapfab_fabricate(stats_request: PCAPFab_Stats_Request, api_key: APIKe
     else:
         steno_packets_dir = f'/nsm/steno/{steno_dirs[0]}/thread1/packets/'
         steno_packets = [x for x in sorted(os.listdir(steno_packets_dir)) if not x.startswith('.')]
-        pcap_earliest = datetime.fromtimestamp(steno_packets[0][:-6])
-        pcap_latest = datetime.fromtimestamp(steno_packets[-1][:-6])
+        pcap_earliest = datetime.fromtimestamp(int(steno_packets[0][:-6])).isoformat()
+        pcap_latest = datetime.fromtimestamp(int(steno_packets[-1][:-6])).isoformat()
         pcap_count = len(steno_packets)
         pcap_sizes = [os.path.getsize(steno_packets_dir+f) for f in steno_packets if os.path.isfile(steno_packets_dir+f)]
         pcap_size_gbs = int(sum(pcap_sizes) / 1024 / 1024 / 1024)

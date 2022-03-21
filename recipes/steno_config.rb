@@ -181,3 +181,9 @@ directory '/etc/stenographer/certs' do
   mode '0750'
   action :create
 end
+
+cron_d 'steno_chmod_cron' do
+  user 'stenoghrapher'
+  minute '*'
+  command 'chmod g+r -R /nsm/steno/'
+end
