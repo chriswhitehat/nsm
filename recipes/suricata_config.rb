@@ -82,9 +82,10 @@ if node[:nsm][:interfaces][:sniffing]
     frequency 'daily'
     rotate    14
     create    '640 suricata nsm'
-    postrotate <<-EOF
-    /bin/kill -HUP `cat /var/run/suricata.pid 2>/dev/null` 2>/dev/null || true 
-    EOF
+    postrotate [
+    '/bin/kill -HUP `cat /var/run/suricata.pid 2>/dev/null` 2>/dev/null || true',
+    '/usr/bin/systemctl kill -s HUP rsyslog.service >/dev/null 2>&1 || true'
+    ]
   end
 
 

@@ -30,7 +30,8 @@ logrotate_app "rotate-stenographer" do
   path      nsm_logrotate_paths
   frequency 'daily'
   rotate    14
-  create    '640 stenographer stenographer'
+  create    '640 syslog stenographer'
+  postrotate '/usr/bin/systemctl kill -s HUP rsyslog.service >/dev/null 2>&1 || true'
 end
 
 
@@ -184,7 +185,7 @@ end
 
 file '/var/log/stenographer.log' do
   action :create
-  owner 'stenographer'
+  owner 'syslog'
   group 'stenographer'
   mode '0640'
 end
