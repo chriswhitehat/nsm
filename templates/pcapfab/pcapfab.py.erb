@@ -429,7 +429,7 @@ async def pcapfab_fabricate(fabricate_request: PCAPFab_Fabricate_Request, backgr
 
     fabricate_metadata.pcaps = []
     for sensor in fabricate_request.sensor_group:
-        if sensor not in fabricate_request.maintenance:
+        if not fabricate_request.maintenance or sensor not in fabricate_request.maintenance:
             fabricate_metadata.pcaps.append(request_pcap(sensor, fabricate_metadata))
 
     pending = False
