@@ -161,6 +161,7 @@ class PCAPFab_Fabricate_Request(BaseModel):
     tcpdump_args: Optional[str]
     file_name_prefix: Optional[str]
     extract_files: bool = True
+    maintenance: str
     sensor: str
     sensor_group: str
     sensor_group_name: str
@@ -290,11 +291,23 @@ class PCAPFab_Fabricate_Request(BaseModel):
 
         sensors = []
 
-        for sensor in [x.strip() for x in v.split(',')]:
+        for sensor in [x.strip() for x in v.split(',') if x]:
             if not is_valid_hostname(sensor):
                 raise ValueError('sensor_group must consist of comma separated valid hostnames')
             sensors.append(sensor)
         return sensors
+
+    @validator('maintenance')
+    def maintenance_validator(cls, v):
+
+        maintenance = []
+
+        for sensor in [x.strip() for x in v.split(',') if x]:
+            if not is_valid_hostname(sensor):
+                raise ValueError('Maintenance must consist of comma separated valid hostnames')
+            maintenance.append(sensor)
+        return maintenance
+
 
 
 class PCAPFab_Fabricate_Status(BaseModel):
@@ -416,7 +429,8 @@ async def pcapfab_fabricate(fabricate_request: PCAPFab_Fabricate_Request, backgr
 
     fabricate_metadata.pcaps = []
     for sensor in fabricate_request.sensor_group:
-        fabricate_metadata.pcaps.append(request_pcap(sensor, fabricate_metadata))
+        if sensor not in fabricate_request.maintenance:
+            fabricate_metadata.pcaps.append(request_pcap(sensor, fabricate_metadata))
 
     pending = False
 
