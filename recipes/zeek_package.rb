@@ -38,6 +38,7 @@ node[:nsm][:zeek][:zkg][:package].each do |zkg_name, zkg|
     execute "install_#{zkg_name}" do
       command "/opt/zeek/bin/zkg install #{zkg[:path]} --force"
       not_if do ::Dir.exist?("/opt/zeek/var/lib/zkg/clones/package/#{zkg[:install_path]}") end
+      notifies :run, 'execute[zkg_refresh]', :before
       notifies :run, "execute[pin_#{zkg_name}]", :immediately
       action :run
     end
