@@ -156,6 +156,9 @@ default[:nsm][:zeek][:scripts][:global]['zeek_pcr'] = false
 # Add node name to the conn log
 default[:nsm][:zeek][:scripts][:global]['zeek_add_node_name'] = false
 
+# Add node name to the conn log
+default[:nsm][:zeek][:scripts][:global]['zeek_filter_hooks'] = false
+
 # File Extractions
 default[:nsm][:zeek][:scripts][:global]['file-extraction'] = false
 

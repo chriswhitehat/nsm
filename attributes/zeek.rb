@@ -19,6 +19,7 @@ default[:nsm][:zeek][:config][:log_expire_days] = '0'
 # Zkg Sources
 ###############
 default[:nsm][:zeek][:zkg][:source][:zeek] = 'https://github.com/zeek/packages'
+default[:nsm][:zeek][:zkg][:source][:chriswhitehat] = 'https://github.com/chriswhitehat/zkg'
 
 ###############
 # Zkg Packages
@@ -89,6 +90,12 @@ default[:nsm][:zeek][:zkg][:package]['zeek_add_node_name'][:install] = true
 default[:nsm][:zeek][:zkg][:package]['zeek_add_node_name'][:apt_deps] = []
 default[:nsm][:zeek][:zkg][:package]['zeek_add_node_name'][:path] = 'zeek_add_node_name'
 default[:nsm][:zeek][:zkg][:package]['zeek_add_node_name'][:install_path] = 'zeek_add_node_name'
+
+default[:nsm][:zeek][:zkg][:package]['zeek_filter_hooks'][:install] = true
+default[:nsm][:zeek][:zkg][:package]['zeek_filter_hooks'][:apt_deps] = []
+default[:nsm][:zeek][:zkg][:package]['zeek_filter_hooks'][:path] = 'zeek_filter_hooks'
+default[:nsm][:zeek][:zkg][:package]['zeek_filter_hooks'][:install_path] = 'zeek_filter_hooks'
+
 
 #####################
 # Zkg Local Packages
