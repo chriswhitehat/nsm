@@ -58,7 +58,7 @@ default[:nsm][:zeek][:zkg][:package]['zeek-cryptomining'][:apt_deps] = []
 default[:nsm][:zeek][:zkg][:package]['zeek-cryptomining'][:path] = 'jsiwek/zeek-cryptomining'
 default[:nsm][:zeek][:zkg][:package]['zeek-cryptomining'][:install_path] = 'zeek-cryptomining'
 
-default[:nsm][:zeek][:zkg][:package]['add-node-names'][:install] = true
+default[:nsm][:zeek][:zkg][:package]['add-node-names'][:install] = false
 default[:nsm][:zeek][:zkg][:package]['add-node-names'][:apt_deps] = []
 default[:nsm][:zeek][:zkg][:package]['add-node-names'][:path] = 'zeek/j-gras/add-node-names'
 default[:nsm][:zeek][:zkg][:package]['add-node-names'][:install_path] = 'add-node-names'
@@ -85,6 +85,10 @@ default[:nsm][:zeek][:zkg][:package]['zeek_pcr'][:apt_deps] = []
 default[:nsm][:zeek][:zkg][:package]['zeek_pcr'][:path] = 'zeek_pcr'
 default[:nsm][:zeek][:zkg][:package]['zeek_pcr'][:install_path] = 'zeek_pcr'
 
+default[:nsm][:zeek][:zkg][:package]['zeek_add_node_name'][:install] = true
+default[:nsm][:zeek][:zkg][:package]['zeek_add_node_name'][:apt_deps] = []
+default[:nsm][:zeek][:zkg][:package]['zeek_add_node_name'][:path] = 'zeek_add_node_name'
+default[:nsm][:zeek][:zkg][:package]['zeek_add_node_name'][:install_path] = 'zeek_add_node_name'
 
 #####################
 # Zkg Local Packages
