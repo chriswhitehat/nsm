@@ -153,6 +153,9 @@ default[:nsm][:zeek][:scripts][:global]['zeek_files_filter'] = false
 # Add producer consumer ratio PCR to the conn log
 default[:nsm][:zeek][:scripts][:global]['zeek_pcr'] = false
 
+# Add node name to the conn log
+default[:nsm][:zeek][:scripts][:global]['zeek_add_node_name'] = false
+
 # File Extractions
 default[:nsm][:zeek][:scripts][:global]['file-extraction'] = false
 
