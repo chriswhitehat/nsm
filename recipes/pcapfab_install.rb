@@ -25,7 +25,7 @@ end
 
 group 'pcapfab' do
   action :create
-  append :true
+  append true
   members ['pcapfab', 'splunk']
 end
 
