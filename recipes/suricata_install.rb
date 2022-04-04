@@ -13,14 +13,14 @@ end
 
 group 'suricata' do
   action :create
-  members ['suricata']
+  members ['suricata', 'splunk']
   append true
   system true
 end
 
 group 'nsm' do
   action :create
-  members ['suricata']
+  members ['suricata', 'splunk']
   append true
 end
 

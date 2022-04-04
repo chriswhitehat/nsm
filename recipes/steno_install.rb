@@ -13,14 +13,14 @@ end
 
 group 'stenographer' do
   action :create
-  members ['stenographer']
+  members ['stenographer', 'splunk']
   append true
   system true
 end
 
 group 'nsm' do
   action :create
-  members ['stenographer']
+  members ['stenographer', 'splunk']
   append true
 end
 

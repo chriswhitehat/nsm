@@ -23,6 +23,12 @@ user 'pcapfab' do
   system true
 end
 
+group 'pcapfab' do
+  action :create
+  append :true
+  members ['pcapfab', 'splunk']
+end
+
 user 'nsm' do
   action :create
   system true

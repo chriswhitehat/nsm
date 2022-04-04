@@ -13,14 +13,14 @@ end
 
 group 'zeek' do
   action :create
-  members ['zeek']
+  members ['zeek', 'splunk']
   append true
   system true
 end
 
 group 'nsm' do
   action :create
-  members ['zeek']
+  members ['zeek', 'splunk']
   append true
 end
 
