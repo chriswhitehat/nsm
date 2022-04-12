@@ -368,13 +368,13 @@ async def get_api_key(api_key_header: str = Security(api_key_header) ):
         )
 
 @app.get("/pcapfab/test")
-async def pcapfab_fabricate(api_key: APIKey = Depends(get_api_key)):
+async def pcapfab_test(api_key: APIKey = Depends(get_api_key)):
     response = PCAPFab_Test(test='successful')
     return response
 
 
 @app.post("/pcapfab/stats")
-async def pcapfab_fabricate(stats_request: PCAPFab_Stats_Request, api_key: APIKey = Depends(get_api_key)):
+async def pcapfab_stats(stats_request: PCAPFab_Stats_Request, api_key: APIKey = Depends(get_api_key)):
 
     steno_dirs = [x for x in os.listdir('/nsm/steno/') if x not in ['rpc', 'thread1']]
 
@@ -419,7 +419,7 @@ async def pcapfab_fabricate(stats_request: PCAPFab_Stats_Request, api_key: APIKe
 
 
 @app.post("/pcapfab/fabricate/submit")
-async def pcapfab_fabricate(fabricate_request: PCAPFab_Fabricate_Request, backgroundtasks: BackgroundTasks, api_key: APIKey = Depends(get_api_key)):
+async def pcapfab_fabricate_submit(fabricate_request: PCAPFab_Fabricate_Request, backgroundtasks: BackgroundTasks, api_key: APIKey = Depends(get_api_key)):
 
     backgroundtasks.add_task(rotate_pcaps)
 
@@ -452,13 +452,13 @@ async def pcapfab_fabricate(fabricate_request: PCAPFab_Fabricate_Request, backgr
 
 
 @app.post("/pcapfab/fabricate/status")
-async def pcapfab_status(fabricate_status: PCAPFab_Fabricate_Status, api_key: APIKey = Depends(get_api_key)):
+async def pcapfab_fabricate_status(fabricate_status: PCAPFab_Fabricate_Status, api_key: APIKey = Depends(get_api_key)):
 
     return load_metadata(fabricate_status.id, 'pfab')
 
 
 @app.post("/pcapfab/pcap/submit")
-async def pcapfab_status(pcap_request: PCAPFab_PCAP_Request, backgroundtasks: BackgroundTasks, api_key: APIKey = Depends(get_api_key)):
+async def pcapfab_pcap_submit(pcap_request: PCAPFab_PCAP_Request, backgroundtasks: BackgroundTasks, api_key: APIKey = Depends(get_api_key)):
 
     pcap_metadata = generate_pcap_metadata(pcap_request)
     write_metadata(pcap_metadata, 'p')
@@ -469,7 +469,7 @@ async def pcapfab_status(pcap_request: PCAPFab_PCAP_Request, backgroundtasks: Ba
 
 
 @app.post("/pcapfab/pcap/status")
-async def pcapfab_status(pcap_status: PCAPFab_PCAP_Status, api_key: APIKey = Depends(get_api_key)):
+async def pcapfab_pcap_status(pcap_status: PCAPFab_PCAP_Status, api_key: APIKey = Depends(get_api_key)):
 
     return load_metadata(pcap_status.id, 'p')
 
@@ -488,6 +488,47 @@ async def pcapfab_status(pcap_status: PCAPFab_PCAP_Status, api_key: APIKey = Dep
 # @app.get("/pcapfab/pcaps/")
 # async def pcapfab_pcaps(rasterize_url: Rasterize_Url, api_key: APIKey = Depends(get_api_key)):
 #     rasterize_url_dict = rasterize_url.dict()
+
+def pcapfab_stats_file():
+    steno_dirs = [x for x in os.listdir('/nsm/steno/') if x not in ['rpc', 'thread1']]
+
+    if len(steno_dirs) != 1:
+        logger.error("Something went wrong in stats, unexpected steno dir listing.")
+        pcap_earliest = 'unknown'
+        pcap_latest = 'unknown'
+        pcap_count = -1
+        pcap_total_size = -1
+        pcap_avg_size = -1
+    else:
+        steno_packets_dir = f'/nsm/steno/{steno_dirs[0]}/thread1/packets/'
+        steno_packets = [x for x in sorted(os.listdir(steno_packets_dir)) if not x.startswith('.')]
+        pcap_earliest = datetime.fromtimestamp(int(steno_packets[0][:-6]))
+        pcap_latest = datetime.fromtimestamp(int(steno_packets[-1][:-6]))
+        pcap_count = len(steno_packets)
+        pcap_sizes = [os.path.getsize(steno_packets_dir+f) for f in steno_packets if os.path.isfile(steno_packets_dir+f)]
+        pcap_size_gbs = int(sum(pcap_sizes) / 1024 / 1024 / 1024)
+        pcap_total_size = f'{pcap_size_gbs} GB'
+        pcap_avg_size = pcap_size_gbs / pcap_count
+
+    steno_log = runBash('tac /var/log/stenographer.log | egrep stenotype | head -1')
+    steno_stats = re.search("MBps=(?P<MBps>\S+).+drops=(?P<drops>\S+)\sdrop%=(?P<drop_pct>\d+)", steno_log.decode()).groupdict()
+    steno_stats['mbps'] = int(float(steno_stats['MBps']) * 8)
+
+    nsm_disk_util = shutil.disk_usage('/nsm')
+
+    stats = {'pcap_earliest'=pcap_earliest.isoformat(),
+              'pcap_latest'=pcap_latest.isoformat(),
+              'pcap_retention'=(pcap_latest - pcap_earliest).days,
+              'pcap_count'=pcap_count,
+              'pcap_total_size'=pcap_total_size,
+              'pcap_avg_size'=pcap_avg_size,
+              'disk_util_pct'=round(nsm_disk_util.used / nsm_disk_util.total * 100, 2),
+              'packet_drops'=int(steno_stats['drops']),
+              'packet_drop_pct'=int(steno_stats['drop_pct']),
+              'mbps_avg'=steno_stats['mbps']}
+
+    with open('/nsm/pcapfab/stats.json', 'w') as stats_file:
+        stats_file.write(json.dumps())
 
 
 def is_valid_hostname(hostname):
@@ -1044,7 +1085,7 @@ def stenoread(pcap_metadata: PCAPFab_PCAP_Metadata, pcap_request: PCAPFab_PCAP_R
         write_metadata(pcap_metadata, 'p')
 
 def main():
-    global testout
+    pcapfab_stats_file()
     # try:
 
         # wait_time = DEFAULT_WAIT_TIME
