@@ -378,8 +378,8 @@ async def pcapfab_stats(stats_request: PCAPFab_Stats_Request, api_key: APIKey = 
 
     if not os.path.exists('/nsm/pcapfab/stats.json'):
         pcapfab_stats_file()
-        
-    stats = json.load('/nsm/pcapfab/stats.json')
+
+    stats = json.load(open('/nsm/pcapfab/stats.json'))
     
     response = PCAPFab_Stats_Response(sensor_group=stats_request.sensor_group,
                                       sensor=stats_request.sensor,
