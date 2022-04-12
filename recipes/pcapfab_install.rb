@@ -161,3 +161,10 @@ systemd_unit 'pcapfab.service' do
   action :start
 end
 
+# PCAP Fab Stats
+cron_d 'pcapfab_stats_file' do
+  user 'pcapfab'
+  minute '*'
+  command '/usr/bin/python3 /opt/pcapfab/pcapfab.py'
+end
+

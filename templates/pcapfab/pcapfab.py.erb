@@ -376,44 +376,23 @@ async def pcapfab_test(api_key: APIKey = Depends(get_api_key)):
 @app.post("/pcapfab/stats")
 async def pcapfab_stats(stats_request: PCAPFab_Stats_Request, api_key: APIKey = Depends(get_api_key)):
 
-    steno_dirs = [x for x in os.listdir('/nsm/steno/') if x not in ['rpc', 'thread1']]
-
-    if len(steno_dirs) != 1:
-        logger.error("Something went wrong in stats, unexpected steno dir listing.")
-        pcap_earliest = 'unknown'
-        pcap_latest = 'unknown'
-        pcap_count = -1
-        pcap_total_size = -1
-        pcap_avg_size = -1
-    else:
-        steno_packets_dir = f'/nsm/steno/{steno_dirs[0]}/thread1/packets/'
-        steno_packets = [x for x in sorted(os.listdir(steno_packets_dir)) if not x.startswith('.')]
-        pcap_earliest = datetime.fromtimestamp(int(steno_packets[0][:-6]))
-        pcap_latest = datetime.fromtimestamp(int(steno_packets[-1][:-6]))
-        pcap_count = len(steno_packets)
-        pcap_sizes = [os.path.getsize(steno_packets_dir+f) for f in steno_packets if os.path.isfile(steno_packets_dir+f)]
-        pcap_size_gbs = int(sum(pcap_sizes) / 1024 / 1024 / 1024)
-        pcap_total_size = f'{pcap_size_gbs} GB'
-        pcap_avg_size = pcap_size_gbs / pcap_count
-
-    steno_log = runBash('tac /var/log/stenographer.log | egrep stenotype | head -1')
-    steno_stats = re.search("MBps=(?P<MBps>\S+).+drops=(?P<drops>\S+)\sdrop%=(?P<drop_pct>\d+)", steno_log.decode()).groupdict()
-    steno_stats['mbps'] = int(float(steno_stats['MBps']) * 8)
-
-    nsm_disk_util = shutil.disk_usage('/nsm')
-
+    if not os.path.exists('/nsm/pcapfab/stats.json'):
+        pcapfab_stats_file()
+        
+    stats = json.load('/nsm/pcapfab/stats.json')
+    
     response = PCAPFab_Stats_Response(sensor_group=stats_request.sensor_group,
                                       sensor=stats_request.sensor,
-                                      pcap_earliest=pcap_earliest.isoformat(),
-                                      pcap_latest=pcap_latest.isoformat(),
-                                      pcap_retention=(pcap_latest - pcap_earliest).days,
-                                      pcap_count=pcap_count,
-                                      pcap_total_size=pcap_total_size,
-                                      pcap_avg_size=pcap_avg_size,
-                                      disk_util_pct=round(nsm_disk_util.used / nsm_disk_util.total * 100, 2),
-                                      packet_drops=int(steno_stats['drops']),
-                                      packet_drop_pct=int(steno_stats['drop_pct']),
-                                      mbps_avg=steno_stats['mbps'])
+                                      pcap_earliest=stats['pcap_earliest'],
+                                      pcap_latest=stats['pcap_latest'],
+                                      pcap_retention=stats['pcap_retention'],
+                                      pcap_count=stats['pcap_count'],
+                                      pcap_total_size=stats['pcap_total_size'],
+                                      pcap_avg_size=stats['pcap_avg_size'],
+                                      disk_util_pct=stats['disk_util_pct'],
+                                      packet_drops=stats['packet_drops'],
+                                      packet_drop_pct=stats['packet_drop_pct'],
+                                      mbps_avg=stats['mbps_avg'])
     
     return response
 
@@ -516,19 +495,19 @@ def pcapfab_stats_file():
 
     nsm_disk_util = shutil.disk_usage('/nsm')
 
-    stats = {'pcap_earliest'=pcap_earliest.isoformat(),
-              'pcap_latest'=pcap_latest.isoformat(),
-              'pcap_retention'=(pcap_latest - pcap_earliest).days,
-              'pcap_count'=pcap_count,
-              'pcap_total_size'=pcap_total_size,
-              'pcap_avg_size'=pcap_avg_size,
-              'disk_util_pct'=round(nsm_disk_util.used / nsm_disk_util.total * 100, 2),
-              'packet_drops'=int(steno_stats['drops']),
-              'packet_drop_pct'=int(steno_stats['drop_pct']),
-              'mbps_avg'=steno_stats['mbps']}
+    stats = {'pcap_earliest': pcap_earliest.isoformat(),
+              'pcap_latest': pcap_latest.isoformat(),
+              'pcap_retention': (pcap_latest - pcap_earliest).days,
+              'pcap_count': pcap_count,
+              'pcap_total_size': pcap_total_size,
+              'pcap_avg_size': pcap_avg_size,
+              'disk_util_pct': round(nsm_disk_util.used / nsm_disk_util.total * 100, 2),
+              'packet_drops': int(steno_stats['drops']),
+              'packet_drop_pct': int(steno_stats['drop_pct']),
+              'mbps_avg': steno_stats['mbps']}
 
     with open('/nsm/pcapfab/stats.json', 'w') as stats_file:
-        stats_file.write(json.dumps())
+        stats_file.write(json.dumps(stats))
 
 
 def is_valid_hostname(hostname):
