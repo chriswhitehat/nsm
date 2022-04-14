@@ -112,7 +112,7 @@ end
 
 file '/var/log/pcapfab.log' do
   action :touch
-  owner 'syslog'
+  owner 'pcapfab'
   group 'pcapfab'
   mode '0644'
   not_if do ::File.exists?('/var/log/pcapfab.log') end
