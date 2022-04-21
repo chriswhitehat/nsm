@@ -69,6 +69,7 @@ remote_file "/root/installtmp/go#{node[:nsm][:go][:version]}.linux-amd64.tar.gz"
   group 'root'
   mode '0644'
   source "https://go.dev/dl/go#{node[:nsm][:go][:version]}.linux-amd64.tar.gz"
+  ssl_verify_mode :verify_none
   notifies :run, 'execute[extract_golang]', :immediately
 end
 
