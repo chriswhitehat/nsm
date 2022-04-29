@@ -57,6 +57,11 @@ else
 
   file '/nsm/maintenance_mode' do
     action :delete
+    notifies :reboot_now, 'reboot[leaving_maintenance_mode]', :immediately
+  end
+
+  reboot 'leaving_maintenance_mode' do
+    action :nothing
   end
 
 end
