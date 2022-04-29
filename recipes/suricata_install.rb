@@ -62,8 +62,8 @@ end
 
 cron_d 'cron_suricata_setcap' do
   user 'root'
-  minute '25'
-  command 'getcap /usr/bin/suricata | egrep eip && echo "success" || setcap cap_net_raw=eip /usr/bin/suricata && systemctl restart suricata'
+  minute '30'
+  command '/usr/sbin/getcap /usr/bin/suricata | /usr/bin/egrep eip && /usr/bin/echo "success" || /usr/sbin/setcap cap_net_raw=eip /usr/bin/suricata && /usr/bin/systemctl restart suricata'
 end
 
 template '/usr/sbin/suricata-reload' do
