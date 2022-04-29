@@ -60,6 +60,12 @@ execute 'setcap_suricata' do
   action :nothing
 end
 
+cron_d 'cron_suricata_setcap' do
+  user 'root'
+  minute '25'
+  command 'getcap /usr/bin/suricata | egrep eip && echo "success" || setcap cap_net_raw=eip /usr/bin/suricata && systemctl restart suricata'
+end
+
 template '/usr/sbin/suricata-reload' do
   source 'suricata/suricata-reload.erb'
   owner 'root'
