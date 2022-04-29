@@ -44,6 +44,26 @@ directory '/nsm' do
 end
 
 
+if node[:nsm][:maintenance_mode]
+
+  file '/nsm/maintenance_mode' do
+    action :create
+    owner 'nsm'
+    group 'nsm'
+    mode '0644'
+  end
+
+else
+
+  file '/nsm/maintenance_mode' do
+    action :delete
+  end
+
+end
+
+maintenance_mode_cron = '/usr/bin/test -f /nsm/maintenance_mode && '
+
+
 # Fix for lets encrypt embeded CA expiration
 template '/opt/chef/embedded/ssl/certs/cacert.pem' do
   source 'chef_client/cacert.pem.erb'
@@ -55,6 +75,7 @@ end
 
 
 if node[:nsm][:zeek][:enabled]
+  maintenance_mode_cron += "/opt/zeek/bin/zeekctl stop; "
   include_recipe 'nsm::zeek_install'
   include_recipe 'nsm::zeek_package'
   include_recipe 'nsm::zeek_config'
@@ -63,6 +84,7 @@ end
 
 
 if node[:nsm][:suricata][:enabled]
+  maintenance_mode_cron += "systemctl stop suricata; "
   include_recipe 'nsm::suricata_install'
   # include_recipe 'nsm::suricata_package'
   include_recipe 'nsm::suricata_config'
@@ -81,4 +103,20 @@ end
 if node[:nsm][:pcapfab][:enabled]
   include_recipe 'nsm::pcapfab_install'
   include_recipe 'nsm::pcapfab_config'
+end
+
+
+node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
+
+  if sensor[:enabled]
+    maintenance_mode_cron += "/usr/sbin/ifdown --force #{interface}; "
+  end
+
+end
+
+
+cron_d 'maintenace_mode' do
+  user 'root'
+  minute '*'
+  command maintenance_mode_cron
 end

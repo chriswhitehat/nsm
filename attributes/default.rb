@@ -21,3 +21,5 @@ default[:nsm][:pcapfab][:enabled] = false
 
 default[:nsm][:sensor_region] = 'default_region'
 default[:nsm][:sensor_group] = 'default_group'
+
+default[:nsm][:maintenance_mode] = false
