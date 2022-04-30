@@ -98,6 +98,12 @@ end
 node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
 
   if sensor[:enabled]
+
+    if node[:nsm][:steno][:enabled]
+        maintenance_mode_commands += "/usr/bin/systemctl stop stenographer@#{@sensor[:sensorname]}.service\n"
+        maintenance_mode_recovery = "/usr/bin/systemctl start stenographer@#{@sensor[:sensorname]}.service\n" + maintenance_mode_recovery
+    end
+    
     maintenance_mode_commands += "/usr/sbin/ifdown --force #{interface};\n"
     maintenance_mode_recovery = "/usr/sbin/ifup --force #{interface}; " + maintenance_mode_recovery
   end
