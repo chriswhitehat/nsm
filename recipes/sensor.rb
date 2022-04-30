@@ -46,6 +46,8 @@ end
 
 maintenance_mode_commands = "#!/bin/bash\n\n\n"
 
+maintenance_mode_recovery = ''
+
 
 # Fix for lets encrypt embeded CA expiration
 template '/opt/chef/embedded/ssl/certs/cacert.pem' do
@@ -59,15 +61,19 @@ end
 
 if node[:nsm][:zeek][:enabled]
   maintenance_mode_commands += "/opt/zeek/bin/zeekctl stop;\n"
+  maintenance_mode_recovery = "/opt/zeek/bin/zeekctl start; " + maintenance_mode_recovery
+
   include_recipe 'nsm::zeek_install'
   include_recipe 'nsm::zeek_package'
   include_recipe 'nsm::zeek_config'
-  include_recipe 'nsm::zeek_scripts'  
+  include_recipe 'nsm::zeek_scripts'
 end
 
 
 if node[:nsm][:suricata][:enabled]
   maintenance_mode_commands += "/usr/bin/systemctl stop suricata;\n"
+  maintenance_mode_recovery = "/usr/bin/systemctl stop suricata; " + maintenance_mode_recovery
+
   include_recipe 'nsm::suricata_install'
   # include_recipe 'nsm::suricata_package'
   include_recipe 'nsm::suricata_config'
@@ -93,6 +99,7 @@ node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
 
   if sensor[:enabled]
     maintenance_mode_commands += "/usr/sbin/ifdown --force #{interface};\n"
+    maintenance_mode_recovery = "/usr/sbin/ifup --force #{interface}; " + maintenance_mode_recovery
   end
 
 end
@@ -115,12 +122,13 @@ cron_d 'maintenace_mode' do
   user 'root'
   minute '*'
   command '/nsm/maintenance_mode'
-  #notifies :reboot_now, 'reboot[leaving_maintenance_mode]', :immediately
+  notifies :run, 'execute[maintenance_mode_recovery]', :immediately
 end
 
-
-reboot 'leaving_maintenance_mode' do
+execute 'maintenance_mode_recovery' do
+  command maintenance_mode_recovery
   action :nothing
-  only_if node[:nsm][:maintenance_mode]
+  not_if node[:nsm][:maintenance_mode]
 end
+
 
