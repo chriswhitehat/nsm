@@ -114,7 +114,7 @@ cron_d 'maintenace_mode' do
   action maintenance_mode_cron_action
   user 'root'
   minute '*'
-  command maintenance_mode_cron
+  command '/nsm/maintenance_mode'
   #notifies :reboot_now, 'reboot[leaving_maintenance_mode]', :immediately
 end
 
