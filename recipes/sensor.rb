@@ -72,7 +72,7 @@ end
 
 if node[:nsm][:suricata][:enabled]
   maintenance_mode_commands += "/usr/bin/systemctl stop suricata;\n"
-  maintenance_mode_recovery = "/usr/bin/systemctl stop suricata; " + maintenance_mode_recovery
+  maintenance_mode_recovery = "/usr/bin/systemctl start suricata; " + maintenance_mode_recovery
 
   include_recipe 'nsm::suricata_install'
   # include_recipe 'nsm::suricata_package'
