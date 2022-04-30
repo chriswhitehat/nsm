@@ -128,7 +128,7 @@ end
 execute 'maintenance_mode_recovery' do
   command maintenance_mode_recovery
   action :nothing
-  not_if node[:nsm][:maintenance_mode]
+  not_if { node[:nsm][:maintenance_mode] }
 end
 
 
