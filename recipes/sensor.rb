@@ -98,7 +98,7 @@ node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
 end
 
 file '/nsm/maintenance_mode' do
-  contents maintenance_mode_commands
+  content maintenance_mode_commands
   owner 'nsm'
   group 'nsm'
   mode '0750'
