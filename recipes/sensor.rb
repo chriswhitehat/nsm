@@ -44,29 +44,7 @@ directory '/nsm' do
 end
 
 
-if node[:nsm][:maintenance_mode]
-
-  file '/nsm/maintenance_mode' do
-    action :create
-    owner 'nsm'
-    group 'nsm'
-    mode '0644'
-  end
-
-else
-
-  file '/nsm/maintenance_mode' do
-    action :delete
-    notifies :reboot_now, 'reboot[leaving_maintenance_mode]', :immediately
-  end
-
-  reboot 'leaving_maintenance_mode' do
-    action :nothing
-  end
-
-end
-
-maintenance_mode_cron = '/usr/bin/test -f /nsm/maintenance_mode && '
+maintenance_mode_commands = "#!/bin/bash\n\n\n"
 
 
 # Fix for lets encrypt embeded CA expiration
@@ -80,7 +58,7 @@ end
 
 
 if node[:nsm][:zeek][:enabled]
-  maintenance_mode_cron += "/opt/zeek/bin/zeekctl stop; "
+  maintenance_mode_commands += "/opt/zeek/bin/zeekctl stop;\n"
   include_recipe 'nsm::zeek_install'
   include_recipe 'nsm::zeek_package'
   include_recipe 'nsm::zeek_config'
@@ -89,7 +67,7 @@ end
 
 
 if node[:nsm][:suricata][:enabled]
-  maintenance_mode_cron += "systemctl stop suricata; "
+  maintenance_mode_commands += "/usr/bin/systemctl stop suricata;\n"
   include_recipe 'nsm::suricata_install'
   # include_recipe 'nsm::suricata_package'
   include_recipe 'nsm::suricata_config'
@@ -114,14 +92,35 @@ end
 node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
 
   if sensor[:enabled]
-    maintenance_mode_cron += "/usr/sbin/ifdown --force #{interface}; "
+    maintenance_mode_commands += "/usr/sbin/ifdown --force #{interface};\n"
   end
 
 end
 
+file '/nsm/maintenance_mode' do
+  contents maintenance_mode_commands
+  owner 'nsm'
+  group 'nsm'
+  mode '0750'
+end
+
+if node[:nsm][:maintenance_mode]
+  maintenance_mode_cron_action = 'create'
+else
+  maintenance_mode_cron_action = 'delete'
+end
 
 cron_d 'maintenace_mode' do
+  action maintenance_mode_cron_action
   user 'root'
   minute '*'
   command maintenance_mode_cron
+  #notifies :reboot_now, 'reboot[leaving_maintenance_mode]', :immediately
 end
+
+
+reboot 'leaving_maintenance_mode' do
+  action :nothing
+  only_if node[:nsm][:maintenance_mode]
+end
+
