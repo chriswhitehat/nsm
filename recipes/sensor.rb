@@ -103,7 +103,7 @@ node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
         maintenance_mode_commands += "/usr/bin/systemctl stop stenographer@#{@sensor[:sensorname]}.service\n"
         maintenance_mode_recovery = "/usr/bin/systemctl start stenographer@#{@sensor[:sensorname]}.service\n" + maintenance_mode_recovery
     end
-    
+
     maintenance_mode_commands += "/usr/sbin/ifdown --force #{interface};\n"
     maintenance_mode_recovery = "/usr/sbin/ifup --force #{interface}; " + maintenance_mode_recovery
   end
@@ -129,6 +129,7 @@ cron_d 'maintenace_mode' do
   minute '*'
   command '/nsm/maintenance_mode'
   notifies :run, 'execute[maintenance_mode_recovery]', :immediately
+  notifies :reboot, 'reboot[maintenance_mode_recovery_reboot]', :immediately
 end
 
 execute 'maintenance_mode_recovery' do
@@ -137,4 +138,9 @@ execute 'maintenance_mode_recovery' do
   not_if { node[:nsm][:maintenance_mode] }
 end
 
+reboot 'maintenance_mode_recovery_reboot' do
+  action :nothing
+  delay_mins 2
+  reason 'Recovering from maintenance mode, clean boot required.'
+end
 
