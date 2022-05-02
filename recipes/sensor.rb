@@ -144,7 +144,7 @@ cron_d 'maintenace_mode' do
   minute '*'
   command '/nsm/maintenance_mode'
   notifies :run, 'execute[maintenance_mode_recovery]', :immediately
-  notifies :reboot, 'reboot[maintenance_mode_recovery_reboot]', :immediately
+  notifies :request_reboot, 'reboot[maintenance_mode_recovery_reboot]', :immediately
 end
 
 execute 'maintenance_mode_recovery' do
