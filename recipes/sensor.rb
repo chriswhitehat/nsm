@@ -113,12 +113,12 @@ if node[:nsm][:interfaces][:sniffing]
       end
 
       if node[:nsm][:steno][:enabled]
-        maintenance_mode_commands += "/usr/bin/systemctl stop stenographer@#{@sniff[:sensorname]}.service\n"
-        maintenance_mode_recovery = "/usr/bin/systemctl start stenographer@#{@sniff[:sensorname]}.service\n" + maintenance_mode_recovery
+        maintenance_mode_commands += "/usr/bin/systemctl stop stenographer@#{sniff[:sensorname]}.service\n"
+        maintenance_mode_recovery = "/usr/bin/systemctl start stenographer@#{sniff[:sensorname]}.service\n" + maintenance_mode_recovery
       end
 
-      maintenance_mode_commands += "/usr/sbin/ifdown --force #{@sniff[:interface]};\n"
-      maintenance_mode_recovery = "/usr/sbin/ifup --force #{@sniff[:interface]}; " + maintenance_mode_recovery
+      maintenance_mode_commands += "/usr/sbin/ifdown --force #{sniff[:interface]};\n"
+      maintenance_mode_recovery = "/usr/sbin/ifup --force #{sniff[:interface]}; " + maintenance_mode_recovery
 
     end
   end
