@@ -95,20 +95,35 @@ if node[:nsm][:pcapfab][:enabled]
 end
 
 
-node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
+if node[:nsm][:interfaces][:sniffing] 
 
-  if sensor[:enabled]
+  node[:nsm][:interfaces][:sniffing].each do |interface, sensor|
 
-    if node[:nsm][:steno][:enabled]
-        maintenance_mode_commands += "/usr/bin/systemctl stop stenographer@#{@sensor[:sensorname]}.service\n"
-        maintenance_mode_recovery = "/usr/bin/systemctl start stenographer@#{@sensor[:sensorname]}.service\n" + maintenance_mode_recovery
+    if sensor[:enabled]
+
+      sniff = node[:nsm][:interfaces][:sniffing][:iface].dup
+      # Set default sniff options to interface
+      
+      sniff.each do |key, val|
+        if sensor[key]
+          sniff[key] = sensor[key].dup
+        else
+          sniff[key] = val
+        end
+      end
+
+      if node[:nsm][:steno][:enabled]
+        maintenance_mode_commands += "/usr/bin/systemctl stop stenographer@#{@sniff[:sensorname]}.service\n"
+        maintenance_mode_recovery = "/usr/bin/systemctl start stenographer@#{@sniff[:sensorname]}.service\n" + maintenance_mode_recovery
+      end
+
+      maintenance_mode_commands += "/usr/sbin/ifdown --force #{@sniff[:interface]};\n"
+      maintenance_mode_recovery = "/usr/sbin/ifup --force #{@sniff[:interface]}; " + maintenance_mode_recovery
+
     end
-
-    maintenance_mode_commands += "/usr/sbin/ifdown --force #{interface};\n"
-    maintenance_mode_recovery = "/usr/sbin/ifup --force #{interface}; " + maintenance_mode_recovery
   end
-
 end
+
 
 file '/nsm/maintenance_mode' do
   content maintenance_mode_commands
