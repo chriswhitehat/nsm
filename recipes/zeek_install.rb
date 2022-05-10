@@ -119,18 +119,18 @@ zeek_dirs.each do |zeek_dir|
 end
 
 
-template '/lib/systemd/system/zeek.service' do
-  source 'zeek/zeek.service.erb'
-  owner 'root'
-  group 'root'
-  mode '0644'
-  notifies :run, 'execute[systemctl_reload]', :immediately
-end
+# template '/lib/systemd/system/zeek.service' do
+#   source 'zeek/zeek.service.erb'
+#   owner 'root'
+#   group 'root'
+#   mode '0644'
+#   notifies :run, 'execute[systemctl_reload]', :immediately
+# end
 
-execute 'systemctl_reload' do
-  command 'sudo systemctl daemon-reload'
-  action :nothing
-end
+# execute 'systemctl_reload' do
+#   command 'sudo systemctl daemon-reload'
+#   action :nothing
+# end
 
 
 # package ["cmake", "make", "gcc", "g++", "flex", "bison", "libpcap-dev", "libjemalloc2", "libjemalloc-dev",
