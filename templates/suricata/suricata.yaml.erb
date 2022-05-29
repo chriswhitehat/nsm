@@ -22,8 +22,7 @@ vars:
     <%= @homenet_descs %>
     HOME_NET: "[<%= @homenet.uniq.join(',') %>]"
     
-    EXTERNAL_NET: "!$HOME_NET"
-    #EXTERNAL_NET: "any"
+    EXTERNAL_NET: "any"
 
     HTTP_SERVERS: "$HOME_NET"
     SMTP_SERVERS: "$HOME_NET"
