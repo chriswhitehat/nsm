@@ -188,5 +188,23 @@ cron_d "cron_suricata_update" do
 end
 
 
+##########################
+# Suricata JSON Rules log
+##########################
 
+template '/usr/bin/suricata-rules-json' do
+   source 'suricata/suricata-rules-json.erb'
+   owner 'suricata'
+   group 'suricata'
+   mode '0750'
+ end
 
+if node[:nsm][:suricata][:rules][:json]
+  cron_d "cron_suricata_rules_json" do
+    action :create
+    minute '0'
+    hour '11'
+    user 'suricata'
+    command "/usr/bin/suricata-rules-json"
+  end
+end
