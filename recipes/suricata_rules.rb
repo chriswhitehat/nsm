@@ -199,11 +199,12 @@ template '/usr/bin/suricata-rules-json' do
    mode '0750'
  end
 
-if node[:nsm][:suricata][:rules][:json]
+if node[:nsm][:suricata][:rules][:json][:enabled]
   cron_d "cron_suricata_rules_json" do
     action :create
     minute '0'
     hour '11'
+    day node[:nsm][:suricata][:rules][:json][:cron_day]
     user 'suricata'
     command "/usr/bin/suricata-rules-json"
   end
