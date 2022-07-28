@@ -384,16 +384,17 @@ async def pcapfab_stats(stats_request: PCAPFab_Stats_Request, api_key: APIKey = 
     if not os.path.exists('/nsm/pcapfab'):
         return PCAPFab_Stats_Response(sensor_group=stats_request.sensor_group,
                                       sensor=stats_request.sensor,
-                                      pcap_earliest=stats['pcap_earliest'],
-                                      pcap_latest=stats['pcap_latest'],
-                                      pcap_retention=stats['pcap_retention'],
-                                      pcap_count=stats['pcap_count'],
-                                      pcap_total_size=stats['pcap_total_size'],
-                                      pcap_avg_size=stats['pcap_avg_size'],
-                                      disk_util_pct=stats['disk_util_pct'],
-                                      packet_drops=stats['packet_drops'],
-                                      packet_drop_pct=stats['packet_drop_pct'],
-                                      mbps_avg=stats['mbps_avg'])
+                                      pcap_earliest='-',
+                                      pcap_latest='-',
+                                      pcap_retention=-1,
+                                      pcap_count=-1,
+                                      pcap_total_size='-',
+                                      pcap_avg_size=-1,
+                                      disk_util_pct=-1,
+                                      disks_bad='-',
+                                      packet_drops=-1,
+                                      packet_drop_pct=-1,
+                                      mbps_avg=-1)
 
     if not os.path.exists('/nsm/pcapfab/stats.json'):
         pcapfab_stats_file()
@@ -409,6 +410,7 @@ async def pcapfab_stats(stats_request: PCAPFab_Stats_Request, api_key: APIKey = 
                                       pcap_total_size=stats['pcap_total_size'],
                                       pcap_avg_size=stats['pcap_avg_size'],
                                       disk_util_pct=stats['disk_util_pct'],
+                                      disks_bad=stats.get('disks_bad', '-'),
                                       packet_drops=stats['packet_drops'],
                                       packet_drop_pct=stats['packet_drop_pct'],
                                       mbps_avg=stats['mbps_avg'])
