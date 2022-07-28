@@ -93,6 +93,14 @@ cron_d 'zeekctl_cron' do
   command '/opt/zeek/bin/zeekctl cron'
 end
 
+cron_d 'zeek_cleanup' do
+  user 'zeek'
+  minute '5'
+  hour '8'
+  weekday '0'
+  command '/opt/zeek/bin/zeekctl cleanup; rm -rf /nsm/zeek/spool/tmp/*'
+end
+
 cron_d 'zeek_log_rotate' do
   minute '0'
   hour '8'
