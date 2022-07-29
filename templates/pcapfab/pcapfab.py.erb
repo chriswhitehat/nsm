@@ -546,7 +546,8 @@ def pcapfab_stats_file():
 
             for state, drives in disk_issues_dict.items():
                 if state != 'OK':
-                    disk_issues += f"{state}:\n{'\n'.join(drives)}"
+                    drvs = '\n'.join(drives)
+                    disk_issues += f"{state}:\n{drvs}"
 
             disk_issues = disk_issues.strip()
 
