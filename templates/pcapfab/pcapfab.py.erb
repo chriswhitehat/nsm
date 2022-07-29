@@ -330,7 +330,7 @@ class PCAPFab_Stats_Response(BaseModel):
     pcap_total_size: str
     pcap_avg_size: int
     disk_util_pct: float
-    disks_healthy: str
+    disks_healthy: int
     disk_issues: str
     packet_drops: int
     packet_drop_pct: float
@@ -559,7 +559,7 @@ def pcapfab_stats_file():
 
     if not disk_issues:
         disk_issues = '-'
-        
+
 
     stats = {'pcap_earliest': pcap_earliest.isoformat(),
               'pcap_latest': pcap_latest.isoformat(),
