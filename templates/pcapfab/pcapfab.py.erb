@@ -514,8 +514,12 @@ def pcapfab_stats_file():
         pcap_avg_size = pcap_size_gbs / pcap_count
 
     steno_log = runBash('tac /var/log/stenographer.log | egrep stenotype | head -1')
-    steno_stats = re.search("MBps=(?P<MBps>\S+).+drops=(?P<drops>\S+)\sdrop%=(?P<drop_pct>\d+)", steno_log.decode()).groupdict()
-    steno_stats['mbps'] = int(float(steno_stats['MBps']) * 8)
+    steno_stats_parse = re.search("MBps=(?P<MBps>\S+).+drops=(?P<drops>\S+)\sdrop%=(?P<drop_pct>\d+)", steno_log.decode())
+    if steno_stats_parse and steno_stats_parse.groupdict():
+        steno_stats = steno_stats_parse.groupdict()
+        steno_stats['mbps'] = int(float(steno_stats['MBps']) * 8)
+    else:
+        steno_stats = {'drops': -1, 'drop_pct': -1, 'mbps': -1}
 
     nsm_disk_util = shutil.disk_usage('/nsm')
 
@@ -528,13 +532,15 @@ def pcapfab_stats_file():
         total = 0
         if ssacli:
             for drive in ssacli:
-                drive_state = re.search("physicaldrive ([^\s]+).+, ([a-zA-Z]+)\)", drive).groups()
-                if len(drive_state) == 2:
-                    if drive_state[-1] in disk_issues_dict:
-                        disk_issues_dict[drive_state[-1]].append(drive_state[0])
-                    else:
-                        disk_issues_dict[drive_state[-1]] = [drive_state[0]]
-                total += 1
+                drive_state_parse = re.search("physicaldrive ([^\s]+).+, ([a-zA-Z]+)\)", drive)
+                if drive_state_parse and drive_state_parse.groups():
+                    drive_state = drive_state_parse.groups()
+                    if len(drive_state) == 2:
+                        if drive_state[-1] in disk_issues_dict:
+                            disk_issues_dict[drive_state[-1]].append(drive_state[0])
+                        else:
+                            disk_issues_dict[drive_state[-1]] = [drive_state[0]]
+                    total += 1
 
             if 'OK' in disk_issues_dict:
                 ok = len(disk_issues_dict['OK'])
