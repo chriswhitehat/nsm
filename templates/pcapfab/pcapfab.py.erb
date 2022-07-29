@@ -413,11 +413,11 @@ async def pcapfab_stats(stats_request: PCAPFab_Stats_Request, api_key: APIKey = 
                                       pcap_avg_size=stats['pcap_avg_size'],
                                       disk_util_pct=stats['disk_util_pct'],
                                       disks_healthy=stats.get('disks_healthy', -1),
-                                      disks_issues=stats.get('disk_issues', '-'),
+                                      disk_issues=stats.get('disk_issues', '-'),
                                       packet_drops=stats['packet_drops'],
                                       packet_drop_pct=stats['packet_drop_pct'],
                                       mbps_avg=stats['mbps_avg'])
-    
+
     return response
 
 
