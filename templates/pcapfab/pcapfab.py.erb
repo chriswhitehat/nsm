@@ -330,7 +330,8 @@ class PCAPFab_Stats_Response(BaseModel):
     pcap_total_size: str
     pcap_avg_size: int
     disk_util_pct: float
-    disks_bad: str
+    disks_healthy: str
+    disk_issues: str
     packet_drops: int
     packet_drop_pct: float
     mbps_avg: int
@@ -391,7 +392,8 @@ async def pcapfab_stats(stats_request: PCAPFab_Stats_Request, api_key: APIKey = 
                                       pcap_total_size='-',
                                       pcap_avg_size=-1,
                                       disk_util_pct=-1,
-                                      disks_bad='-',
+                                      disks_healthy='-',
+                                      disk_issues='-',
                                       packet_drops=-1,
                                       packet_drop_pct=-1,
                                       mbps_avg=-1)
@@ -410,7 +412,8 @@ async def pcapfab_stats(stats_request: PCAPFab_Stats_Request, api_key: APIKey = 
                                       pcap_total_size=stats['pcap_total_size'],
                                       pcap_avg_size=stats['pcap_avg_size'],
                                       disk_util_pct=stats['disk_util_pct'],
-                                      disks_bad=stats.get('disks_bad', '-'),
+                                      disks_healthy=stats.get('disks_healthy', '-'),
+                                      disks_issues=stats.get('disk_issues', '-'),
                                       packet_drops=stats['packet_drops'],
                                       packet_drop_pct=stats['packet_drop_pct'],
                                       mbps_avg=stats['mbps_avg'])
@@ -516,19 +519,36 @@ def pcapfab_stats_file():
 
     nsm_disk_util = shutil.disk_usage('/nsm')
 
-    disks_bad = '-'
+    disks_healthy = -1
+    disk_issues_dict = {}
+    disk_issues = ''
 
     if os.path.exists('/var/log/hpedrive.state'):
         ssacli = open('/var/log/hpedrive.state').read().splitlines()
-        bad = 0
         total = 0
         if ssacli:
             for drive in ssacli:
+                drive_state = re.search("physicaldrive ([^\s]+).+, ([a-zA-Z]+)\)", drive).groups()
+                if len(drive_state) == 2:
+                    if drive_state[-1] in disk_issues_dict:
+                        disk_issues_dict[drive_state[-1]].append(drive_state[0])
+                    else:
+                        disk_issues_dict[drive_state[-1]] = [drive_state[0]]
                 total += 1
-                if 'OK' not in drive:
-                    bad += 1
 
-            disks_bad = f'{bad}/{total}'        
+            if 'OK' in disk_issues_dict:
+                ok = len(disk_issues_dict['OK'])
+                if ok == total:
+                    disks_healthy = 1
+                else:
+                    disks_healthy = 0
+
+
+            for state, drives in disk_issues_dict.items():
+                if state != 'OK':
+                    disk_issues += f"{state}:\n{'\n'.join(drives)}"
+
+            disk_issues = disk_issues.strip()
 
 
     stats = {'pcap_earliest': pcap_earliest.isoformat(),
@@ -538,7 +558,8 @@ def pcapfab_stats_file():
               'pcap_total_size': pcap_total_size,
               'pcap_avg_size': pcap_avg_size,
               'disk_util_pct': round(nsm_disk_util.used / nsm_disk_util.total * 100, 2),
-              'disks_bad': disks_bad,
+              'disks_healthy': disks_healthy,
+              'disk_issues': disk_issues,
               'packet_drops': int(steno_stats['drops']),
               'packet_drop_pct': int(steno_stats['drop_pct']),
               'mbps_avg': steno_stats['mbps']}
