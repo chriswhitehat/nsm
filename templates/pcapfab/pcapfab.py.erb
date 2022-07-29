@@ -557,6 +557,9 @@ def pcapfab_stats_file():
 
             disk_issues = disk_issues.strip()
 
+    if not disk_issues:
+        disk_issues = '-'
+        
 
     stats = {'pcap_earliest': pcap_earliest.isoformat(),
               'pcap_latest': pcap_latest.isoformat(),
