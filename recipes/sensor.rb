@@ -125,11 +125,15 @@ if node[:nsm][:interfaces][:sniffing]
 end
 
 
-file '/nsm/maintenance_mode' do
+file '/home/system/maintenance_mode' do
   content maintenance_mode_commands
   owner 'nsm'
   group 'nsm'
   mode '0750'
+end
+
+file '/nsm/maintenance_mode' do
+  action :delete
 end
 
 if node[:nsm][:maintenance_mode]
@@ -142,7 +146,7 @@ cron_d 'maintenace_mode' do
   action maintenance_mode_cron_action
   user 'root'
   minute '*'
-  command '/nsm/maintenance_mode'
+  command '/home/system/maintenance_mode'
   notifies :run, 'execute[maintenance_mode_recovery]', :immediately
   notifies :request_reboot, 'reboot[maintenance_mode_recovery_reboot]', :immediately
 end
