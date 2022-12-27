@@ -21,6 +21,19 @@ execute 'set-timezone' do
   action :nothing
 end
 
+template '/usr/share/i18n/locales/en_US' do
+  source 'misc/en_US.erb'
+  mode '0644'
+  owner 'root'
+  group 'root'
+  notifies :run, 'execute[set-timeformat]', :immediately
+end
+
+execute 'set-timeformat' do
+  command "locale-gen"
+  action :nothing
+end
+
 
 user 'nsm' do
    action :create
