@@ -73,8 +73,8 @@ end
 
 
 if node[:nsm][:zeek][:enabled]
-  maintenance_mode_commands += "/opt/zeek/bin/zeekctl stop;\n"
-  maintenance_mode_recovery = "/opt/zeek/bin/zeekctl start; " + maintenance_mode_recovery
+  maintenance_mode_commands += "runuser -l zeek -c /opt/zeek/bin/zeekctl stop;\n"
+  maintenance_mode_recovery = "runuser -l zeek -c '/opt/zeek/bin/zeekctl deploy'; " + maintenance_mode_recovery
 
   include_recipe 'nsm::zeek_install'
   include_recipe 'nsm::zeek_package'
