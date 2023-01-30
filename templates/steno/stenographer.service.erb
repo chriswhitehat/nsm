@@ -35,6 +35,8 @@ LimitFSIZE=4294967296
 LimitNOFILE=1000000
 ExecStart=/usr/bin/stenographer -config /etc/stenographer/config_%i
 ExecStopPost=/bin/pkill -9 stenotype
+Restart=on-failure
+RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target
