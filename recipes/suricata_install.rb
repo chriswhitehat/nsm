@@ -40,6 +40,14 @@ directory '/nsm/suricata' do
   action :create
 end
 
+if node[:nsm][:suricata][:config][:filestore][:enabled] == "yes"
+  directory node[:nsm][:suricata][:config][:filestore][:dir] do
+    owner 'suricata'
+    group 'suricata'
+    mode '0750'
+    action :create
+  end
+end
 
 apt_repository 'suricata-stable' do
   uri 'ppa:oisf/suricata-stable'

@@ -75,7 +75,8 @@ if node[:nsm][:interfaces][:sniffing]
   nsm_logrotate_paths = ['/nsm/suricata/suricata.log',
                         '/nsm/suricata/stats.log',
                         '/nsm/suricata/eve.json',
-                        '/var/log/suricata/suricata-start.log']
+                        '/var/log/suricata/suricata-start.log', 
+                        '/nsm/suricata/filestore.log']
 
   logrotate_app "rotate-suricata" do
     path      nsm_logrotate_paths
@@ -101,6 +102,22 @@ if node[:nsm][:interfaces][:sniffing]
         :af_packet => af_packet
       )
     notifies :restart, 'service[suricata.service]'
+  end
+
+
+  if node[:nsm][:suricata][:config][:filestore][:enabled] == "yes"
+    filestore_purge_action = 'create'
+  else
+    filestore_purge_action = 'delete'
+  end
+
+  cron_d "cron_suricata_filestore_purge" do
+    action filestore_purge_action
+    minute '15'
+    hour '0'
+    mode '0640'
+    user 'suricata'
+    command "/usr/bin/suricatactl filestore prune -d #{node[:nsm][:suricata][:config][:filestore][:dir]} --age #{node[:nsm][:suricata][:config][:filestore][:prune][:retention]} #{node[:nsm][:suricata][:config][:filestore][:prune][:verbose_log]} > /nsm/suricata/filestore.log 2>&1"
   end
 
   service 'suricata.service' do

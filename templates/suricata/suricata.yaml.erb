@@ -241,11 +241,19 @@ outputs:
             #session-resumption: no
             # custom controls which TLS fields that are included in eve-log
             #custom: [subject, issuer, session_resumed, serial, fingerprint, sni, version, not_before, not_after, certificate, chain, ja3, ja3s]
+        <% if node[:nsm][:suricata][:config][:filestore][:enabled] == "yes" %>
+        - files:
+            force-magic: <%= node[:nsm][:suricata][:config][:filestore][:force_magic] %>   # force logging magic on all logged files
+            # force logging of checksums, available hash functions are md5,
+            # sha1 and sha256
+            force-hash: <%= node[:nsm][:suricata][:config][:filestore][:force_hash] %>
+        <% else %>
         #- files:
             #force-magic: no   # force logging magic on all logged files
             # force logging of checksums, available hash functions are md5,
             # sha1 and sha256
             #force-hash: [md5]
+        <% end %>
         #- drop:
         #    alerts: yes      # log alerts that caused drops
         #    flows: all       # start or all: 'start' logs only a single drop
@@ -447,16 +455,16 @@ outputs:
   # prune" command which can delete files over a certain age.
   - file-store:
       version: 2
-      enabled: no
+      enabled: <%= node[:nsm][:suricata][:config][:filestore][:enabled] %>
 
       # Set the directory for the filestore. Relative pathnames
       # are contained within the "default-log-dir".
-      #dir: filestore
+      dir: <%= node[:nsm][:suricata][:config][:filestore][:dir] %>
 
       # Write out a fileinfo record for each occurrence of a file.
       # Disabled by default as each occurrence is already logged
       # as a fileinfo record to the main eve-log.
-      #write-fileinfo: yes
+      write-fileinfo: <%= node[:nsm][:suricata][:config][:filestore][:write_fileinfo] %>
 
       # Force storing of all files. Default: no.
       #force-filestore: yes
@@ -464,7 +472,7 @@ outputs:
       # Override the global stream-depth for sessions in which we want
       # to perform file extraction. Set to 0 for unlimited; otherwise,
       # must be greater than the global stream-depth value to be used.
-      #stream-depth: 0
+      stream-depth: <%= node[:nsm][:suricata][:config][:filestore][:stream_depth] %>
 
       # Uncomment the following variable to define how many files can
       # remain open for filestore by Suricata. Default value is 0 which
@@ -475,7 +483,7 @@ outputs:
       # sha1 and sha256. Note that SHA256 is automatically forced by
       # the use of this output module as it uses the SHA256 as the
       # file naming scheme.
-      #force-hash: [sha1, md5]
+      force-hash: <%= node[:nsm][:suricata][:config][:filestore][:force_hash] %>
       # NOTE: X-Forwarded configuration is ignored if write-fileinfo is disabled
       # HTTP X-Forwarded-For support by adding an extra field or overwriting
       # the source or destination IP address (depending on flow direction)
@@ -853,8 +861,8 @@ app-layer:
 
            # Can be specified in kb, mb, gb.  Just a number indicates
            # it's in bytes.
-           request-body-limit: 100kb
-           response-body-limit: 100kb
+           request-body-limit: <%= node[:nsm][:suricata][:config]['app-layer']['protocols']['http']['libhtp']['request-body-limit'] %>
+           response-body-limit: <%= node[:nsm][:suricata][:config]['app-layer']['protocols']['http']['libhtp']['response-body-limit'] %>
 
            # inspection limits
            request-body-minimal-inspect-size: 32kb
