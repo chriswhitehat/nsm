@@ -12,7 +12,8 @@ default[:nsm][:suricata][:config]['app-layer']['protocols']['http']['libhtp']['r
 # Filestore
 default[:nsm][:suricata][:config][:filestore][:enabled] = 'no'
 default[:nsm][:suricata][:config][:filestore][:dir] = '/nsm/suricata/filestore'
-default[:nsm][:suricata][:config][:filestore][:write_fileinfo] = 'yes'
+# Caution if set to yes a huge number of events are generated
+default[:nsm][:suricata][:config][:filestore][:write_fileinfo] = 'no'
 # Stream Depth in MB
 default[:nsm][:suricata][:config][:filestore][:stream_depth] = '5'
 default[:nsm][:suricata][:config][:filestore][:force_hash] = '[sha256, md5]'
