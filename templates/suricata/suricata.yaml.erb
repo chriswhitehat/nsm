@@ -241,7 +241,7 @@ outputs:
             #session-resumption: no
             # custom controls which TLS fields that are included in eve-log
             #custom: [subject, issuer, session_resumed, serial, fingerprint, sni, version, not_before, not_after, certificate, chain, ja3, ja3s]
-        <% if node[:nsm][:suricata][:config][:filestore][:enabled] == "yes" %>
+        <% if node[:nsm][:suricata][:config][:fileinfo][:enabled] == "yes" %>
         - files:
             force-magic: <%= node[:nsm][:suricata][:config][:filestore][:force_magic] %>   # force logging magic on all logged files
             # force logging of checksums, available hash functions are md5,

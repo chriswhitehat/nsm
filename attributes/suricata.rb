@@ -9,11 +9,14 @@
 default[:nsm][:suricata][:config]['app-layer']['protocols']['http']['libhtp']['request-body-limit'] = '100kb'
 default[:nsm][:suricata][:config]['app-layer']['protocols']['http']['libhtp']['response-body-limit'] = '100kb'
 
+# Eve log fileinfo events
+# Caution if set to yes a huge number of events are generated
+default[:nsm][:suricata][:config][:fileinfo][:enabled] = 'no'
+
 # Filestore
 default[:nsm][:suricata][:config][:filestore][:enabled] = 'no'
 default[:nsm][:suricata][:config][:filestore][:dir] = '/nsm/suricata/filestore'
-# Caution if set to yes a huge number of events are generated
-default[:nsm][:suricata][:config][:filestore][:write_fileinfo] = 'no'
+default[:nsm][:suricata][:config][:filestore][:write_fileinfo] = 'yes'
 # Stream Depth in MB
 default[:nsm][:suricata][:config][:filestore][:stream_depth] = '5'
 default[:nsm][:suricata][:config][:filestore][:force_hash] = '[sha256, md5]'
