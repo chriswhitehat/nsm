@@ -4,6 +4,9 @@
 #
 # Copyright:: 2021, The Authors, All Rights Reserved.
 
+# Expired Repo Key
+default[:nsm][:zeek][:repo][:expired_key] = ''
+
 # Zeekctl
 default[:nsm][:zeek][:config][:mail_to] = 'root@localhost'
 

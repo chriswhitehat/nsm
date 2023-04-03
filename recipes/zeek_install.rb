@@ -40,6 +40,18 @@ directory '/opt/zeek' do
   action :create
 end
 
+execute 'apt_repo_del_key' do
+  command "apt-key del #{node[:nsm][:zeek][:repo][:expired_key]}"
+  action :run
+  not_if do ::File.exists?("/nsm/zeek/expired_apt_key_#{default[:nsm][:zeek][:repo][:expired_key]}") end
+end
+
+file "/nsm/zeek/expired_apt_key_#{default[:nsm][:zeek][:repo][:expired_key]}" do
+  action :create
+  owner 'zeek'
+  group 'zeek'
+  mode '0644'
+end
 
 apt_repository 'security:zeek' do
   uri "http://download.opensuse.org/repositories/security:/zeek/xUbuntu_#{node[:lsb][:release]}/"
