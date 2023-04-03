@@ -43,10 +43,10 @@ end
 execute 'apt_repo_del_key' do
   command "apt-key del #{node[:nsm][:zeek][:repo][:expired_key]}"
   action :run
-  not_if do ::File.exists?("/nsm/zeek/expired_apt_key_#{default[:nsm][:zeek][:repo][:expired_key]}") end
+  not_if do ::File.exists?("/nsm/zeek/expired_apt_key_#{node[:nsm][:zeek][:repo][:expired_key]}") end
 end
 
-file "/nsm/zeek/expired_apt_key_#{default[:nsm][:zeek][:repo][:expired_key]}" do
+file "/nsm/zeek/expired_apt_key_#{node[:nsm][:zeek][:repo][:expired_key]}" do
   action :create
   owner 'zeek'
   group 'zeek'
