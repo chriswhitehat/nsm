@@ -18,6 +18,12 @@ execute 'install_ipython' do
   not_if do ::File.exists?('/usr/local/bin/ipython') end
 end
 
+execute 'install_pyminizip' do
+  command 'pip install pyminizip'
+  action :run
+  not_if do ::File.exists?('/usr/local/lib/python3.8/dist-packages/pyminizip*') end
+end
+
 user 'pcapfab' do
   action :create
   system true
@@ -47,6 +53,12 @@ group 'zeek' do
 end
 
 group 'nsm' do
+  action :create
+  append true
+  members ['pcapfab']
+end
+
+group 'suricata' do
   action :create
   append true
   members ['pcapfab']
