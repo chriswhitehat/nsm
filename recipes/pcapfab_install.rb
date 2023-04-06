@@ -21,7 +21,7 @@ end
 execute 'install_pyminizip' do
   command 'pip install pyminizip'
   action :run
-  not_if do ::File.exists?('/usr/local/lib/python3.8/dist-packages/pyminizip*') end
+  only_if do ::Dir.glob('/usr/local/lib/python3.8/dist-packages/pyminizip*').empty? end
 end
 
 user 'pcapfab' do
