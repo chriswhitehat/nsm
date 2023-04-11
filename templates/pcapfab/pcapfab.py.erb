@@ -541,7 +541,7 @@ def file_retrieve(hash, url):
 
         #FIND AND UPDATE FILE INFO
         json_files = [f for f in os.listdir(path_dir) if f.endswith('.json') if f.startswith(hash)]
-        with open(path_dir + "/" + json_files[0] as info:
+        with open(path_dir + "/" + json_files[0]) as info:
             json_info = json.load(info)
 
         fileinfo.update((key, val) for (key, val) in json_info['fileinfo'].items() if key in fileinfo)
