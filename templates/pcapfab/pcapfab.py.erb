@@ -36,7 +36,11 @@ from datetime import datetime, timedelta
 from urllib.parse import urlparse
 from subprocess import Popen, PIPE
 
+import pyminizip
+
 import logging
+
+
 
 gunicorn_logger = logging.getLogger('gunicorn.error')
 logger.handlers = gunicorn_logger.handlers
@@ -52,6 +56,7 @@ API_KEY = '<%= node[:nsm][:pcapfab][:api_key] %>'
 api_key_header = APIKeyHeader(name="access_token")
 
 DEFAULT_RETENTION_DAYS = <%= node[:nsm][:pcapfab][:retention_days] %>
+DEFAULT_RETENTION_DAYS_FILES = <%= node[:nsm][:pcapfab][:files][:retention_days] %>
 
 WITH_ERRORS = True
 DEFAULT_WAIT_TIME = 0
@@ -354,11 +359,23 @@ class PCAPFab_Purge_Request(BaseModel):
     protected: Optional[bool]
 
 
+
+class Filestore_File_Request(BaseModel):
+    hash: str
+
+    @validator('hash')
+    def hash_validator(cls, v):
+        if not len(v) == 64:
+            raise ValueError('must be a valid SHA256')
+        return v
+
+
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 
 app.mount("/pcaps", StaticFiles(directory="/nsm/pcapfab/pcaps"), name="pcaps")
 
+app.mount("/files", StaticFiles(directory="/nsm/pcapfab/files"), name="files")
 
 async def get_api_key(api_key_header: str = Security(api_key_header) ):
 
@@ -369,6 +386,7 @@ async def get_api_key(api_key_header: str = Security(api_key_header) ):
             status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials"
         )
 
+
 @app.get("/pcapfab/test")
 async def pcapfab_test(api_key: APIKey = Depends(get_api_key)):
     if not os.path.exists('/nsm/pcapfab/'):
@@ -377,6 +395,23 @@ async def pcapfab_test(api_key: APIKey = Depends(get_api_key)):
                 )
     response = PCAPFab_Test(test='successful')
     return response
+
+
+@app.get("/filestore/test")
+async def filestore_test(api_key: APIKey = Depends(get_api_key)):
+    if not os.path.exists('/nsm/suricata/filestore'):
+        raise HTTPException(
+                    status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail="Filestore directory not found, possible partition issues"
+                )
+    response = PCAPFab_Test(test='successful')
+    return response
+
+
+@app.post("/filestore/retrieve")
+async def filestore_file_submit(file_request: Filestore_File_Request, backgroundtasks: BackgroundTasks, request: Request, api_key: APIKey = Depends(get_api_key)):
+    
+    backgroundtasks.add_task(rotate_files)
+    return file_retrieve(file_request.hash, str(request.url))
 
 
 @app.post("/pcapfab/stats")
@@ -476,21 +511,67 @@ async def pcapfab_pcap_status(pcap_status: PCAPFab_PCAP_Status, api_key: APIKey 
 
     return load_metadata(pcap_status.id, 'p')
 
-# @app.get("/pcapfab/list/")
-# async def pcapfab_list(rasterize_url: Rasterize_Url, api_key: APIKey = Depends(get_api_key)):
-#     rasterize_url_dict = rasterize_url.dict()
 
-# @app.get("/pcapfab/purge/")
-# async def pcapfab_purge(rasterize_url: Rasterize_Url, api_key: APIKey = Depends(get_api_key)):
-#     rasterize_url_dict = rasterize_url.dict()
+def file_retrieve(hash, url):
+    fileinfo ={
+        "filename": None,
+        "magic": None,
+        "md5": None,
+        "sha256": None,
+        "size": None,
+        "gaps": None,
+        "download_url": None,
+        "status": False,
+        "password": "infected"
+    }
+    path_dir = f'/nsm/suricata/filestore/{hash[:2]}'
+    path = path_dir + f'/{hash}'
 
-# @app.get("/pcapfab/prune/")
-# async def pcapfab_prune(rasterize_url: Rasterize_Url, api_key: APIKey = Depends(get_api_key)):
-#     rasterize_url_dict = rasterize_url.dict()
+    if os.path.exists(path):
+        #MAKE NEW FILE DIRECTORY PATH
+        now = datetime.now()
+        file_date = now.date().isoformat()
+        file_uuid = uuid.uuid4()
+        if not os.path.exists('/nsm/pcapfab/files/%s' % file_date):
+            os.mkdir('/nsm/pcapfab/files/%s' % file_date)
+        if not os.path.exists('/nsm/pcapfab/files/%s/%s' % (file_date, file_uuid)):
+            os.mkdir('/nsm/pcapfab/files/%s/%s' % (file_date, file_uuid))
 
-# @app.get("/pcapfab/pcaps/")
-# async def pcapfab_pcaps(rasterize_url: Rasterize_Url, api_key: APIKey = Depends(get_api_key)):
-#     rasterize_url_dict = rasterize_url.dict()
+        file_dir = "%s/%s" % (file_date, file_uuid)
+
+        #FIND AND UPDATE FILE INFO
+        json_files = [f for f in os.listdir(path_dir) if f.endswith('.json') if f.startswith(hash)]
+        with open(path_dir + "/" + json_files[0] as info:
+            json_info = json.load(info)
+
+        fileinfo.update((key, val) for (key, val) in json_info['fileinfo'].items() if key in fileinfo)
+        fileinfo['status'] = True
+        fileinfo['download_url'] = url.replace("filestore/retrieve", ("files/"+file_dir + "/" + hash + ".zip"))
+
+        #COPY AND ZIP FILE TO NEW DIRECTORY
+        zip_path = ("/nsm/pcapfab/files/"+file_dir+"/"+hash+".zip")
+        pyminizip.compress(path, None, zip_path, fileinfo['password'], 5)
+        shutil.copy(path, ("/nsm/pcapfab/files/" + file_dir))
+
+
+    return fileinfo
+
+
+def rotate_files():
+
+    expiration = (datetime.now() - timedelta(days=DEFAULT_RETENTION_DAYS_FILES))
+
+    if os.path.exists('/nsm/pcapfab/files'):
+
+        for dir in os.listdir('/nsm/pcapfab/files'):
+            try:
+                dir_date = parse(dir)
+            except:
+                continue
+
+            if dir_date.date() < expiration.date():
+                shutil.rmtree('/nsm/pcapfab/files/%s/' % dir)
+
 
 def pcapfab_stats_file():
     steno_dirs = [x for x in os.listdir('/nsm/steno/') if x not in ['rpc', 'thread1']]
