@@ -549,10 +549,10 @@ def file_retrieve(hash, url):
         fileinfo['download_url'] = url.replace("filestore/retrieve", ("files/"+file_dir + "/" + hash + ".zip"))
 
         #COPY AND ZIP FILE TO NEW DIRECTORY
+        basename = os.path.basename(fileinfo['filename'])
+        file_path = shutil.copy(path, ("/nsm/pcapfab/files/"+ file_dir+"/" + basename))
         zip_path = ("/nsm/pcapfab/files/"+file_dir+"/"+hash+".zip")
-        pyminizip.compress(path, None, zip_path, fileinfo['password'], 5)
-        shutil.copy(path, ("/nsm/pcapfab/files/" + file_dir))
-
+        pyminizip.compress(file_path, None, zip_path, fileinfo['password'], 5)
 
     return fileinfo
 
