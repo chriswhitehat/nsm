@@ -553,6 +553,7 @@ def file_retrieve(hash, url):
         file_path = shutil.copy(path, ("/nsm/pcapfab/files/"+ file_dir+"/" + basename))
         zip_path = ("/nsm/pcapfab/files/"+file_dir+"/"+hash+".zip")
         pyminizip.compress(file_path, None, zip_path, fileinfo['password'], 5)
+        os.rename(file_path, ("/nsm/pcapfab/files/"+file_dir+"/"+hash))
 
     return fileinfo
 
