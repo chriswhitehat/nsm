@@ -45,7 +45,7 @@ def backfill(earliest_time, latest_time, dryrun):
                     dst = os.path.join(dst_dir, dst_file)
 
                     if not os.path.exists(dst_dir):
-                        print('Making directory' + dst_dir)
+                        print('Making directory ' + dst_dir)
 
                         if not dryrun:
                             os.makedirs(dst_dir)
