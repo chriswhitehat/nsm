@@ -2,12 +2,15 @@
 
 import datetime, os, shutil, pwd
 import argparse
+import time
+import random
 
 def processArgs():
     parser = argparse.ArgumentParser(description='Zeek Backfill', prog='zeekback')
     
     parser.add_argument('-e', '--earliest', help='Earliest time to backfill logs - 2023-08-01T10:05:00', required=True)
     parser.add_argument('-l', '--latest', help='Latest time to backfill logs - 2023-08-01T11:05:00', required=True)
+    parser.add_argument('-s', '--splay', help='Number of minutes to randomly wait before copying logs', required=True)
     parser.add_argument('-d', '--dryrun', action="store_true", help='Prints intended actions but takes no action')
     
     return parser.parse_args()
@@ -78,7 +81,17 @@ def main():
         print('Error parsing latest time.')
         exit()
 
-    print(f'Backfilling data from {earliest_time.isoformat()} to {latest_time.isoformat()}')
+    if not earliest_time < latest_time:
+        print('Error, latest time must be after earliest time')
+        exit()
+
+
+    print(f'In {options.splay}min, Backfilling data from {earliest_time.isoformat()} to {latest_time.isoformat()}')
+
+    if options.dryrun:
+        time.sleep(10)
+    else:
+        time.sleep(random.randint(0, int(options.splay) * 60))
 
     backfill(earliest_time, latest_time, options.dryrun)
 
