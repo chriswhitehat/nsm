@@ -4,6 +4,7 @@ import datetime, os, shutil, pwd
 import argparse
 import time
 import random
+import platform
 
 def processArgs():
     parser = argparse.ArgumentParser(description='Zeek Backfill', prog='zeekback')
@@ -90,11 +91,14 @@ def main():
     print(f'In {splay_secs} secs, Backfilling data from {earliest_time.isoformat()} to {latest_time.isoformat()}')
 
     if options.dryrun:
-        time.sleep(random.randint(0,10))
+        # time.sleep(random.randint(0,10))
+        time.sleep(splay_secs)
     else:
         time.sleep(splay_secs)
 
     backfill(earliest_time, latest_time, options.dryrun)
+
+    print( + f'{platform.node()} backfill complete.')
 
 
 if __name__ == '__main__':
