@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+
+import datetime, os, shutil, pwd
+import argparse
+
+def processArgs():
+    parser = argparse.ArgumentParser(description='Zeek Backfill', prog='zeekback')
+    
+    parser.add_argument('-e', '--earliest', help='Earliest time to backfill logs - 2023-08-01T10:05:00', required=True)
+    parser.add_argument('-l', '--latest', help='Latest time to backfill logs - 2023-08-01T11:05:00', required=True)
+    
+    return parser.parse_args()
+
+
+def backfill(earliest_time, latest_time):
+    current_day = earliest_time.date()
+
+    while current_day >= earliest_time.date() and current_day <= latest_time.date():
+
+        current_path = '<%= node[:nsm][:zeek][:config][:log_dir] %>/' + current_day.isoformat()
+
+        if os.path.exists(current_path):
+        
+            for log in os.listdir(current_path):
+                sourcetype, time_range, rest = log.split('.', 2)
+
+                start, end = time_range.split('-')
+
+                log_start = datetime.datetime.strptime(current_day.isoformat() + 'T' + start, '%Y-%m-%dT%H:%M:%S')
+
+                if end == '00:00:00':
+                    log_end = datetime.datetime.strptime(current_day.isoformat() + 'T23:59:59', '%Y-%m-%dT%H:%M:%S')
+                else:
+                    log_end = datetime.datetime.strptime(current_day.isoformat() + 'T' + end, '%Y-%m-%dT%H:%M:%S')
+
+                if (log_start >= earliest_time or log_end >= earliest_time) and (log_start <= latest_time or log_end <= latest_time):
+                    # print(time_range + " " + sourcetype)
+                    
+                    src = os.path.join(current_path, log) 
+
+                    dst_dir = os.path.join('<%= node[:nsm][:zeek][:config][:log_backfill_dir] %>/', sourcetype)
+                    dst_file = f'{sourcetype}.{current_day.isoformat()}.{time_range}.{rest}'
+
+                    dst = os.path.join(dst_dir, dst_file)
+
+                    if not os.path.exists(dst_dir):
+                        print('Making directory' + dst_dir)
+                        os.makedirs(dst_dir)
+
+                    print('Copying %s -> %s' % (src, dst))
+                    shutil.copy2(src, dst)
+
+        current_day = current_day + datetime.timedelta(days=1)
+
+def main():
+
+    if pwd.getpwuid(os.getuid())[0] != 'zeek':
+        print('Must be run as zeek. Exiting.')
+        exit()
+
+    options = processArgs()
+
+
+    try:
+        earliest_time = datetime.datetime.strptime(options.earliest, '%Y-%m-%dT%H:%M:%S')
+    except:
+        print('Error parsing earliest time.')
+        exit()
+
+    try:
+        latest_time = datetime.datetime.strptime(options.latest, '%Y-%m-%dT%H:%M:%S')
+    except:
+        print('Error parsing latest time.')
+        exit()
+
+    print(f'Backfilling data from {earliest_time.isoformat()} to {latest_time.isoformat()}')
+
+    backfill(earliest_time, latest_time)
+
+
+if __name__ == '__main__':
+    main()
