@@ -121,7 +121,8 @@ cron_d 'zeek_log_rotate' do
 end
 
 zeek_dirs = ['/nsm/zeek', 
-            node[:nsm][:zeek][:config][:log_dir], 
+            node[:nsm][:zeek][:config][:log_dir],
+            node[:nsm][:zeek][:config][:log_backfill_dir],
             node[:nsm][:zeek][:config][:extracted_dir], 
             node[:nsm][:zeek][:config][:spool_dir],
             node[:nsm][:zeek][:config][:broker_db_dir]]
@@ -137,6 +138,14 @@ zeek_dirs.each do |zeek_dir|
   end
   
 end
+
+template '/opt/zeek/bin/zeekback.py' do
+  source 'zeek/zeekback.py.erb'
+  owner 'zeek'
+  group 'zeek'
+  mode '0770'
+end
+
 
 
 # template '/lib/systemd/system/zeek.service' do
