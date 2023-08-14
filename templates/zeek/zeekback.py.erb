@@ -85,13 +85,14 @@ def main():
         print('Error, latest time must be after earliest time')
         exit()
 
+    splay_secs = random.randint(0, int(options.splay) * 60)
 
-    print(f'In {options.splay}min, Backfilling data from {earliest_time.isoformat()} to {latest_time.isoformat()}')
+    print(f'In {splay_secs} secs, Backfilling data from {earliest_time.isoformat()} to {latest_time.isoformat()}')
 
     if options.dryrun:
-        time.sleep(10)
+        time.sleep(random.randint(0,10))
     else:
-        time.sleep(random.randint(0, int(options.splay) * 60))
+        time.sleep(splay_secs)
 
     backfill(earliest_time, latest_time, options.dryrun)
 
