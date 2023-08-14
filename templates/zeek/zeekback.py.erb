@@ -8,11 +8,12 @@ def processArgs():
     
     parser.add_argument('-e', '--earliest', help='Earliest time to backfill logs - 2023-08-01T10:05:00', required=True)
     parser.add_argument('-l', '--latest', help='Latest time to backfill logs - 2023-08-01T11:05:00', required=True)
+    parser.add_argument('-d', '--dryrun', action="store_true", help='Prints intended actions but takes no action')
     
     return parser.parse_args()
 
 
-def backfill(earliest_time, latest_time):
+def backfill(earliest_time, latest_time, dryrun):
     current_day = earliest_time.date()
 
     while current_day >= earliest_time.date() and current_day <= latest_time.date():
@@ -45,10 +46,14 @@ def backfill(earliest_time, latest_time):
 
                     if not os.path.exists(dst_dir):
                         print('Making directory' + dst_dir)
-                        os.makedirs(dst_dir)
+
+                        if not dryrun:
+                            os.makedirs(dst_dir)
 
                     print('Copying %s -> %s' % (src, dst))
-                    shutil.copy2(src, dst)
+
+                    if not dryrun:
+                        shutil.copy2(src, dst)
 
         current_day = current_day + datetime.timedelta(days=1)
 
@@ -75,7 +80,7 @@ def main():
 
     print(f'Backfilling data from {earliest_time.isoformat()} to {latest_time.isoformat()}')
 
-    backfill(earliest_time, latest_time)
+    backfill(earliest_time, latest_time, options.dryrun)
 
 
 if __name__ == '__main__':
