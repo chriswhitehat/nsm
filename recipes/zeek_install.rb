@@ -148,6 +148,14 @@ template '/opt/zeek/bin/zeekback.py' do
 end
 
 
+execute 'fix_git_safe_dirs' do
+  command "git config --global --add safe.directory '*' && touch /opt/zeek/fix_git_safe_dirs"
+  not_if do ::File.exist?("/opt/zeek/fix_git_safe_dirs") end
+  action :run
+end
+
+
+
 
 # template '/lib/systemd/system/zeek.service' do
 #   source 'zeek/zeek.service.erb'
