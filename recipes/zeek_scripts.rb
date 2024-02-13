@@ -61,6 +61,34 @@ else
   host = {}
 end
 
+if node[:nsm][:zeek][:intel]
+  if node[:nsm][:zeek][:intel][:global]
+    global = node[:nsm][:zeek][:intel][:global]
+  else
+    global = {}
+  end
+  if node[:nsm][:zeek][:intel][:regional]
+    regional = node[:nsm][:zeek][:intel][:regional]
+  else
+    regional = {}
+  end
+  if node[:nsm][:zeek][:intel][node[:nsm][:sensor_group]]
+    sensor_group = node[:nsm][:zeek][:intel][node[:nsm][:sensor_group]]
+  else
+    sensor_group = {}
+  end
+  if node[:nsm][:zeek][:intel][node[:fqdn]]
+    host = node[:nsm][:zeek][:intel][node[:fqdn]]
+  else
+    host = {}
+  end
+else
+  global_intel = {}
+  regional_intel = {}
+  sensor_group_intel = {}
+  host_intel = {}
+end
+
 template '/opt/zeek/share/zeek/site/local.zeek' do
   source 'zeek/local.zeek.erb'
   owner 'zeek'
@@ -68,6 +96,10 @@ template '/opt/zeek/share/zeek/site/local.zeek' do
   mode '0644'
   manage_symlink_source true
   variables({
+    :global_intel => global_intel,
+    :regional_intel => regional_intel,
+    :sensor_group_intel => sensor_group_intel,
+    :host_intel => host_intel,
     :global_sigs => global_sigs,
     :regional_sigs => regional_sigs,
     :sensor_group_sigs => sensor_group_sigs,

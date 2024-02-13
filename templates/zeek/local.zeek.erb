@@ -10,6 +10,80 @@
 
 
 ########################
+# Zeek Intel
+########################
+
+################
+# Global
+################
+
+<% @global_intel.each do |intel_file, enabled| %>
+	<% if enabled %>
+redef Intel::read_files += { "<%=intel_file%>" };
+@load frameworks/intel/seen
+@load frameworks/intel/do_notice
+<%= "\@load-sigs #{sig}" %>
+	<% else %>
+#redef Intel::read_files += { "<%=intel_file%>" };
+#@load frameworks/intel/seen
+#@load frameworks/intel/do_notice
+	<% end %>
+<% end %>
+
+################
+# Regional
+################
+
+<% @regional_intel.each do |intel_file, enabled| %>
+	<% if enabled %>
+redef Intel::read_files += { "<%=intel_file%>" };
+@load frameworks/intel/seen
+@load frameworks/intel/do_notice
+<%= "\@load-sigs #{sig}" %>
+	<% else %>
+#redef Intel::read_files += { "<%=intel_file%>" };
+#@load frameworks/intel/seen
+#@load frameworks/intel/do_notice
+	<% end %>
+<% end %>
+
+################
+# Sensor Group 
+# <%= node[:nsm][:sensor_group] %>
+################
+
+<% @sensor_group_intel.each do |intel_file, enabled| %>
+	<% if enabled %>
+redef Intel::read_files += { "<%=intel_file%>" };
+@load frameworks/intel/seen
+@load frameworks/intel/do_notice
+<%= "\@load-sigs #{sig}" %>
+	<% else %>
+#redef Intel::read_files += { "<%=intel_file%>" };
+#@load frameworks/intel/seen
+#@load frameworks/intel/do_notice
+	<% end %>
+<% end %>
+
+################
+# Host
+################
+
+<% @host_intel.each do |intel_file, enabled| %>
+	<% if enabled %>
+redef Intel::read_files += { "<%=intel_file%>" };
+@load frameworks/intel/seen
+@load frameworks/intel/do_notice
+<%= "\@load-sigs #{sig}" %>
+	<% else %>
+#redef Intel::read_files += { "<%=intel_file%>" };
+#@load frameworks/intel/seen
+#@load frameworks/intel/do_notice
+	<% end %>
+<% end %>
+
+
+########################
 # Zeek Signatures
 ########################
 

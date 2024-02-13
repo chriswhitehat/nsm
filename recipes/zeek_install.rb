@@ -125,7 +125,8 @@ zeek_dirs = ['/nsm/zeek',
             node[:nsm][:zeek][:config][:log_backfill_dir],
             node[:nsm][:zeek][:config][:extracted_dir], 
             node[:nsm][:zeek][:config][:spool_dir],
-            node[:nsm][:zeek][:config][:broker_db_dir]]
+            node[:nsm][:zeek][:config][:broker_db_dir],
+            node[:nsm][:zeek][:config][:intel_dir]]
 
 zeek_dirs.each do |zeek_dir|
 

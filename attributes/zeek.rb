@@ -15,6 +15,7 @@ default[:nsm][:zeek][:config][:log_backfill_dir] = '/nsm/zeek/logs/backfill'
 default[:nsm][:zeek][:config][:extracted_dir] = '/nsm/zeek/extracted'
 default[:nsm][:zeek][:config][:spool_dir] = '/nsm/zeek/spool'
 default[:nsm][:zeek][:config][:broker_db_dir] = '/nsm/zeek/spool/brokerstore'
+default[:nsm][:zeek][:config][:intel_dir] = '/opt/zeek/share/zeek/intel/'
 #default[:nsm][:zeek][:config][:log_expire_interval] = '7 days'
 default[:nsm][:zeek][:config][:log_expire_days] = '0'
 
