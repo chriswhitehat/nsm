@@ -63,24 +63,24 @@ end
 
 if node[:nsm][:zeek][:intel]
   if node[:nsm][:zeek][:intel][:global]
-    global = node[:nsm][:zeek][:intel][:global]
+    global_intel = node[:nsm][:zeek][:intel][:global]
   else
-    global = {}
+    global_intel = {}
   end
   if node[:nsm][:zeek][:intel][:regional]
-    regional = node[:nsm][:zeek][:intel][:regional]
+    regional_intel = node[:nsm][:zeek][:intel][:regional]
   else
-    regional = {}
+    regional_intel = {}
   end
   if node[:nsm][:zeek][:intel][node[:nsm][:sensor_group]]
-    sensor_group = node[:nsm][:zeek][:intel][node[:nsm][:sensor_group]]
+    sensor_group_intel = node[:nsm][:zeek][:intel][node[:nsm][:sensor_group]]
   else
-    sensor_group = {}
+    sensor_group_intel = {}
   end
   if node[:nsm][:zeek][:intel][node[:fqdn]]
-    host = node[:nsm][:zeek][:intel][node[:fqdn]]
+    host_intel = node[:nsm][:zeek][:intel][node[:fqdn]]
   else
-    host = {}
+    host_intel = {}
   end
 else
   global_intel = {}
