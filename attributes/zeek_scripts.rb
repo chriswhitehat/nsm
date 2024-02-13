@@ -17,7 +17,7 @@ default[:nsm][:zeek][:base_streams][:global]['Syslog::LOG'] = true
 ##########################
 # Load Zeek Intel
 ##########################
-default[:nsm][:zeek][:sigs][:global]['/opt/zeek/share/zeek/intel/xsoar_watchlist.txt'] = false
+default[:nsm][:zeek][:intel][:global]['/opt/zeek/share/zeek/intel/xsoar_watchlist.txt'] = false
 
 ##########################
 # Load Zeek Sigs
