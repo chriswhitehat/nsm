@@ -134,6 +134,9 @@ default[:nsm][:zeek][:scripts][:global]['json-streaming-logs'] = false
 # Adds community id to zeek conn logs
 default[:nsm][:zeek][:scripts][:global]['zeek-community-id'] = false
 
+# Adds community id to zeek conn logs
+default[:nsm][:zeek][:scripts][:global]['wildcard-domain'] = false
+
 # Add ssl handshake ja3 hash fingerprint to ssl log
 default[:nsm][:zeek][:scripts][:global]['ja3'] = false
 
@@ -167,11 +170,6 @@ default[:nsm][:zeek][:scripts][:global]['zeek_filter_hooks'] = false
 # File Extractions
 default[:nsm][:zeek][:scripts][:global]['file-extraction'] = false
 
-
-# TODO: 
-# You can load your own intel into:
-# /opt/zeek/share/zeek/intel/
-default[:nsm][:zeek][:scripts][:global]['intel'] = false
 
 
 
