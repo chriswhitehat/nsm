@@ -21,7 +21,7 @@
 	<% if enabled %>
 redef Intel::read_files += { "<%=intel_file%>" };
 @load frameworks/intel/seen
-@load frameworks/intel/do_notice
+#@load frameworks/intel/do_notice
 	<% else %>
 #redef Intel::read_files += { "<%=intel_file%>" };
 #@load frameworks/intel/seen
