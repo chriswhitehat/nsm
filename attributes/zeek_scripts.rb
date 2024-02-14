@@ -134,7 +134,7 @@ default[:nsm][:zeek][:scripts][:global]['json-streaming-logs'] = false
 # Adds community id to zeek conn logs
 default[:nsm][:zeek][:scripts][:global]['zeek-community-id'] = false
 
-# Adds community id to zeek conn logs
+# Adds Intel::WILDCARD_DOMAIN to intel logs
 default[:nsm][:zeek][:scripts][:global]['wildcard-domain'] = false
 
 # Add ssl handshake ja3 hash fingerprint to ssl log
