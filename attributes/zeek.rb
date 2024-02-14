@@ -44,6 +44,11 @@ default[:nsm][:zeek][:zkg][:package]['zeek-community-id'][:apt_deps] = []
 default[:nsm][:zeek][:zkg][:package]['zeek-community-id'][:path] = 'zeek-community-id'
 default[:nsm][:zeek][:zkg][:package]['zeek-community-id'][:install_path] = 'zeek-community-id'
 
+default[:nsm][:zeek][:zkg][:package]['wildcard-domain'][:install] = true
+default[:nsm][:zeek][:zkg][:package]['wildcard-domain'][:apt_deps] = []
+default[:nsm][:zeek][:zkg][:package]['wildcard-domain'][:path] = 'wildcard-domain'
+default[:nsm][:zeek][:zkg][:package]['wildcard-domain'][:install_path] = 'wildcard-domain'
+
 default[:nsm][:zeek][:zkg][:package]['ja3'][:install] = true
 default[:nsm][:zeek][:zkg][:package]['ja3'][:apt_deps] = []
 default[:nsm][:zeek][:zkg][:package]['ja3'][:path] = 'ja3'
