@@ -54,7 +54,7 @@ file "/nsm/zeek/expired_apt_key_#{node[:nsm][:zeek][:repo][:expired_key]}" do
 end
 
 apt_repository 'security:zeek' do
-  uri "http://download.opensuse.org/repositories/security:/zeek/xUbuntu_#{node[:lsb][:release]}/"
+  uri "https://download.opensuse.org/repositories/security:/zeek/xUbuntu_#{node[:lsb][:release]}/"
   distribution "/"
   key "https://download.opensuse.org/repositories/security:zeek/xUbuntu_#{node[:lsb][:release]}/Release.key"
   notifies :update, 'apt_update[zeek_update]',  :immediately
