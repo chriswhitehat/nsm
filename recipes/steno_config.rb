@@ -72,7 +72,8 @@ if node[:nsm][:interfaces][:sniffing]
 
       (1..sniff[:steno][:lb_count]).each do | thread |
 
-        dirs = ["/nsm/steno/#{sniff[:sensorname]}/thread#{thread}", 
+        dirs = ["/nsm/steno/#{sniff[:sensorname]}",
+                "/nsm/steno/#{sniff[:sensorname]}/thread#{thread}", 
                 "/nsm/steno/#{sniff[:sensorname]}/thread#{thread}/packets",
                 "/nsm/steno/#{sniff[:sensorname]}/thread#{thread}/index"]
 

@@ -6,7 +6,7 @@ description 'Installs/Configures nsm'
 long_description 'Installs/Configures nsm'
 chef_version '>= 14.0'
 
-version '0.28.1'
+version '0.28.2'
 
 depends 'logrotate'
 # The `issues_url` points to the location where issues for this cookbook are

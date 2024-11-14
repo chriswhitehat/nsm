@@ -21,6 +21,9 @@ execute 'set-timezone' do
   action :nothing
 end
 
+
+package 'locales'
+
 template '/usr/share/i18n/locales/en_US' do
   source 'misc/en_US.erb'
   mode '0644'
