@@ -13,14 +13,14 @@ end
 
 group 'suricata' do
   action :create
-  members ['suricata', 'splunk']
+  members ['suricata', node[:chef_splunk][:splunk_user]]
   append true
   system true
 end
 
 group 'nsm' do
   action :create
-  members ['suricata', 'splunk']
+  members ['suricata', node[:chef_splunk][:splunk_user]]
   append true
 end
 
@@ -54,16 +54,19 @@ apt_repository 'suricata-stable' do
   notifies :update, 'apt_update[update_suricata]', :immediately
 end
 
-
 apt_update 'update_suricata' do
   action :nothing
 end
 
+package ['jq']
 
-package ['suricata', 'jq']
+package 'suricata' do
+  action :install
+  notifies :run, 'execute[setcap_suricata]', :immediately
+end
 
 execute 'setcap_suricata' do
-  command 'setcap cap_net_raw=eip /usr/bin/suricata'
+  command '/usr/sbin/setcap cap_net_raw=eip /usr/bin/suricata'
   user 'root'
   action :nothing
 end

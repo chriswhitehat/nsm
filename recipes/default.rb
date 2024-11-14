@@ -14,3 +14,29 @@ directory install_temp do
 end
 
 
+directory '/home/system/dpkgs/' do
+  owner 'system'
+  mode '0755'
+  action :create
+end
+
+
+if node[:nsm][:dpkg_packages]
+
+  node[:nsm][:dpkg_packages].each do |pkg|
+
+    cookbook_file "/home/system/dpkgs/#{pkg}" do
+      source pkg
+      owner 'system'
+      mode '0644'
+      notifies :install, "dpkg_package[#{pkg}]", :immediately
+    end
+    
+    dpkg_package pkg do
+      source "/home/system/dpkgs/#{pkg}"
+      action :nothing
+    end
+    
+  end  
+
+end

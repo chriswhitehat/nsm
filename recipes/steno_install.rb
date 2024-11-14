@@ -13,14 +13,14 @@ end
 
 group 'stenographer' do
   action :create
-  members ['stenographer', 'splunk']
+  members ['stenographer', node[:chef_splunk][:splunk_user]]
   append true
   system true
 end
 
 group 'nsm' do
   action :create
-  members ['stenographer', 'splunk']
+  members ['stenographer', node[:chef_splunk][:splunk_user]]
   append true
 end
 

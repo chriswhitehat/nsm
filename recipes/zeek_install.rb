@@ -13,14 +13,14 @@ end
 
 group 'zeek' do
   action :create
-  members ['zeek', 'splunk']
+  members ['zeek', node[:chef_splunk][:splunk_user]]
   append true
   system true
 end
 
 group 'nsm' do
   action :create
-  members ['zeek', 'splunk']
+  members ['zeek', node[:chef_splunk][:splunk_user]]
   append true
 end
 
@@ -39,6 +39,14 @@ directory '/opt/zeek' do
   recursive true
   action :create
 end
+
+directory '/nsm/zeek' do
+  owner 'zeek'
+  group 'zeek'
+  mode '0750'
+  action :create
+end
+
 
 execute 'apt_repo_del_key' do
   command "apt-key del #{node[:nsm][:zeek][:repo][:expired_key]}"
@@ -120,13 +128,20 @@ cron_d 'zeek_log_rotate' do
   action :delete
 end
 
-zeek_dirs = ['/nsm/zeek', 
-            node[:nsm][:zeek][:config][:log_dir],
-            node[:nsm][:zeek][:config][:log_backfill_dir],
-            node[:nsm][:zeek][:config][:extracted_dir], 
-            node[:nsm][:zeek][:config][:spool_dir],
-            node[:nsm][:zeek][:config][:broker_db_dir],
-            node[:nsm][:zeek][:config][:intel_dir]]
+# Downloads the latest and only moves the watchlist in if there is a difference
+cron_d 'xsoar_watchlist' do
+  minute '*/10'
+  hour '*'
+  user 'zeek'
+  command "sleep $((RANDOM % 15)) && /usr/bin/wget -q #{node[:nsm][:zeek][:config][:xsoar_watchlist_url]} -O /tmp/xsoar_watchlist.txt && /usr/bin/egrep '^#fields' /tmp/xsoar_watchlist.txt && /usr/bin/cmp -s /tmp/xsoar_watchlist.txt #{node[:nsm][:zeek][:config][:intel_dir]}xsoar_watchlist.txt || mv /tmp/xsoar_watchlist.txt #{node[:nsm][:zeek][:config][:intel_dir]}xsoar_watchlist.txt"
+end
+
+zeek_dirs = [node[:nsm][:zeek][:config][:log_dir],
+             node[:nsm][:zeek][:config][:log_backfill_dir],
+             node[:nsm][:zeek][:config][:extracted_dir], 
+             node[:nsm][:zeek][:config][:spool_dir],
+             node[:nsm][:zeek][:config][:broker_db_dir],
+             node[:nsm][:zeek][:config][:intel_dir]]
 
 zeek_dirs.each do |zeek_dir|
 

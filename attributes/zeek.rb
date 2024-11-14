@@ -56,7 +56,7 @@ default[:nsm][:zeek][:zkg][:package]['ja3'][:install_path] = 'ja3'
 
 default[:nsm][:zeek][:zkg][:package]['hassh'][:install] = true
 default[:nsm][:zeek][:zkg][:package]['hassh'][:apt_deps] = []
-default[:nsm][:zeek][:zkg][:package]['hassh'][:path] = 'salesforce/hassh'
+default[:nsm][:zeek][:zkg][:package]['hassh'][:path] = 'corelight/hassh'
 default[:nsm][:zeek][:zkg][:package]['hassh'][:install_path] = 'hassh'
 
 default[:nsm][:zeek][:zkg][:package]['bzar'][:install] = true

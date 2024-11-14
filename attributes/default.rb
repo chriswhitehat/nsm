@@ -7,12 +7,13 @@
 default[:nsm][:timezone] = 'Etc/UTC'
 
 default[:nsm][:zeek][:enabled] = false
-default[:nsm][:zeek][:version] = '4.0.1'
+default[:nsm][:zeek][:version] = '7.0.3'
 
 default[:nsm][:suricata][:enabled] = false
-default[:nsm][:suricata][:version] = '5.0.3'
+default[:nsm][:suricata][:version] = '7.0.7'
 
-default[:nsm][:go][:version] = '1.17.5'
+# default[:nsm][:go][:version] = '1.17.5'
+default[:nsm][:go][:version] = '1.23.2'
 
 default[:nsm][:steno][:enabled] = false
 default[:nsm][:steno][:version] = 'v1.0.1'
