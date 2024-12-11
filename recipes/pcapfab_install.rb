@@ -8,7 +8,7 @@
 
 apt_update
 
-package ['python3-dev', 'python3-pip', 'zip', 'unzip', 'wireshark-common'] do
+package ['python3-full', 'python3-dev', 'python3-pip', 'python3-venv', 'zip', 'unzip', 'wireshark-common'] do
   action :install
 end
 
@@ -65,6 +65,13 @@ execute 'create_python_venv' do
   command '/usr/bin/python3 -m venv /opt/pcapfab/.venv'
   user 'pcapfab'
   creates '/opt/pcapfab/.venv'
+  action :run
+end
+
+execute 'install_venv_pip' do
+  command '/opt/pcapfab/.venv/bin/python3 -m pip install --upgrade pip'
+  user 'pcapfab'
+  creates '/opt/pcapfab/.venv/bin/pip3'
   action :run
 end
 
