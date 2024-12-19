@@ -60,6 +60,9 @@ if node[:nsm][:interfaces][:sniffing]
         owner 'root'
         group 'root'
         mode '0644'
+        variables(
+          :sensor => sniff
+        )
         notifies :run, "execute[downup_#{interface}]", :immediately
       end
 
@@ -68,6 +71,9 @@ if node[:nsm][:interfaces][:sniffing]
         owner 'root'
         group 'root'
         mode '0644'
+        variables(
+          :sensor => sniff
+        )
         notifies :run, "execute[downup_#{interface}]", :immediately
       end
       
