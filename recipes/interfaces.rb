@@ -8,28 +8,28 @@
 # Network Interfaces Config
 ###########
 
-package ['ifupdown', 'net-tools', 'ethtool', 'iftop']
+package ['net-tools', 'ethtool', 'iftop']
 
 
-if node[:nsm][:interfaces][:mgmt][:configure]
+# if node[:nsm][:interfaces][:mgmt][:configure]
 
-  interface = node[:nsm][:interfaces][:mgmt][:interface]
+#   interface = node[:nsm][:interfaces][:mgmt][:interface]
 
-  template '/etc/network/interfaces' do
-    source 'network/interfaces.erb'
-    mode '0644'
-    owner 'root'
-    group 'root'
-    notifies :run, "execute[downup_#{interface}]", :immediately
-  end
+#   template '/etc/network/interfaces' do
+#     source 'network/interfaces.erb'
+#     mode '0644'
+#     owner 'root'
+#     group 'root'
+#     notifies :run, "execute[downup_#{interface}]", :immediately
+#   end
 
   
-  execute "downup_#{interface}" do
-    command "sudo ifdown --force #{interface}; sudo ifup #{interface}"
-    action :nothing
-  end
+#   execute "downup_#{interface}" do
+#     command "sudo ifdown --force #{interface}; sudo ifup #{interface}"
+#     action :nothing
+#   end
   
-end
+# end
 
 if node[:nsm][:interfaces][:sniffing] 
 
@@ -89,7 +89,7 @@ if node[:nsm][:interfaces][:sniffing]
       # end
 
       execute "downup_#{interface}" do
-        command "sudo ifdown --force #{interface}; sudo ifup #{interface}"
+        command "ip link set dev #{interface} down; ip addr set dev #{interface} up"
         action :nothing
       end
     end
