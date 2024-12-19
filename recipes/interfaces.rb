@@ -76,20 +76,24 @@ if node[:nsm][:interfaces][:sniffing]
         )
         notifies :run, "execute[downup_#{interface}]", :immediately
       end
-      
-      # template "/etc/network/interfaces.d/#{interface}" do
-      #   source 'network/sensor_iface.erb'
-      #   mode '0644'
-      #   owner 'root'
-      #   group 'root'
-      #   variables(
-      #     :sensor => sniff
-      #   )
-      #   notifies :run, "execute[downup_#{interface}]", :immediately
-      # end
 
       execute "downup_#{interface}" do
         command "ip link set dev #{interface} down; ip addr set dev #{interface} up"
+        action :nothing
+      end
+
+      template "/etc/systemd/system/sniffing-interface-#{interface}.service" do
+        source 'network/sniffing-interface.service.erb'
+        owner 'root'
+        group 'root'
+        mode '0644'
+        variables(
+          :interface => interface
+        )
+        notifies [:start, :enable], "service[sniffing-interface-#{interface}.service]", :immediately
+      end
+      
+      service "sniffing-interface-#{interface}.service" do
         action :nothing
       end
     end
