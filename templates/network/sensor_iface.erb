@@ -8,9 +8,9 @@
 
 if [ "$IFACE" == "<%= @sensor[:interface] %>" ];
 then
-    ip link set dev <%= @sensor[:nic_offloading] %> promisc on
-    ip link set dev <%= @sensor[:nic_offloading] %> arp off
-    ip link set dev <%= @sensor[:nic_offloading] %> mtu <%= @sensor[:mtu] %>
+    ip link set dev <%= @sensor[:interface] %> promisc on
+    ip link set dev <%= @sensor[:interface] %> arp off
+    ip link set dev <%= @sensor[:interface] %> mtu <%= @sensor[:mtu] %>
     for i in <%= @sensor[:nic_offloading] %>; do ethtool -K $IFACE $i off; done
 fi
 
