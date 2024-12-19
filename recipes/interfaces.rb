@@ -90,7 +90,8 @@ if node[:nsm][:interfaces][:sniffing]
         variables(
           :interface => interface
         )
-        notifies [:start, :enable], "service[sniffing-interface-#{interface}.service]", :immediately
+        notifies :enable, "service[sniffing-interface-#{interface}.service]", :immediately
+        notifies :start, "service[sniffing-interface-#{interface}.service]", :immediately
       end
       
       service "sniffing-interface-#{interface}.service" do
