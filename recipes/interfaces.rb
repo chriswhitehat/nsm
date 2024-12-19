@@ -55,7 +55,7 @@ if node[:nsm][:interfaces][:sniffing]
         action :create
       end
       
-      template "/etc/networkd-dispatcher/configured.d/10-disable-offloading-#{sniff[:interface]}" do
+      template "/etc/networkd-dispatcher/configured.d/10-disable-offloading-#{interface}" do
         source 'network/sensor_iface.erb'
         owner 'root'
         group 'root'
@@ -63,7 +63,7 @@ if node[:nsm][:interfaces][:sniffing]
         notifies :run, "execute[downup_#{interface}]", :immediately
       end
 
-      template "/etc/networkd-dispatcher/routable.d/10-disable-offloading-#{sniff[:interface]}" do
+      template "/etc/networkd-dispatcher/routable.d/10-disable-offloading-#{interface}" do
         source 'network/sensor_iface.erb'
         owner 'root'
         group 'root'
