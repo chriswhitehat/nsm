@@ -61,7 +61,6 @@ if node[:nsm][:interfaces][:sniffing]
 
       execute "downup_#{interface}" do
         command "sudo ifdown --force #{interface}; sudo ifup #{interface}"
-        creates '/tmp/something'
         action :nothing
       end
     end
