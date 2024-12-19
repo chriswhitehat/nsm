@@ -8,10 +8,6 @@ auto <%= @sensor[:interface] %>
 iface <%= @sensor[:interface] %> inet manual
   up ip link set $IFACE promisc on arp off up
   down ip link set $IFACE promisc off down
-  <% if node[:network][:interfaces][@sensor[:interface]][:ring_params] && node[:network][:interfaces][@sensor[:interface]][:ring_params][:max_rx] %>
-  post-up ethtool -G $IFACE rx <%= node[:network][:interfaces][@sensor[:interface]][:ring_params][:max_rx] %>; for i in <%= @sensor[:nic_offloading] %>; do ethtool -K $IFACE $i off; done
-  <% else %>
   for i in <%= @sensor[:nic_offloading] %>; do ethtool -K $IFACE $i off; done
-  <% end %>
   post-up echo 1 > /proc/sys/net/ipv6/conf/$IFACE/disable_ipv6
   mtu <%= @sensor[:mtu] %>
