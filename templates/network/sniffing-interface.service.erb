@@ -10,7 +10,7 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/ip link set dev <%= interface %> up
+ExecStart=/usr/sbin/ip link set dev <%= @interface %> up
 TimeoutStartSec=0
 RemainAfterExit=yes
 
