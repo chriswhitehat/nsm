@@ -8,7 +8,7 @@
 # Network Interfaces Config
 ###########
 
-package ['net-tools', 'ethtool', 'iftop']
+package ['net-tools', 'ethtool', 'iftop', 'ifstat', 'bc']
 
 
 # if node[:nsm][:interfaces][:mgmt][:configure]
@@ -30,6 +30,20 @@ package ['net-tools', 'ethtool', 'iftop']
 #   end
   
 # end
+      
+template "/usr/sbin/nsm_link_status" do
+  source 'network/nsm_link_status.erb'
+  owner 'root'
+  group 'root'
+  mode '0755'
+end
+
+logrotate_app "nsm_link_status" do
+  path      "/var/log/nsm_link_status.log"
+  frequency 'daily'
+  rotate    10
+  create    '644 root root'
+end
 
 if node[:nsm][:interfaces][:sniffing] 
 
@@ -97,6 +111,12 @@ if node[:nsm][:interfaces][:sniffing]
       service "sniffing-interface-#{interface}.service" do
         action :nothing
       end
+
+      cron_d "nsm_link_status_#{interface}" do
+        minute '*'
+        command "/usr/sbin/nsm_link_status #{interface} >> /var/log/nsm_link_status.log"
+      end
+
     end
   end
 end
