@@ -114,7 +114,7 @@ if node[:nsm][:interfaces][:sniffing]
 
       cron_d "nsm_link_status_#{interface}" do
         minute '*'
-        command "/usr/sbin/nsm_link_status #{interface} >> /var/log/nsm_link_status.log"
+        command "/usr/sbin/nsm_link_status '#{sniff[:sensorname]}' #{interface} >> /var/log/nsm_link_status.log"
       end
 
     end

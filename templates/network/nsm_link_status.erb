@@ -7,13 +7,14 @@
  
 # Relies on ifstat and bc
  
-IFACE=$1;
+SENSORNAME=$1
+IFACE=$2;
  
 if [[ $(ethtool $IFACE 2> /dev/null | egrep 'Link detected: yes') ]]; then
   KBPS=$(($(ifstat -w -i $IFACE 1 1 | tail -1 | cut -d '.' -f1) * 8))
   GBPS=$(echo "scale=3; $KBPS/1000/1000" | bc)
-  echo "$(date +'%Y-%m-%dT%H:%M:%S%z') hostname=$(hostname) sensorname=<%= @sensor[:sensorname] %> nic=$IFACE state=UP kbps=$KBPS mbps=$(($KBPS/1000)) gbps=$GBPS";
+  echo "$(date +'%Y-%m-%dT%H:%M:%S%z') hostname=$(hostname) sensorname=$SENSORNAME nic=$IFACE state=UP kbps=$KBPS mbps=$(($KBPS/1000)) gbps=$GBPS";
 else
-  echo "$(date +'%Y-%m-%dT%H:%M:%S%z') hostname=$(hostname) sensorname=<%= @sensor[:sensorname] %> nic=$IFACE state=DOWN kbps=0 mbps=0 gbps=0";
+  echo "$(date +'%Y-%m-%dT%H:%M:%S%z') hostname=$(hostname) sensorname=$SENSORNAME nic=$IFACE state=DOWN kbps=0 mbps=0 gbps=0";
 fi
  
