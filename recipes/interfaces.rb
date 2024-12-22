@@ -8,7 +8,7 @@
 # Network Interfaces Config
 ###########
 
-package ['net-tools', 'ethtool', 'iftop', 'ifstat', 'bc']
+package ['ethtool', 'iftop', 'ifstat', 'bc']
 
 
 # if node[:nsm][:interfaces][:mgmt][:configure]
