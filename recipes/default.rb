@@ -4,6 +4,8 @@
 #
 # Copyright:: 2021, The Authors, All Rights Reserved.
 
+package 'cron'
+
 install_temp = '/root/installtmp'
 
 directory install_temp do
