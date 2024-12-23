@@ -8,7 +8,7 @@
 # Network Interfaces Config
 ###########
 
-package ['ethtool', 'iftop', 'ifstat', 'bc']
+package ['iputils-ping', 'ethtool', 'iftop', 'ifstat', 'bc']
 
 
 # if node[:nsm][:interfaces][:mgmt][:configure]
