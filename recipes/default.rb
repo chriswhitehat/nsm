@@ -6,7 +6,6 @@
 
 apt_repository 'rsyslog' do
   uri 'ppa:adiscon/v8-stable'
-  notifies :run, 'execute[upgrade_rsyslog]', :immediately
 end
 
 package ['cron', 'rsyslog']
