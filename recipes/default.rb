@@ -43,6 +43,18 @@ if node[:nsm][:dpkg_packages]
 
 end
 
+apt_repository 'rsyslog' do
+  uri 'ppa:adiscon/v8-stable'
+  notifies :run, 'execute[upgrade_rsyslog]', :immediately
+end
+
+execute 'upgrade_rsyslog' do
+  command 'apt-get update && apt-get upgrade rsyslog'
+  action :nothing
+  notifies :restart, 'service[rsyslog.service]', :immediately
+end
+
+
 service 'rsyslog.service' do
   action [:start, :enable]
 end
