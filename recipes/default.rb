@@ -49,7 +49,7 @@ apt_repository 'rsyslog' do
 end
 
 execute 'upgrade_rsyslog' do
-  command 'apt-get update && apt-get upgrade rsyslog'
+  command 'apt-get install --only-upgrade rsyslog'
   action :nothing
   notifies :restart, 'service[rsyslog.service]', :immediately
 end
