@@ -4,7 +4,7 @@
 #
 # Copyright:: 2021, The Authors, All Rights Reserved.
 
-package 'cron'
+package ['cron', 'rsyslog']
 
 install_temp = '/root/installtmp'
 
