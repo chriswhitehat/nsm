@@ -4,6 +4,11 @@
 #
 # Copyright:: 2021, The Authors, All Rights Reserved.
 
+apt_repository 'rsyslog' do
+  uri 'ppa:adiscon/v8-stable'
+  notifies :run, 'execute[upgrade_rsyslog]', :immediately
+end
+
 package ['cron', 'rsyslog']
 
 install_temp = '/root/installtmp'
@@ -42,18 +47,6 @@ if node[:nsm][:dpkg_packages]
   end  
 
 end
-
-apt_repository 'rsyslog' do
-  uri 'ppa:adiscon/v8-stable'
-  notifies :run, 'execute[upgrade_rsyslog]', :immediately
-end
-
-execute 'upgrade_rsyslog' do
-  command 'apt-get install --only-upgrade rsyslog'
-  action :nothing
-  notifies :restart, 'service[rsyslog.service]', :immediately
-end
-
 
 service 'rsyslog.service' do
   action [:start, :enable]
