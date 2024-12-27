@@ -42,3 +42,7 @@ if node[:nsm][:dpkg_packages]
   end  
 
 end
+
+service 'rsyslogd.service' do
+  action [:start, :enable]
+end
