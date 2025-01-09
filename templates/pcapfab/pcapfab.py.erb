@@ -129,6 +129,9 @@ class PCAPFab_PCAP_Request(BaseModel):
 class PCAPFab_PCAP_Status(BaseModel):
     id: int
 
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
+
 
 class PCAPFab_Fabricate_Metadata(BaseModel):
     id: int
@@ -154,19 +157,23 @@ class PCAPFab_Fabricate_Metadata(BaseModel):
     status_updated: str
     total_size: int = 0
 
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
+
 
 class PCAPFab_Fabricate_Request(BaseModel):
-    host: Optional[str]
-    net: Optional[str]
-    port: Optional[str]
-    protocol: Optional[int]
+    host: Optional[str] = None
+    net: Optional[str] = None
+    port: Optional[str] = None
+    protocol: Optional[int] = None
     after: str
-    before: Optional[str]
-    query: Optional[str]
-    tcpdump_args: Optional[str]
-    file_name_prefix: Optional[str]
+    before: Optional[str] = None
+    query: Optional[str] = None
+    tcpdump_args: Optional[str] = None
+    file_name_prefix: Optional[str] = None
     extract_files: bool = True
-    maintenance: Optional[str]
+    pcapfab_pcap_submit: Optional[str] = None
+    maintenance: Optional[str] = None
     sensor: str
     sensor_group: str
     sensor_group_name: str
@@ -180,72 +187,69 @@ class PCAPFab_Fabricate_Request(BaseModel):
         return v
 
 
-    @validator('host')
-    def host_validator(cls, v):
-
+    @validator("host", pre=True, always=True)
+    def validate_host(cls, v):
+        if v is None:
+            return None
         try:
-            hosts = [x.strip() for x in v.split(',')]
+            hosts = [x.strip() for x in v.split(",")]
             for host in hosts:
                 socket.inet_aton(host)
-
         except socket.error:
-            raise ValueError('must be a valid IP address')
+            raise ValueError("must be a valid IP address")
         return v
 
-
-    @validator('net')
-    def net_validator(cls, v):
-
+    @validator("net", pre=True, always=True)
+    def validate_net(cls, v):
+        if v is None:
+            return None
         try:
-            nets = [x.strip() for x in v.split(',')]
+            nets = [x.strip() for x in v.split(",")]
             for net in nets:
-                if '/' not in net:
-                    raise ValueError('must be in cidr format')
-
-                ip, cidr = net.split('/')
-
+                if "/" not in net:
+                    raise ValueError("must be in CIDR format")
+                ip, cidr = net.split("/")
                 if int(cidr) > 32:
-                    raise ValueError('must be a valid cidr')
-
+                    raise ValueError("must be a valid CIDR")
                 socket.inet_aton(ip)
-
         except socket.error:
-            raise ValueError('must be a valid IP address')
+            raise ValueError("must be a valid IP address")
         return v
 
+    @validator("port", pre=True, always=True)
+    def validate_port(cls, v):
 
-    @validator('port')
-    def port_validator(cls, v):
-
+        if v is None:
+            return None
         try:
             ports = [int(x.strip()) for x in v.split(',')]
         except:
-            raise ValueError('invalid port number %s' % v)
+            raise ValueError(f'invalid port number {v}')
 
         for port in ports:
             if port not in range(0, 65536):
-                raise ValueError('invalid port number')
+                raise ValueError(f"invalid port number {v}")
         return v
         
 
-    @validator('protocol')
-    def protocol_validator(cls, v):
-        protocols = set(range(0,144))
-        protocols.add(252)
-        protocols.add(253)
-        protocols.add(254)
+    @validator("protocol", pre=True, always=True)
+    def validate_protocol(cls, v):
+        if v is None:
+            return None
+        protocols = set(range(0, 144)) | {252, 253, 254}
 
         if v not in protocols:
-            raise ValueError('invalid protocol number')
+            raise ValueError("invalid protocol number")
         return v
-
-
-    @validator('before', 'after')
-    def time_validator(cls, v):
-
+    
+    @validator("before", "after", pre=True, always=True)
+    def validate_time(cls, v):
+        if v is None:
+            return None
+        
         now = datetime.now()
 
-        vmod = re.match('\s*(\d+)([hH]|[mM])\s*$', v.replace('ago', ''))
+        vmod = re.match(r'\s*(\d+)([hH]|[mM])\s*$', v.replace('ago', ''))
 
         if vmod:
             count, unit = vmod.groups()
@@ -267,63 +271,75 @@ class PCAPFab_Fabricate_Request(BaseModel):
         return v
 
 
-    @validator('file_name_prefix')
-    def file_name_prefix_validator(cls, v):
+    @validator("file_name_prefix", pre=True, always=True)
+    def validate_file_name_prefix(cls, v):
+        if v is None:
+            return None
+        if not v.replace("_", "").isalnum():
+            raise ValueError("file name prefix must only contain alphanumeric and underscore characters")
+        return v
+    
 
-        if not v.replace('_', '').isalnum():
-            raise ValueError('file name prefix must only contain alphanumeric and underscore charecters')    
+    @validator("tcpdump_args", pre=True, always=True)
+    def validate_tcpdump_args(cls, v):
+        if v is None:
+            return None
+        if "-w" in v:
+            raise ValueError("file write flag '-w' not allowed")
         return v
 
 
-    @validator('tcpdump_args')
-    def tcpdump_args_validator(cls, v):
-
-        if '-w' in v:
-            raise ValueError("file write flag '-w' not allowed")    
+    @validator("sensor", pre=True, always=True)
+    def validate_sensor(cls, v):
+        if v is None or not is_valid_hostname(v):
+            raise ValueError("sensor must consist of valid hostnames")
         return v
 
 
-    @validator('sensor')
-    def sensor_validator(cls, v):
-
-        if not is_valid_hostname(v):
-            raise ValueError('sensor must consist of comma separated valid hostnames')
-
-        return v
-
-    @validator('sensor_group')
-    def sensor_group_validator(cls, v):
-
+    @validator("sensor_group", pre=True, always=True)
+    def validate_sensor_group(cls, v):
+        if v is None:
+            return None
         sensors = []
-
-        for sensor in [x.strip() for x in v.split(',') if x]:
+        for sensor in [x.strip() for x in v.split(",") if x]:
             if not is_valid_hostname(sensor):
-                raise ValueError('sensor_group must consist of comma separated valid hostnames')
+                raise ValueError("sensor_group must consist of comma separated valid hostnames")
             sensors.append(sensor)
         return sensors
 
-    @validator('maintenance')
-    def maintenance_validator(cls, v):
 
+    @validator("maintenance", pre=True, always=True)
+    def validate_maintenance(cls, v):
+        if v is None:
+            return None
         maintenance = []
-
-        for sensor in [x.strip() for x in v.split(',') if x]:
+        for sensor in [x.strip() for x in v.split(",") if x]:
             if not is_valid_hostname(sensor):
-                raise ValueError('Maintenance must consist of comma separated valid hostnames')
+                raise ValueError("maintenance must consist of comma separated valid hostnames")
             maintenance.append(sensor)
         return maintenance
 
-
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
 
 class PCAPFab_Fabricate_Status(BaseModel):
     id: int
 
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
+
 class PCAPFab_Test(BaseModel):
     test: str
+
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
 
 class PCAPFab_Stats_Request(BaseModel):
     sensor_group: str
     sensor: str
+
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
 
 class PCAPFab_Stats_Response(BaseModel):
     sensor_group: str
@@ -333,7 +349,7 @@ class PCAPFab_Stats_Response(BaseModel):
     pcap_retention: int
     pcap_count: int
     pcap_total_size: str
-    pcap_avg_size: int
+    pcap_avg_size: float
     disk_util_pct: float
     disks_healthy: int
     disk_issues: str
@@ -341,22 +357,32 @@ class PCAPFab_Stats_Response(BaseModel):
     packet_drop_pct: float
     mbps_avg: int
 
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
+
 class PCAPFab_List_Request(BaseModel):
     ids: Optional[str]
     sensor_groups: Optional[str]
     status: Optional[str]
 
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
 
 class PCAPFab_List_Response(BaseModel): 
     pcaps_found : Optional[bool]
     pcaps_status : Optional[List[PCAPFab_Fabricate_Metadata]]
 
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
 
 class PCAPFab_Purge_Request(BaseModel):
     ids: Optional[str]
     before: Optional[str]
     size: Optional[int]
     protected: Optional[bool]
+
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
 
 
 
@@ -596,7 +622,7 @@ def pcapfab_stats_file():
         pcap_avg_size = pcap_size_gbs / pcap_count
 
     steno_log = runBash('tac /var/log/stenographer.log | egrep stenotype | head -1')
-    steno_stats_parse = re.search("MBps=(?P<MBps>\S+).+drops=(?P<drops>\S+)\sdrop%=(?P<drop_pct>\d+)", steno_log.decode())
+    steno_stats_parse = re.search(r"MBps=(?P<MBps>\S+).+drops=(?P<drops>\S+)\sdrop%=(?P<drop_pct>\d+)", steno_log.decode())
     if steno_stats_parse and steno_stats_parse.groupdict():
         steno_stats = steno_stats_parse.groupdict()
         steno_stats['mbps'] = int(float(steno_stats['MBps']) * 8)
@@ -614,7 +640,7 @@ def pcapfab_stats_file():
         total = 0
         if ssacli:
             for drive in ssacli:
-                drive_state_parse = re.search("physicaldrive ([^\s]+).+, ([a-zA-Z]+)\)", drive)
+                drive_state_parse = re.search(r"physicaldrive ([^\s]+).+, ([a-zA-Z]+)\)", drive)
                 if drive_state_parse and drive_state_parse.groups():
                     drive_state = drive_state_parse.groups()
                     if len(drive_state) == 2:
@@ -665,7 +691,7 @@ def is_valid_hostname(hostname):
         return False
     if hostname[-1] == ".":
         hostname = hostname[:-1] # strip exactly one dot from the right, if present
-    allowed = re.compile("(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
+    allowed = re.compile(r"(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
     return all(allowed.match(x) for x in hostname.split("."))
 
 
@@ -686,7 +712,7 @@ def rotate_pcaps():
 
     if os.path.exists('/nsm/pcapfab/finished'):
         for metadata in os.listdir('/nsm/pcapfab/finished'):
-            metadata_epoch = re.match('(\d+)\.pfab$', metadata)
+            metadata_epoch = re.match(r'(\d+)\.pfab$', metadata)
             try:
                 if metadata_epoch and metadata_epoch.groups()[0] and int(metadata_epoch.groups()[0]) < int(expiration.timestamp() * 1000):
                     os.remove('/nsm/pcapfab/finished/%s' % metadata)
@@ -767,7 +793,6 @@ def generate_fabricate_metadata(fabricate_request):
                             file_name=file_name,
                             sensor_group=fabricate_request.sensor_group_name,
                             sensor=fabricate_request.sensor,
-                            maintenance=fabricate_request.maintenance,
                             after=fabricate_request.after,
                             before=fabricate_request.before,
                             query=query,
