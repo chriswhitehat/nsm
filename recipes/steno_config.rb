@@ -162,7 +162,7 @@ if node[:nsm][:interfaces][:sniffing]
         action :nothing
       end
 
-      cron_d 'steno_#{sniff[:sensorname]}_chown_cron' do
+      cron_d "steno_#{sniff[:sensorname]}_chown_cron" do
         user 'stenoghrapher'
         minute '*'
         command "find /nsm/steno/#{sniff[:sensorname]}/ -group stenographer | xargs -r chown stenographer:nsm"
