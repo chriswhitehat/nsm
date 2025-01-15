@@ -92,7 +92,7 @@ if node[:nsm][:interfaces][:sniffing]
       end
 
       execute "downup_#{interface}" do
-        command "ip link set dev #{interface} down; ip addr set dev #{interface} up"
+        command "ip link set dev #{interface} down; ip link set dev #{interface} up"
         action :nothing
       end
 

@@ -61,7 +61,7 @@ dirs.each do |dir|
 end
 
 package ['build-essential', 'libaio-dev', 'libleveldb-dev', 'libsnappy-dev', 'g++', 
-  'libcap2-bin', 'libseccomp-dev', 'tcpreplay', 'jq', 'libjq1', 'libonig5', 'openssl', 'rsyslog']
+  'libcap2-bin', 'libseccomp-dev', 'tcpreplay', 'jq', 'libjq1', 'libonig5', 'openssl', 'rsyslog', 'tcpdump']
 
 
 remote_file "/root/installtmp/go#{node[:nsm][:go][:version]}.linux-amd64.tar.gz" do

@@ -97,15 +97,21 @@ def runBashParallel(children, cmd, threads=5):
 class PCAPFab_PCAP_Metadata(BaseModel):
     id: int
     pcap_start: str
-    pcap_end: Optional[str]
-    pcap_duration: Optional[int]
+    pcap_end: Optional[str] = None
+    pcap_duration: Optional[int] = None
     file_name: str
-    pcap_link: Optional[str]
+    pcap_link: Optional[str] = None
     sensor: str
-    size: Optional[str]
+    size: Optional[str] = None
     status: str
-    status_msg: Optional[str]
+    status_msg: Optional[str] = None
     status_updated: str
+
+    @validator("pcap_end", "pcap_duration", "pcap_link", "size", "status_msg", pre=True, always=True)
+    def validate_optional(cls, v):
+        if v is None:
+            return None
+        return v
 
 
 class PCAPFab_PCAP_Request(BaseModel):
@@ -137,25 +143,31 @@ class PCAPFab_Fabricate_Metadata(BaseModel):
     id: int
     expiration: str
     fabricate_start: str
-    fabricate_end: Optional[str]
+    fabricate_end: Optional[str] = None
     fabricate_duration: int
     after: str
     before: str
     query: str
-    tcpdump_args: Optional[str]
-    pcaps_dir: Optional[str]
+    tcpdump_args: Optional[str] = None
+    pcaps_dir: Optional[str] = None
     file_name: str
-    pcaps: Optional[List[PCAPFab_PCAP_Metadata]]
+    pcaps: Optional[List[PCAPFab_PCAP_Metadata]] = None
     sensor: str
     sensor_group: str
-    pcap_link: Optional[str]
-    file_links: Optional[List[str]]
+    pcap_link: Optional[str] = None
+    file_links: Optional[List[str]] = None
     extract_files: bool
-    done: Optional[str]
+    done: Optional[str] = None
     status: str
-    status_msg: Optional[str]
+    status_msg: Optional[str] = None
     status_updated: str
     total_size: int = 0
+
+    @validator("fabricate_end", "tcpdump_args", "pcaps_dir", "pcaps", "pcap_link", "file_links", "done", "status_msg", pre=True, always=True)
+    def validate_optional(cls, v):
+        if v is None:
+            return None
+        return v
 
     class Config:
         extra = "ignore"  # Ignore fields not defined in the model
@@ -177,6 +189,9 @@ class PCAPFab_Fabricate_Request(BaseModel):
     sensor: str
     sensor_group: str
     sensor_group_name: str
+
+    class Config:
+        extra = "ignore"  # Ignore fields not defined in the model
 
     @validator('*')
     def no_single_quotes(cls, v):
@@ -305,7 +320,7 @@ class PCAPFab_Fabricate_Request(BaseModel):
             if not is_valid_hostname(sensor):
                 raise ValueError("sensor_group must consist of comma separated valid hostnames")
             sensors.append(sensor)
-        return sensors
+        return ','.join(sensors)
 
 
     @validator("maintenance", pre=True, always=True)
@@ -316,11 +331,10 @@ class PCAPFab_Fabricate_Request(BaseModel):
         for sensor in [x.strip() for x in v.split(",") if x]:
             if not is_valid_hostname(sensor):
                 raise ValueError("maintenance must consist of comma separated valid hostnames")
-            maintenance.append(sensor)
-        return maintenance
+                mainenance.append(sensor)
+        return ','.join(maintenance)
 
-    class Config:
-        extra = "ignore"  # Ignore fields not defined in the model
+    
 
 class PCAPFab_Fabricate_Status(BaseModel):
     id: int
@@ -361,25 +375,43 @@ class PCAPFab_Stats_Response(BaseModel):
         extra = "ignore"  # Ignore fields not defined in the model
 
 class PCAPFab_List_Request(BaseModel):
-    ids: Optional[str]
-    sensor_groups: Optional[str]
-    status: Optional[str]
+    ids: Optional[str] = None
+    sensor_groups: Optional[str] = None
+    status: Optional[str] = None
+
+    @validator("ids", "sensor_groups", "status", pre=True, always=True)
+    def validate_optional(cls, v):
+        if v is None:
+            return None
+        return v
 
     class Config:
         extra = "ignore"  # Ignore fields not defined in the model
 
 class PCAPFab_List_Response(BaseModel): 
-    pcaps_found : Optional[bool]
-    pcaps_status : Optional[List[PCAPFab_Fabricate_Metadata]]
+    pcaps_found : Optional[bool] = None
+    pcaps_status : Optional[List[PCAPFab_Fabricate_Metadata]] = None
+
+    @validator("pcaps_found", "pcaps_status", pre=True, always=True)
+    def validate_optional(cls, v):
+        if v is None:
+            return None
+        return v
 
     class Config:
         extra = "ignore"  # Ignore fields not defined in the model
 
 class PCAPFab_Purge_Request(BaseModel):
-    ids: Optional[str]
-    before: Optional[str]
-    size: Optional[int]
-    protected: Optional[bool]
+    ids: Optional[str] = None
+    before: Optional[str] = None
+    size: Optional[int] = None
+    protected: Optional[bool] = None
+
+    @validator("ids", "before", "size", "protected", pre=True, always=True)
+    def validate_optional(cls, v):
+        if v is None:
+            return None
+        return v
 
     class Config:
         extra = "ignore"  # Ignore fields not defined in the model
@@ -492,8 +524,10 @@ async def pcapfab_fabricate_submit(fabricate_request: PCAPFab_Fabricate_Request,
 
 
     fabricate_metadata.pcaps = []
-    for sensor in fabricate_request.sensor_group:
-        if not fabricate_request.maintenance or sensor not in fabricate_request.maintenance:
+    logger.debug(f"sensor_group {fabricate_request.sensor_group}")
+    logger.debug(f"maintenance {fabricate_request.maintenance}")
+    for sensor in [x.strip() for x in fabricate_request.sensor_group.split(",") if x]:
+        if not fabricate_request.maintenance or sensor not in [x.strip() for x in fabricate_request.maintenance.split(",") if x]:
             fabricate_metadata.pcaps.append(request_pcap(sensor, fabricate_metadata))
 
     pending = False
@@ -798,7 +832,7 @@ def generate_fabricate_metadata(fabricate_request):
                             query=query,
                             tcpdump_args=tcpdump_args,
                             extract_files=fabricate_request.extract_files,
-                            done=f'0/{len(fabricate_request.sensor_group)}',
+                            done=f'0/{len([x.strip() for x in fabricate_request.sensor_group.split(",") if x])}',
                             status='Distributing',
                             status_updated=status_updated)
 
@@ -947,7 +981,7 @@ def request_pcap(sensor, fabricate_metadata):
                                  pcap_duration=0,
                                  file_name=f'{fabricate_metadata.id}_{sensor_name}.pcap',
                                  sensor=sensor,
-                                 size=0,
+                                 size='0',
                                  status="Failed",
                                  status_msg=f'PCAP request failed: {status_msg}',
                                  status_updated=now.isoformat())
