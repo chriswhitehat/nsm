@@ -12,6 +12,14 @@ package ['cron', 'rsyslog']
 
 install_temp = '/root/installtmp'
 
+
+execute 'set_logging_facl' do
+  command 'sudo setfacl -m g::rwx /var/log/'
+  creates '/var/log/facl_set'
+  action :run
+end
+
+
 directory install_temp do
   owner 'root'
   group 'root'
