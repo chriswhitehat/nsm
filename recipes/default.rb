@@ -14,8 +14,8 @@ install_temp = '/root/installtmp'
 
 
 execute 'set_logging_facl' do
-  command 'sudo setfacl -m g::rwx /var/log/'
-  creates '/var/log/facl_set'
+  command 'sudo setfacl -m g::rwx /var/log/ && sudo touch /var/log/group_facl_set'
+  creates '/var/log/group_facl_set'
   action :run
 end
 
