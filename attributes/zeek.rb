@@ -19,6 +19,12 @@ default[:nsm][:zeek][:config][:intel_dir] = '/opt/zeek/share/zeek/intel/'
 #default[:nsm][:zeek][:config][:log_expire_interval] = '7 days'
 default[:nsm][:zeek][:config][:log_expire_days] = '0'
 
+###############
+# Zeek Intel Watchlist
+###############
+
+# Update interval in cron minutes format
+default[:nsm][:zeek][:config][:xsoar_watchlist_update] = '*/5'
 
 ###############
 # Zkg Sources
