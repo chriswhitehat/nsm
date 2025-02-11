@@ -8,7 +8,7 @@ apt_repository 'rsyslog' do
   uri 'ppa:adiscon/v8-stable'
 end
 
-package ['cron', 'rsyslog']
+package ['cron', 'rsyslog', 'acl']
 
 install_temp = '/root/installtmp'
 
