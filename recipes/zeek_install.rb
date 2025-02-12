@@ -133,7 +133,7 @@ cron_d 'xsoar_watchlist' do
   minute node[:nsm][:zeek][:config][:xsoar_watchlist_update]
   hour '*'
   user 'zeek'
-  command "/usr/bin/sleep $((RANDOM % 15)) && /usr/bin/wget -q #{node[:nsm][:zeek][:config][:xsoar_watchlist_url]} -O /tmp/xsoar_watchlist.txt && /usr/bin/egrep '^#fields' /tmp/xsoar_watchlist.txt && /usr/bin/cmp -s /tmp/xsoar_watchlist.txt #{node[:nsm][:zeek][:config][:intel_dir]}xsoar_watchlist.txt || /usr/bin/mv /tmp/xsoar_watchlist.txt #{node[:nsm][:zeek][:config][:intel_dir]}xsoar_watchlist.txt"
+  command "/usr/bin/perl -e 'sleep int(rand(30))' && /usr/bin/wget -q #{node[:nsm][:zeek][:config][:xsoar_watchlist_url]} -O /tmp/xsoar_watchlist.txt && /usr/bin/egrep '^#fields' /tmp/xsoar_watchlist.txt && /usr/bin/cmp -s /tmp/xsoar_watchlist.txt #{node[:nsm][:zeek][:config][:intel_dir]}xsoar_watchlist.txt || /usr/bin/mv /tmp/xsoar_watchlist.txt #{node[:nsm][:zeek][:config][:intel_dir]}xsoar_watchlist.txt"
 end
 
 zeek_dirs = [node[:nsm][:zeek][:config][:log_dir],
