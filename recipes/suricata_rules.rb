@@ -23,52 +23,64 @@ dirs.each do |dir|
     action :create
   end
 end      
-      
+
 
 ['disable', 'drop', 'enable', 'modify'].each do |conf|
 
-  if node[:nsm][:suricata][:rules] && node[:nsm][:suricata][:rules][conf]
-    if node[:nsm][:suricata][:rules][conf][:global]
-      global = node[:nsm][:suricata][:rules][conf][:global]
+  if node[:nsm][:suricata][:config][:rules][conf][:url] != ''
+
+    # Downloads the latest rule configs and only moves them in and triggers an update if the rules conf file changed
+    cron_d "suricata_#{conf}_download" do
+      minute '*/5'
+      hour '*'
+      user 'suricata'
+      command "/usr/bin/perl -e 'sleep int(rand(30))' && /usr/bin/wget -q #{node[:nsm][:suricata][:config][:rules][conf][:url]} -O '/tmp/suricata_#{conf}.conf' && /usr/bin/egrep 'Suricata-Update formatting' /tmp/suricata_#{conf}.conf && /usr/bin/cmp -s /tmp/suricata_#{conf}.conf #{etc_base}/#{conf}.conf || /usr/bin/mv /tmp/suricata_#{conf}.conf #{etc_base}/#{conf}.conf && /usr/bin/suricata-update -D #{var_lib_base} -c #{etc_base}/update.yaml --suricata-conf #{etc_base}/suricata.yaml && /usr/sbin/suricata-reload"
+    end
+
+  else
+
+    if node[:nsm][:suricata][:rules] && node[:nsm][:suricata][:rules][conf]
+      if node[:nsm][:suricata][:rules][conf][:global]
+        global = node[:nsm][:suricata][:rules][conf][:global]
+      else
+        global = {}
+      end
+      if node[:nsm][:suricata][:rules][conf][node[:nsm][:sensor_region]]
+        sensor_region = node[:nsm][:suricata][:rules][conf][node[:nsm][:sensor_region]]
+      else
+        sensor_region = {}
+      end
+      if node[:nsm][:suricata][:rules][conf][node[:nsm][:sensor_group]]
+        sensor_group = node[:nsm][:suricata][:rules][conf][node[:nsm][:sensor_group]]
+      else
+        sensor_group = {}
+      end
+      if node[:nsm][:suricata][:rules][conf][node[:fqdn]]
+        host = node[:nsm][:suricata][:rules][conf][node[:fqdn]]
+      else
+        host = {}
+      end
     else
       global = {}
-    end
-    if node[:nsm][:suricata][:rules][conf][node[:nsm][:sensor_region]]
-      sensor_region = node[:nsm][:suricata][:rules][conf][node[:nsm][:sensor_region]]
-    else
       sensor_region = {}
-    end
-    if node[:nsm][:suricata][:rules][conf][node[:nsm][:sensor_group]]
-      sensor_group = node[:nsm][:suricata][:rules][conf][node[:nsm][:sensor_group]]
-    else
       sensor_group = {}
-    end
-    if node[:nsm][:suricata][:rules][conf][node[:fqdn]]
-      host = node[:nsm][:suricata][:rules][conf][node[:fqdn]]
-    else
       host = {}
     end
-  else
-    global = {}
-    sensor_region = {}
-    sensor_group = {}
-    host = {}
-  end
 
-
-  template "#{etc_base}/#{conf}.conf" do
-    source "suricata/rules/rule_configs.conf.erb"
-    owner 'suricata'
-    group 'suricata'
-    mode '0640'
-    variables({
-      :global_sigs => global,
-      :sensor_region_sigs => sensor_region,
-      :sensor_group_sigs => sensor_group,
-      :host_sigs => host,
-      :rule_conf => conf
-    })
-    notifies :run, "execute[suricata_update]", :delayed
+    template "#{etc_base}/#{conf}.conf" do
+      source "suricata/rules/rule_configs.conf.erb"
+      owner 'suricata'
+      group 'suricata'
+      mode '0640'
+      variables({
+        :global_sigs => global,
+        :sensor_region_sigs => sensor_region,
+        :sensor_group_sigs => sensor_group,
+        :host_sigs => host,
+        :rule_conf => conf
+      })
+      notifies :run, "execute[suricata_update]", :delayed
+    end
   end
 end
 
@@ -99,6 +111,19 @@ else
   sensor_region = {}
   sensor_group = {}
   host = {}
+end
+
+
+if node[:nsm][:suricata][:config][:rules][:local][:url] != ''
+
+  # Downloads the latest local rules and only moves them in and triggers an update if the rules file changed
+  cron_d 'suricata_local_download' do
+    minute '*/5'
+    hour '*'
+    user 'suricata'
+    command "/usr/bin/perl -e 'sleep int(rand(30))' && /usr/bin/wget -q #{node[:nsm][:suricata][:config][:rules][:local][:url]} -O '/tmp/suricata_local_download.rules' && /usr/bin/egrep 'Suricata-Update Local Rules' /tmp/suricata_local_download.rules && /usr/bin/cmp -s /tmp/suricata_local_download.rules #{etc_base}/rules/local_download.rules || /usr/bin/mv /tmp/suricata_local_download.rules #{etc_base}/rules/local_download.rules && /usr/bin/suricata-update -D #{var_lib_base} -c #{etc_base}/update.yaml --suricata-conf #{etc_base}/suricata.yaml && /usr/sbin/suricata-reload"
+  end
+
 end
 
 

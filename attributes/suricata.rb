@@ -26,3 +26,9 @@ default[:nsm][:suricata][:config][:filestore][:force_magic] = 'no'
 default[:nsm][:suricata][:config][:filestore][:prune][:retention] = '14d'
 # Make empty string to disable verbose logging
 default[:nsm][:suricata][:config][:filestore][:prune][:verbose_log] = '-v'
+
+
+default[:nsm][:suricata][:config][:rules][:enable][:url] = ''
+default[:nsm][:suricata][:config][:rules][:disable][:url] = ''
+default[:nsm][:suricata][:config][:rules][:modify][:url] = ''
+default[:nsm][:suricata][:config][:rules][:local][:url] = ''
