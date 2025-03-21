@@ -27,7 +27,7 @@ end
 
 ['disable', 'drop', 'enable', 'modify'].each do |conf|
 
-  if node[:nsm][:suricata][:config][:rules][conf][:url] != ''
+  if node[:nsm][:suricata][:config] && node[:nsm][:suricata][:config][:rules] && node[:nsm][:suricata][:config][:rules][conf] && node[:nsm][:suricata][:config][:rules][conf][:url] != ''
 
     # Downloads the latest rule configs and only moves them in and triggers an update if the rules conf file changed
     cron_d "suricata_#{conf}_download" do
@@ -38,6 +38,11 @@ end
     end
 
   else
+
+    file "delete_suricata_#{conf}_download" do
+      path "/etc/cron.d/suricata_#{conf}_download"
+      action :delete
+    end
 
     if node[:nsm][:suricata][:rules] && node[:nsm][:suricata][:rules][conf]
       if node[:nsm][:suricata][:rules][conf][:global]
@@ -114,7 +119,8 @@ else
 end
 
 
-if node[:nsm][:suricata][:config][:rules][:local][:url] != ''
+
+if node[:nsm][:suricata][:config] && node[:nsm][:suricata][:config][:rules] && node[:nsm][:suricata][:config][:rules][:local] && node[:nsm][:suricata][:config][:rules][:local][:url] != ''
 
   # Downloads the latest local rules and only moves them in and triggers an update if the rules file changed
   cron_d 'suricata_local_download' do
