@@ -712,6 +712,8 @@ def pcapfab_stats_file():
                                 drvs.append(drive.replace('_0GB_', f'_{hdd_size}_'))
                             if 'SSD' in drive and ssd_size:
                                 drvs.append(drive.replace('_0GB_', f'_{ssd_size}_'))
+                        else:
+                            drvs.append(drive)
                     drvs = ', '.join(drvs)
                     disk_issues += f"{state}: {drvs}"
 
