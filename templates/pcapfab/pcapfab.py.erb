@@ -674,15 +674,20 @@ def pcapfab_stats_file():
         total = 0
 
         hdd_size = ''
+        sdd_size = ''
         if ssacli:
             for drive in ssacli:
                 # drive_state_parse = re.search(r"physicaldrive ([^\s]+).+, ([a-zA-Z]+)\)", drive)
                 drive_state_parse = re.search(r"physicaldrive ([^\s]+) \(([^,]+), ([^,]+), ([^,]+), ([a-zA-Z]+)\)", drive)
                 if drive_state_parse and drive_state_parse.groups():
                     drive_state = drive_state_parse.groups()
-                    if not hdd_size and drive_state[-1] == 'OK' and 'HDD' in drive_state[2]:
-                        hdd_size = drive_state[3].replace(" ", "")
+                    if drive_state[-1] == 'OK':
+                        if not hdd_size and 'HDD' in drive_state[2]:
+                            hdd_size = drive_state[3].replace(" ", "")    
+                        if not sdd_size and 'SSD' in drive_state[2]:
+                            ssd_size = drive_state[3].replace(" ", "")
                     drive_status = f'{drive_state[1]}_{drive_state[3].replace(" ", "")}_{drive_state[2].split()[-1]}'.replace(' ', '-')
+
                     if len(drive_state) == 5:
                         if drive_state[-1] in disk_issues_dict:
                             disk_issues_dict[drive_state[-1]].append(drive_status)
@@ -700,7 +705,14 @@ def pcapfab_stats_file():
 
             for state, drives in disk_issues_dict.items():
                 if state != 'OK':
-                    drvs = ','.join(drives).replace('_0GB_', f'_{hdd_size}_')
+                    drvs = []
+                    for drive in drives:
+                        if '_0GB_' in drive:
+                            if 'HDD' in drive and hdd_size:
+                                drvs.append(drive.replace('_0GB_', f'_{hdd_size}_'))
+                            if 'SSD' in drive and ssd_size:
+                                drvs.append(drive.replace('_0GB_', f'_{ssd_size}_'))
+                    drvs = ', '.join(drvs)
                     disk_issues += f"{state}: {drvs}"
 
             disk_issues = disk_issues.strip()
