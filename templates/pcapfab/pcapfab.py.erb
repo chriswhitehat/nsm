@@ -672,12 +672,16 @@ def pcapfab_stats_file():
     if os.path.exists('/var/log/hpedrive.state'):
         ssacli = open('/var/log/hpedrive.state').read().splitlines()
         total = 0
+
+        hdd_size = ''
         if ssacli:
             for drive in ssacli:
                 # drive_state_parse = re.search(r"physicaldrive ([^\s]+).+, ([a-zA-Z]+)\)", drive)
                 drive_state_parse = re.search(r"physicaldrive ([^\s]+) \(([^,]+), ([^,]+), ([^,]+), ([a-zA-Z]+)\)", drive)
                 if drive_state_parse and drive_state_parse.groups():
                     drive_state = drive_state_parse.groups()
+                    if not hdd_size and drive_state[-1] == 'OK' and 'HDD' in drive_state[2]:
+                        hdd_size = drive_state[3].replace(" ", "")
                     drive_status = f'{drive_state[1]}_{drive_state[3].replace(" ", "")}_{drive_state[2].split()[-1]}'.replace(' ', '-')
                     if len(drive_state) == 5:
                         if drive_state[-1] in disk_issues_dict:
@@ -696,7 +700,7 @@ def pcapfab_stats_file():
 
             for state, drives in disk_issues_dict.items():
                 if state != 'OK':
-                    drvs = ','.join(drives)
+                    drvs = ','.join(drives).replace('_0GB_', f'_{hdd_size}_')
                     disk_issues += f"{state}: {drvs}"
 
             disk_issues = disk_issues.strip()
