@@ -674,14 +674,16 @@ def pcapfab_stats_file():
         total = 0
         if ssacli:
             for drive in ssacli:
-                drive_state_parse = re.search(r"physicaldrive ([^\s]+).+, ([a-zA-Z]+)\)", drive)
+                # drive_state_parse = re.search(r"physicaldrive ([^\s]+).+, ([a-zA-Z]+)\)", drive)
+                drive_state_parse = re.search(r"physicaldrive ([^\s]+) \(([^,]+), ([^,]+), ([^,]+), ([a-zA-Z]+)\)", drive)
                 if drive_state_parse and drive_state_parse.groups():
                     drive_state = drive_state_parse.groups()
-                    if len(drive_state) == 2:
+                    drive_status = f'{drive_state[1]}_{drive_state[3].replace(" ", "")}_{drive_state[2].split()[-1]}'.replace(' ', '-')
+                    if len(drive_state) == 5:
                         if drive_state[-1] in disk_issues_dict:
-                            disk_issues_dict[drive_state[-1]].append(drive_state[0])
+                            disk_issues_dict[drive_state[-1]].append(drive_status)
                         else:
-                            disk_issues_dict[drive_state[-1]] = [drive_state[0]]
+                            disk_issues_dict[drive_state[-1]] = [drive_status]
                     total += 1
 
             if 'OK' in disk_issues_dict:
