@@ -678,7 +678,7 @@ def pcapfab_stats_file():
         if ssacli:
             for drive in ssacli:
                 # drive_state_parse = re.search(r"physicaldrive ([^\s]+).+, ([a-zA-Z]+)\)", drive)
-                drive_state_parse = re.search(r"physicaldrive ([^\s]+) \(([^,]+), ([^,]+), ([^,]+), ([a-zA-Z]+)\)", drive)
+                drive_state_parse = re.search(r"physicaldrive ([^\s]+) \(([^,]+), ([^,]+), ([^,]+), ([a-zA-Z\s]+)\)", drive)
                 if drive_state_parse and drive_state_parse.groups():
                     drive_state = drive_state_parse.groups()
                     if drive_state[-1] == 'OK':
