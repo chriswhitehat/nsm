@@ -34,8 +34,8 @@ default[:nsm][:zeek][:sigs][:global]['frameworks/signatures/detect-windows-shell
 # This script logs which scripts were loaded during each run.
 default[:nsm][:zeek][:scripts][:global]['misc/loaded-scripts'] = true
 
-# Apply the default tuning scripts for common tuning settings.
-default[:nsm][:zeek][:scripts][:global]['tuning/defaults'] = true
+# Apply the default tuning scripts for common tuning settings. (Deprecated 2025-10-23)
+default[:nsm][:zeek][:scripts][:global]['tuning/defaults'] = false
 
 # Estimate and log capture loss.
 default[:nsm][:zeek][:scripts][:global]['misc/capture-loss'] = true
