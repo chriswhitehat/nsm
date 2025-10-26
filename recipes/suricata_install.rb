@@ -81,7 +81,7 @@ template '/usr/sbin/suricata-reload' do
   source 'suricata/suricata-reload.erb'
   owner 'root'
   group 'root'
-  mode '0750'
+  mode '0755'
 end
 
 # Bad for performance on high volume sensors
