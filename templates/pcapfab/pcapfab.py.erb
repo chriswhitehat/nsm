@@ -682,7 +682,7 @@ def pcapfab_stats_file():
                 if drive_state_parse and drive_state_parse.groups():
                     drive_state = drive_state_parse.groups()
                     if drive_state[-1] == 'OK':
-                        if not hdd_size and 'HDD' in drive_state[2]:
+                        if not hdd_size and 'HDD' in drive_state[2] or 'SAS' in drive_state[2]:
                             hdd_size = drive_state[3].replace(" ", "")    
                         if not sdd_size and 'SSD' in drive_state[2]:
                             ssd_size = drive_state[3].replace(" ", "")
@@ -708,9 +708,9 @@ def pcapfab_stats_file():
                     drvs = []
                     for drive in drives:
                         if '_0GB_' in drive:
-                            if 'HDD' in drive and hdd_size:
+                            if hdd_size and 'HDD' in drive or 'SAS' in drive:
                                 drvs.append(drive.replace('_0GB_', f'_{hdd_size}_'))
-                            if 'SSD' in drive and ssd_size:
+                            if ssd_size and 'SSD' in drive:
                                 drvs.append(drive.replace('_0GB_', f'_{ssd_size}_'))
                         else:
                             drvs.append(drive)
