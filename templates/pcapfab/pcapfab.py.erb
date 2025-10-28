@@ -722,6 +722,28 @@ def pcapfab_stats_file():
 
             disk_issues = disk_issues.strip()
 
+    if os.path.exists('/var/log/hpemrdrive.state'):
+        storcli = open('/var/log/hpemrdrive.state').read()
+
+        storcli_vol_states = {'OfLn': 'OffLine',
+                             'Pdgd': 'Partially Degraded',
+                             'Dgrd': 'Degraded',
+                             'Optl': 'Optimal'}
+
+        if storcli:
+            if 'Optl' not in storcli:
+                vol_status = storcli.split()[2].strip()
+                if vol_status in storcli_vol_states:
+                    vol_status = storcli_vol_states[vol_status]
+                if disk_issues:
+                    disk_issues += f"\nFailed: NSM Volume {vol_status}"
+                else:
+                    disk_issues += f"Failed: NSM Volume {vol_status}"
+                disks_healthy = 0
+            else:
+                disks_healthy = 1
+
+
     if not disk_issues:
         disk_issues = '-'
 
