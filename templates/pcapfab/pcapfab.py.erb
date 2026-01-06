@@ -723,7 +723,7 @@ def pcapfab_stats_file():
             disk_issues = disk_issues.strip()
 
     if os.path.exists('/var/log/hpemrdrive.state'):
-        storcli = open('/var/log/hpemrdrive.state').read()
+        storcli = open('/var/log/hpemrdrive.state').read().strip()
 
         storcli_vol_states = {'OfLn': 'OffLine',
                              'Pdgd': 'Partially Degraded',

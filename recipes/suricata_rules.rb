@@ -34,7 +34,7 @@ end
       minute '*/5'
       hour '*'
       user 'suricata'
-      command "/usr/bin/perl -e 'sleep int(rand(30))' && /usr/bin/wget -q #{node[:nsm][:suricata][:config][:rules][conf][:url]} -O '/tmp/suricata_#{conf}.conf' && /usr/bin/egrep 'Suricata-Update formatting' /tmp/suricata_#{conf}.conf && /usr/bin/cmp -s /tmp/suricata_#{conf}.conf #{etc_base}/#{conf}.conf || /usr/bin/mv /tmp/suricata_#{conf}.conf #{etc_base}/#{conf}.conf && /usr/bin/suricata-update -D #{var_lib_base} -c #{etc_base}/update.yaml --suricata-conf #{etc_base}/suricata.yaml && /usr/sbin/suricata-reload"
+      command "/usr/bin/perl -e 'sleep int(rand(30))' && /usr/bin/wget -q #{node[:nsm][:suricata][:config][:rules][conf][:url]} -O '/tmp/suricata_#{conf}.conf' && /usr/bin/egrep 'Suricata-Update formatting' /tmp/suricata_#{conf}.conf && ! /usr/bin/cmp -s /tmp/suricata_#{conf}.conf #{etc_base}/#{conf}.conf && /usr/bin/mv #{etc_base}/#{conf}.conf #{etc_base}/#{conf}.conf.`/usr/bin/date +%s` && /usr/bin/mv /tmp/suricata_#{conf}.conf #{etc_base}/#{conf}.conf && /usr/bin/suricata-update -D #{var_lib_base} -c #{etc_base}/update.yaml --suricata-conf #{etc_base}/suricata.yaml && /usr/sbin/suricata-reload"
     end
 
   else
@@ -127,7 +127,7 @@ if node[:nsm][:suricata][:config] && node[:nsm][:suricata][:config][:rules] && n
     minute '*/5'
     hour '*'
     user 'suricata'
-    command "/usr/bin/perl -e 'sleep int(rand(30))' && /usr/bin/wget -q #{node[:nsm][:suricata][:config][:rules][:local][:url]} -O '/tmp/suricata_local_download.rules' && /usr/bin/egrep 'Suricata-Update Local Rules' /tmp/suricata_local_download.rules && /usr/bin/cmp -s /tmp/suricata_local_download.rules #{etc_base}/rules/local_download.rules || /usr/bin/mv /tmp/suricata_local_download.rules #{etc_base}/rules/local_download.rules && /usr/bin/suricata-update -D #{var_lib_base} -c #{etc_base}/update.yaml --suricata-conf #{etc_base}/suricata.yaml && /usr/sbin/suricata-reload"
+    command "/usr/bin/perl -e 'sleep int(rand(30))' && /usr/bin/wget -q #{node[:nsm][:suricata][:config][:rules][:local][:url]} -O '/tmp/suricata_local_download.rules' && /usr/bin/egrep 'Suricata-Update Local Rules' /tmp/suricata_local_download.rules && ! /usr/bin/cmp -s /tmp/suricata_local_download.rules #{etc_base}/rules/local_download.rules && /usr/bin/mv #{etc_base}/rules/local_download.rules #{etc_base}/rules/local_download.rules.`/usr/bin/date +%s` && /usr/bin/mv /tmp/suricata_local_download.rules #{etc_base}/rules/local_download.rules && /usr/bin/suricata-update -D #{var_lib_base} -c #{etc_base}/update.yaml --suricata-conf #{etc_base}/suricata.yaml && /usr/sbin/suricata-reload"
   end
 
 end
