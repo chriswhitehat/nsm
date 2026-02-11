@@ -643,8 +643,8 @@ def pcapfab_stats_file():
 
     if len(steno_dirs) != 1:
         #logger.error("Something went wrong in stats, unexpected steno dir listing.")
-        pcap_earliest = 'unknown'
-        pcap_latest = 'unknown'
+        pcap_earliest = '-'
+        pcap_latest = '-'
         pcap_retention = -1
         pcap_count = -1
         pcap_total_size = '-'
@@ -757,7 +757,7 @@ def pcapfab_stats_file():
 
 
     stats = {}
-    if pcap_latest != 'unknown':
+    if pcap_latest != '-':
         pcap_retention = (pcap_latest - pcap_earliest).days
         pcap_earliest = pcap_earliest.isoformat()
         pcap_latest = pcap_latest.isoformat()
