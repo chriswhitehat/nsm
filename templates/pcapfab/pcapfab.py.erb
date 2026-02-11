@@ -635,14 +635,19 @@ def rotate_files():
 
 
 def pcapfab_stats_file():
-    steno_dirs = [x for x in os.listdir('/nsm/steno/') if x not in ['rpc', 'thread1']]
+
+    if os.path.exists('/nsm/steno'):
+        steno_dirs = [x for x in os.listdir('/nsm/steno/') if x not in ['rpc', 'thread1']]
+    else:
+        steno_dirs = []
 
     if len(steno_dirs) != 1:
-        logger.error("Something went wrong in stats, unexpected steno dir listing.")
+        #logger.error("Something went wrong in stats, unexpected steno dir listing.")
         pcap_earliest = 'unknown'
         pcap_latest = 'unknown'
+        pcap_retention = -1
         pcap_count = -1
-        pcap_total_size = -1
+        pcap_total_size = '-'
         pcap_avg_size = -1
     else:
         steno_packets_dir = f'/nsm/steno/{steno_dirs[0]}/thread1/packets/'
@@ -655,13 +660,16 @@ def pcapfab_stats_file():
         pcap_total_size = f'{pcap_size_gbs} GB'
         pcap_avg_size = pcap_size_gbs / pcap_count
 
-    steno_log = runBash('tac /var/log/stenographer.log | egrep stenotype | head -1')
-    steno_stats_parse = re.search(r"MBps=(?P<MBps>\S+).+drops=(?P<drops>\S+)\sdrop%=(?P<drop_pct>\d+)", steno_log.decode())
-    if steno_stats_parse and steno_stats_parse.groupdict():
-        steno_stats = steno_stats_parse.groupdict()
-        steno_stats['mbps'] = int(float(steno_stats['MBps']) * 8)
-    else:
+    if not steno_dirs:
         steno_stats = {'drops': -1, 'drop_pct': -1, 'mbps': -1}
+    else:
+        steno_log = runBash('tac /var/log/stenographer.log | egrep stenotype | head -1')
+        steno_stats_parse = re.search(r"MBps=(?P<MBps>\S+).+drops=(?P<drops>\S+)\sdrop%=(?P<drop_pct>\d+)", steno_log.decode())
+        if steno_stats_parse and steno_stats_parse.groupdict():
+            steno_stats = steno_stats_parse.groupdict()
+            steno_stats['mbps'] = int(float(steno_stats['MBps']) * 8)
+        else:
+            steno_stats = {'drops': -1, 'drop_pct': -1, 'mbps': -1}
 
     nsm_disk_util = shutil.disk_usage('/nsm')
 
@@ -748,9 +756,15 @@ def pcapfab_stats_file():
         disk_issues = '-'
 
 
-    stats = {'pcap_earliest': pcap_earliest.isoformat(),
-              'pcap_latest': pcap_latest.isoformat(),
-              'pcap_retention': (pcap_latest - pcap_earliest).days,
+    stats = {}
+    if pcap_latest != 'unknown':
+        pcap_retention = (pcap_latest - pcap_earliest).days
+        pcap_earliest = pcap_earliest.isoformat()
+        pcap_latest = pcap_latest.isoformat()
+        
+    stats = {'pcap_earliest': pcap_earliest,
+              'pcap_latest': pcap_latest,
+              'pcap_retention': pcap_retention,
               'pcap_count': pcap_count,
               'pcap_total_size': pcap_total_size,
               'pcap_avg_size': pcap_avg_size,
