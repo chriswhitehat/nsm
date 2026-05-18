@@ -756,6 +756,18 @@ def pcapfab_stats_file():
         disk_issues = '-'
 
 
+    if os.path.exists('/var/log/passive_mbps'):
+        try:
+            mbps = int(open('/var/log/passive_mbps').read().strip())
+        except:
+            mbps = ''
+    else:
+        mbps = ''
+
+    if not mbps:
+        mbps = steno_stats['mbps']
+        
+
     stats = {}
     if pcap_latest != '-':
         pcap_retention = (pcap_latest - pcap_earliest).days
@@ -773,7 +785,7 @@ def pcapfab_stats_file():
               'disk_issues': disk_issues,
               'packet_drops': int(steno_stats['drops']),
               'packet_drop_pct': int(steno_stats['drop_pct']),
-              'mbps_avg': steno_stats['mbps']}
+              'mbps_avg': mbps}
 
     with open('/nsm/pcapfab/stats.json', 'w') as stats_file:
         stats_file.write(json.dumps(stats))
