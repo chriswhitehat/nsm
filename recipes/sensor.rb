@@ -131,7 +131,7 @@ if node[:nsm][:interfaces][:sniffing]
       cron_d 'passive_mbps' do
         user 'root'
         minute '*/10'
-        command "/bin/bash -c 'IF=#{sniff[:interface]}; R1=$(ip -s link show \"$IF\" | awk \"/RX:/{getline;print \\$1}\"); T1=$(ip -s link show \"$IF\" | awk \"/TX:/{getline;print \\$1}\"); sleep 60; R2=$(ip -s link show \"$IF\" | awk \"/RX:/{getline;print \\$1}\"); T2=$(ip -s link show \"$IF\" | awk \"/TX:/{getline;print \\$1}\"); echo $(( ((R2-R1)+(T2-T1))*8/60/1000000 )) > /var/log/passive_mbps\'"
+        command "/bin/bash -c 'IF=#{sniff[:interface]}; R1=$(/usr/sbin/ip -s link show \"$IF\" | /usr/bin/awk \"/RX:/{getline;print \\$1}\"); T1=$(/usr/sbin/ip -s link show \"$IF\" | /usr/bin/awk \"/TX:/{getline;print \\$1}\"); /usr/bin/sleep 60; R2=$(/usr/sbin/ip -s link show \"$IF\" | /usr/bin/awk \"/RX:/{getline;print \\$1}\"); T2=$(/usr/sbin/ip -s link show \"$IF\" | /usr/bin/awk \"/TX:/{getline;print \\$1}\"); /usr/bin/echo $(( ((R2-R1)+(T2-T1))*8/60/1000000 )) > /var/log/passive_mbps\'"
       end
 
       if node[:nsm][:steno][:enabled]
