@@ -128,6 +128,12 @@ if node[:nsm][:interfaces][:sniffing]
         end
       end
 
+      cron_d 'passive_mbps' do
+        user 'root'
+        minute '*/10'
+        command "/bin/bash -c 'IF=#{sniff[:interface]}; R1=$(ip -s link show \"$IF\" | awk \"/RX:/{getline;print \\$1}\"); T1=$(ip -s link show \"$IF\" | awk \"/TX:/{getline;print \\$1}\"); sleep 60; R2=$(ip -s link show \"$IF\" | awk \"/RX:/{getline;print \\$1}\"); T2=$(ip -s link show \"$IF\" | awk \"/TX:/{getline;print \\$1}\"); echo $(( ((R2-R1)+(T2-T1))*8/60/1000000 )) > /var/log/passive_mbps\'"
+      end
+
       if node[:nsm][:steno][:enabled]
         maintenance_mode_commands += "/usr/bin/systemctl stop stenographer@#{sniff[:sensorname]}.service\n"
         maintenance_mode_recovery = "/usr/bin/systemctl start stenographer@#{sniff[:sensorname]}.service\n" + maintenance_mode_recovery
@@ -165,12 +171,6 @@ cron_d 'maintenace_mode' do
   command '/home/system/maintenance_mode'
   notifies :run, 'execute[maintenance_mode_recovery]', :immediately
   notifies :request_reboot, 'reboot[maintenance_mode_recovery_reboot]', :immediately
-end
-
-cron_d 'passive_mbps' do
-  user 'root'
-  minute '*/10'
-  command "/bin/bash -c 'IF=#{sniff[:interface]}; R1=$(ip -s link show \"$IF\" | awk \"/RX:/{getline;print \\$1}\"); T1=$(ip -s link show \"$IF\" | awk \"/TX:/{getline;print \\$1}\"); sleep 60; R2=$(ip -s link show \"$IF\" | awk \"/RX:/{getline;print \\$1}\"); T2=$(ip -s link show \"$IF\" | awk \"/TX:/{getline;print \\$1}\"); echo $(( ((R2-R1)+(T2-T1))*8/60/1000000 )) > /var/log/passive_mbps\'"
 end
 
 execute 'maintenance_mode_recovery' do
