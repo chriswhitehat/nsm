@@ -167,6 +167,12 @@ cron_d 'maintenace_mode' do
   notifies :request_reboot, 'reboot[maintenance_mode_recovery_reboot]', :immediately
 end
 
+cron_d 'passive_mbps' do
+  user 'root'
+  minute '*/10'
+  command "/bin/bash -c 'IF=#{sniff[:interface]}; R1=$(ip -s link show \"$IF\" | awk \"/RX:/{getline;print \\$1}\"); T1=$(ip -s link show \"$IF\" | awk \"/TX:/{getline;print \\$1}\"); sleep 60; R2=$(ip -s link show \"$IF\" | awk \"/RX:/{getline;print \\$1}\"); T2=$(ip -s link show \"$IF\" | awk \"/TX:/{getline;print \\$1}\"); echo $(( ((R2-R1)+(T2-T1))*8/60/1000000 )) > /var/log/passive_mbps\'"
+end
+
 execute 'maintenance_mode_recovery' do
   command maintenance_mode_recovery
   action :nothing
