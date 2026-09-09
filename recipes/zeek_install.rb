@@ -75,6 +75,7 @@ end
 
 package 'gdb'
 
+package 'python3-websockets'
 
 package 'zeek' do
   action :install
